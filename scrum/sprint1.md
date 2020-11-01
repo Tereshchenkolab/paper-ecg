@@ -19,7 +19,7 @@ This is the log of all tasks and features.
 - Design the high-level architecture of the application 
 
 
-## Member task
+## Member tasks
 
 ### Natalie
 
