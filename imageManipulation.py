@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
-import math
 import matplotlib.pyplot as plt
+
+import math
 import random
 
 class Color:
@@ -257,8 +258,8 @@ def cropToGridAndIsolateLinesDemo():
 def contiguousRegionsDemo():
     # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.50 PM.png"
     # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.19 PM.png"
-    # path = 'fullScan.png'
-    path = "../Test Images/Larisa/LAU8 tracé 8.JPG"
+    path = 'fullScan.png'
+    # path = "../Test Images/Larisa/LAU8 tracé 8.JPG"
     # path = "../Test Images/Mocks/test1.png"
     # path = 'image.png'
 
@@ -390,8 +391,8 @@ def contiguousRegionsDemo():
 
 def thresholdExperiments():
     # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.50 PM.png"
-    path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.19 PM.png"
-    # path = 'fullScan.png'
+    # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.19 PM.png"
+    path = 'fullScan.png'
     # path = "../Test Images/Larisa/LAU8 tracé 8.JPG"
     # path = "../Test Images/Mocks/test1.png"
     # path = 'image.png'
@@ -411,6 +412,7 @@ def thresholdExperiments():
 
 def main():
     thresholdExperiments()
+    contiguousRegionsDemo()
 
 if __name__ == "__main__":
     main()
