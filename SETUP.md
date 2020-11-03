@@ -33,7 +33,7 @@ Here is a recommendation flow chart to make the decision easy:
     [ Python Installer ]             [ pyenv ]
 ```
 
-**Note**: Anaconda is available for Windows/Linux/macOS, and there is a windows port of `pyenv` available.
+**Note**: Anaconda is available for Windows/Linux/macOS, and there is a [windows port of `pyenv`](https://github.com/pyenv-win/pyenv-win) available.
 
 
 
