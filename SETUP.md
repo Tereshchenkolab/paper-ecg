@@ -60,7 +60,7 @@ $ /path/to/python3.6.7 --version
 3.6.7
 ```
 
-### Create an Environment
+### Create an environment
 
 Python comes bundled with an environment manager, `venv` (not to be confused with `virtualenv` or `pyenv`). 
 We will use this tool to package all of the dependcies for the project in a locally.
@@ -78,13 +78,13 @@ Run `venv <environment name>` to create a virtual envirnonment for the project.
 python -m venv environment
 ```
 
-#### Activating / Deactivating
+#### Activating / deactivating
 
 In order to utilize the isolated environment you will need to activate the environemnt.
 
 ...
 
-### Install Dependencies
+### Install dependencies
 
 ...
 
@@ -120,11 +120,11 @@ To prevent conda from taking `python` and `python3` hostage globally, run:
 conda config --set auto_activate_base false
 ```
 
-### Set up an Environment
+### Set up an environment
 
 ...
 
-### Install Dependencies
+### Install dependencies
 
 ...
 
@@ -143,7 +143,7 @@ conda config --set auto_activate_base false
 
 ...
 
-### Configure an Environment
+### Configure an environment
 
 Use the built-in module `venv` to create a virtual envirnonment for the project ([venv documentation](https://docs.python.org/3/library/venv.html)). 
 
@@ -153,7 +153,7 @@ python -m venv environment
 
 ...
 
-### Install Dependencies
+### Install dependencies
 
 ```
 pip install -r requirements.txt
