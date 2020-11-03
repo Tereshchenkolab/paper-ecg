@@ -1,4 +1,4 @@
-[◀️ Back to Project Homepage](../README.md)
+[Project Homepage](../README.md) / Sprint Review Documents
 
 # Sprint Review Documents
 
