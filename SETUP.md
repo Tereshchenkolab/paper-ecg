@@ -14,7 +14,7 @@ However, there are three different ways to accomplish this:
 
 1. Official Python Installer ([jump](#1-official-python-installer))
 1. Anaconda ([jump](#2-anaconda))
-1. `pyenv`([jump](#3-pyenv-macOS-Linux-only))
+1. `pyenv`([jump](#3-pyenv-macoslinux-only))
 
 ### Which one is right for me?
 
