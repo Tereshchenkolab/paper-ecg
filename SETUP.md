@@ -1,4 +1,4 @@
-[◀️ Back to Project Homepage](README.md)
+[Project Homepage](README.md) /  Setup Instructions
 
 # Setup Instructions
 
