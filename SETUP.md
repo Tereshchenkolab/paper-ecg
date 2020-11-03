@@ -1,3 +1,5 @@
+[◀️ Back to README](README.md)
+
 # Setup Instructions
 
 This guide takes you from a fresh install of Linux/MacOS/Windows to having the project running. 
