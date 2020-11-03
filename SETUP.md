@@ -53,7 +53,7 @@ $ python --version
 If this returns `2.7.X`, try `python3 --version`. 
 If that works, use `python3` in place of `python` for the rest of instructions. 
 
-If neither of those works you will nedd specify the full path to the Python 3.6.7 executable:
+If neither of those works you will need to specify the full path to the Python 3.6.7 executable:
 
 ```
 $ /path/to/python3.6.7 --version
