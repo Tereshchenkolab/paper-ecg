@@ -12,9 +12,9 @@ The steps involved are:
 
 However, there are three different ways to accomplish this:
 
-1. Official Python Installer
-1. Anaconda
-1. `pyenv`
+1. Official Python Installer ([jump](#1-official-python-installer))
+1. Anaconda ([jump](#2-anaconda))
+1. `pyenv`([jump](#3-pyenv-macOS-Linux-only))
 
 ### Which one is right for me?
 
