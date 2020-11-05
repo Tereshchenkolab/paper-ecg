@@ -99,8 +99,10 @@ Follow the [installation instructions](https://github.com/pyenv/pyenv#installati
 ### Download Python 3.6.7
 
 ```
-pyenv install 3.6.7
+env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.6.7
 ```
+
+For PyInstaller to work correctly, you need a complete Python installation, so you need to specify `--enable-shared`. In general `pyenv install 3.6.7` is all you need to install a Python version via `pyenv`.
 
 ### Configure an environment
 
