@@ -104,13 +104,13 @@ pyenv install 3.6.7
 
 ### Configure an environment
 
-Use `pyenv` to create a virtual envirnonment for the project ([venv documentation](https://docs.python.org/3/library/venv.html)). 
+Use `pyenv` to create a virtual envirnonment for the project. 
 
 ```
 pyenv virtualenv 3.6.7 paper-ecg
 ```
 
-Assign that virtual environment to the current direactory (this automatically activates the environment)
+Assign that virtual environment to the current direactory (this automatically activates the environment).
 
 ```
 pyenv local paper-ecg
