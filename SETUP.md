@@ -63,14 +63,14 @@ Create a virtual envirnonment for the project.
 In order to utilize the isolated environment you will need to activate the environemnt.
 The activation command varies between operating systems and shells, and the correct command to use is given in the table below:
 
-Platform|Shell| Command to activate virtual environment
-|-|-|-|
-POSIX | bash/zsh | `$ source <venv>/bin/activate`
-|"| fish | `$ source <venv>/bin/activate.fish`
-|"| csh/tcsh | `$ source <venv>/bin/activate.csh`
-|"| PowerShell Core | `$ <venv>/bin/Activate.ps1`
-Windows | cmd.exe | `C:\> <venv>\Scripts\activate.bat`
-|"| PowerShell | `PS C:\> <venv>\Scripts\Activate.ps1`
+Platform|Shell          | Command to activate virtual environment
+|-    |-                |-|
+POSIX | bash/zsh        | `$ source .env/bin/activate`
+|"    | fish            | `$ source .env/bin/activate.fish`
+|"    | csh/tcsh        | `$ source .env/bin/activate.csh`
+|"    | PowerShell Core | `$ .env/bin/Activate.ps1`
+Windows | cmd.exe       | `C:\> .env\Scripts\activate.bat`
+|"      | PowerShell    | `PS C:\> .env\Scripts\Activate.ps1`
     
 #### Deactivating
 
@@ -82,7 +82,7 @@ To install all of the dependencies in your new environment, run:
 
 `pip install -r requirements.txt`
 
-**Bonus**:If pip complains about being out of date, just run `pip install --upgrade pip`
+> 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
 
 Now, running `fbs run` should build and run the project.
 
@@ -102,20 +102,6 @@ Follow the [installation instructions](https://github.com/pyenv/pyenv#installati
 pyenv install 3.6.7
 ```
 
-The `.python-version` in the repo already specifies Python `3.6.7`.
-Make sure that is working by running:
-
-```
-> python --version
-3.6.7
-```
-
-If that doesn't work, try setting the version of Python in the repo folder manually:
-
-```
-pyenv local 3.6.7
-```
-
 ### Configure an environment
 
 Use `pyenv` to create a virtual envirnonment for the project ([venv documentation](https://docs.python.org/3/library/venv.html)). 
@@ -124,18 +110,26 @@ Use `pyenv` to create a virtual envirnonment for the project ([venv documentatio
 pyenv virtualenv 3.6.7 paper-ecg
 ```
 
-Use pyenv to automatically activate the environment in this directory:
+Assign that virtual environment to the current direactory (this automatically activates the environment)
 
 ```
 pyenv local paper-ecg
 ```
 
 Now, whenever this folder is the working directory in terminal, this environment will be used.
+Test this out by running:
+
+```
+> python --version
+3.6.7
+```
 
 ### Install dependencies
 
 ```
 pip install -r requirements.txt
 ```
+
+> 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
 
 Now, running `fbs run` should build and run the project.
