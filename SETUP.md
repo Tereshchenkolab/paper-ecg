@@ -94,7 +94,7 @@ Now, running `fbs run` should build and run the project.
 
 ### Install `pynenv`
 
-Follow the installation instructions on the `pyenv` GitHub.
+Follow the [installation instructions](https://github.com/pyenv/pyenv#installation) on the `pyenv` GitHub.
 
 ### Download Python 3.6.7
 
@@ -118,18 +118,19 @@ pyenv local 3.6.7
 
 ### Configure an environment
 
-Use the built-in module `venv` to create a virtual envirnonment for the project ([venv documentation](https://docs.python.org/3/library/venv.html)). 
+Use `pyenv` to create a virtual envirnonment for the project ([venv documentation](https://docs.python.org/3/library/venv.html)). 
 
 ```
-python -m venv .env
+pyenv virtualenv 3.6.7 paper-ecg
 ```
 
 Use pyenv to automatically activate the environment in this directory:
 
 ```
-pyenv local .env
+pyenv local paper-ecg
 ```
 
+Now, whenever this folder is the working directory in terminal, this environment will be used.
 
 ### Install dependencies
 
