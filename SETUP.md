@@ -130,6 +130,8 @@ Test this out by running:
 pip install -r requirements.txt
 ```
 
+> ⚠️ This may take several minutes
+
 > 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
 
 Now, running `fbs run` should build and run the project.
