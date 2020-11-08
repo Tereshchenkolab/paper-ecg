@@ -16,11 +16,11 @@ from EditorWidget import Editor
 import os, sys
 
 if __name__ == '__main__':
-    appctxt = ApplicationContext()
+    context = ApplicationContext()
 
     # Translate asset paths to useable format for PyInstaller
     def resource(relativePath):
-        return appctxt.get_resource(relativePath)
+        return context.get_resource(relativePath)
 
     editor = Editor()
 
@@ -32,6 +32,6 @@ if __name__ == '__main__':
     window.resize(800, 500)
     window.show()
 
-    exit_code = appctxt.app.exec_()
+    exit_code = context.app.exec_()
     print(f"Exiting with status {exit_code}")
     sys.exit(exit_code)
