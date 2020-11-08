@@ -6,11 +6,12 @@ Entry point for the application
 """
 
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from PyQt5 import uic
 
 from Utility import *
 from MainWindow import MainWindow
+from EditorWidget import Editor
 
 import os, sys
 
@@ -19,11 +20,15 @@ if __name__ == '__main__':
 
     # Translate asset paths to useable format for PyInstaller
     def resource(relativePath):
-      return appctxt.get_resource(relativePath)
+        return appctxt.get_resource(relativePath)
+
+    editor = Editor()
 
     window = MainWindow()
     window.setWindowTitle("Paper ECG")
     window.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
+    window.setCentralWidget(editor)
+    window.setContentsMargins(0,0,0,0)
     window.resize(800, 500)
     window.show()
 

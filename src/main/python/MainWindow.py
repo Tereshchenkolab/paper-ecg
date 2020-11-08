@@ -13,8 +13,7 @@ from QtHelper import *
 class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self):
-        super(MainWindow, self).__init__()
-
+        super().__init__()
         self.populateMenuBar()
 
 

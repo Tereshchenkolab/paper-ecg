@@ -1,6 +1,6 @@
 {
     "app_name": "PyQtHelloWorld",
     "author": "CS6",
-    "main_module": "src/main/python/main.py",
+    "main_module": "src/main/python/Main.py",
     "version": "0.0.0"
 }
