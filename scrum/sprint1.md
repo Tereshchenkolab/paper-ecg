@@ -44,3 +44,12 @@ Julian researched GUI libraries and built a demo application using PyQt, Qt Desi
 Both team members conducted a literature review.
 
 Natalie is concerned about managing Python versions on Windows, so we need to find a solution that works on Windows.
+
+
+# Sprint Review
+
+
+
+# Retrospective
+
+

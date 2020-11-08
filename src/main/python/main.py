@@ -1,36 +1,32 @@
+"""
+Main.py
+Created November 1, 2020
+
+Entry point for the application
+"""
+
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5 import QtWidgets
 from PyQt5 import uic
-from utility import *
+
+from Utility import *
+from MainWindow import MainWindow
 
 import os, sys
 
-# class MainWindow(QtWidgets.QMainWindow):
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-
-#         self.setWindowTitle("PyQt")
-#         l = QtWidgets.QLabel(helloWorld())
-#         l.setMargin(60)
-#         self.setCentralWidget(l)
-
 if __name__ == '__main__':
-    appctxt = ApplicationContext()       # 1. Instantiate ApplicationContext
+    appctxt = ApplicationContext()
 
     # Translate asset paths to useable format for PyInstaller
     def resource(relativePath):
       return appctxt.get_resource(relativePath)
 
-    # window = MainWindow()
-    # window.resize(250, 150)
-    # window.show()
-
-    Form, Window = uic.loadUiType(resource("qt/demo.ui"))
-    window = Window()
-    form = Form()
-    form.setupUi(window)
+    window = MainWindow()
+    window.setWindowTitle("Paper ECG")
+    window.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
+    window.resize(800, 500)
     window.show()
 
-    exit_code = appctxt.app.exec_()      # 2. Invoke appctxt.app.exec_()
+    exit_code = appctxt.app.exec_()
+    print(f"Exiting with status {exit_code}")
     sys.exit(exit_code)
