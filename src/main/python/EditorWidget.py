@@ -14,13 +14,16 @@ class Editor(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
+        self.imgLabel = QtWidgets.QLabel()
         self.initUi()
 
     def initUi(self):
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0) # Adds ~10px by default
 
-        midleft = QtWidgets.QFrame()
+        self.imgLabel.setGeometry(0, 0, 500, 500)
+        self.imgLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        self.imgLabel.setScaledContents(True)
 
         # Initialize tab screen
         tabs = QtWidgets.QTabWidget()
@@ -64,7 +67,7 @@ class Editor(QtWidgets.QWidget):
         tabs.addTab(leadTab,"Leads")
 
         splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
-        splitter.addWidget(midleft)
+        splitter.addWidget(self.imgLabel)
 
         # If on MacOS
         if platform.system() == "Darwin":
@@ -125,3 +128,6 @@ class Editor(QtWidgets.QWidget):
 
         hbox.addWidget(splitter)
         self.setLayout(hbox)
+
+    def displayImg(self, img):
+        self.imgLabel.setPixmap(QtGui.QPixmap(img))

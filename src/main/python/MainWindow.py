@@ -6,15 +6,17 @@ Primary window of the application
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 import sys
 
 from QtHelper import *
 
 class MainWindow(QtWidgets.QMainWindow):
 
-    def __init__(self):
+    def __init__(self, imgControl):
         super().__init__()
         self.populateMenuBar()
+        self.imgController = imgControl
 
 
     def populateMenuBar(self):
@@ -55,7 +57,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def open(self):
-        print("'open()' handler not implemented!")
+        self.imgController.openImgFile()
 
 
     def export(self):
