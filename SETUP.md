@@ -45,14 +45,14 @@ If neither of those works you will need to specify the full path to the Python 3
 ### Create an environment
 
 Python comes bundled with an environment manager, `venv` (not to be confused with `virtualenv` or `pyenv`). 
-We will use this tool to package all of the dependcies for the project in a locally.
+We will use this tool to package all of the dependencies for the project in a locally.
 Check out the [venv documentation](https://docs.python.org/3/library/venv.html)) for more information.
 
 > 💡 Environments isolate different Python projects to prevent dependency conflicts.
 
 Make sure when you run `python --version` you get `3.6.7`, or you are using the full path to the executable.
 
-Create a virtual envirnonment for the project. 
+Create a virtual environment for the project. 
 
 ```
 > python -m venv .env
@@ -60,7 +60,7 @@ Create a virtual envirnonment for the project.
 
 #### Activating
 
-In order to utilize the isolated environment you will need to activate the environemnt.
+In order to utilize the isolated environment you will need to activate the environment.
 The activation command varies between operating systems and shells, and the correct command to use is given in the table below:
 
 Platform|Shell          | Command to activate virtual environment
@@ -71,6 +71,14 @@ POSIX | bash/zsh        | `$ source .env/bin/activate`
 |"    | PowerShell Core | `$ .env/bin/Activate.ps1`
 Windows | cmd.exe       | `C:\> .env\Scripts\activate.bat`
 |"      | PowerShell    | `PS C:\> .env\Scripts\Activate.ps1`
+
+##### 💡 Pro Tip
+
+check the "Python > Env > Active Env In Current Terminal" box in the workspace settings or add this setting to `.vscode/settings.json`:
+
+```
+"python.terminal.activateEnvInCurrentTerminal": true,
+```
     
 #### Deactivating
 
@@ -106,13 +114,13 @@ For PyInstaller to work correctly, you need a complete Python installation, so y
 
 ### Configure an environment
 
-Use `pyenv` to create a virtual envirnonment for the project. 
+Use `pyenv` to create a virtual environment for the project. 
 
 ```
 pyenv virtualenv 3.6.7 paper-ecg
 ```
 
-Assign that virtual environment to the current direactory (this automatically activates the environment).
+Assign that virtual environment to the current directory (this automatically activates the environment).
 
 ```
 pyenv local paper-ecg
