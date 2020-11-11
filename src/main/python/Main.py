@@ -12,6 +12,7 @@ from PyQt5 import uic
 from Utility import *
 from MainWindow import MainWindow
 from EditorWidget import Editor
+from ImageController import ImageControl
 
 import os, sys
 
@@ -23,8 +24,9 @@ if __name__ == '__main__':
         return context.get_resource(relativePath)
 
     editor = Editor()
+    controller = ImageControl(editor)
 
-    window = MainWindow()
+    window = MainWindow(controller)
     window.setWindowTitle("Paper ECG")
     window.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
     window.setCentralWidget(editor)
