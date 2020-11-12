@@ -35,6 +35,42 @@ None.
 
 
 
+## November 11
+
+
+### Natalie
+
+#### Since last meeting
+
+- File chooser and displaying and image.
+- MVC refactoring.
+
+#### Until next meeting
+
+- Get controller working.
+- Taking over as Scrum master.
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Creating editor panel GUI.
+
+#### Until next meeting
+
+- Refactoring GUI code.
+- Polishing side panel GUI.
+
+#### Blockers
+
+None.
+
+
 
 ## Template
 
