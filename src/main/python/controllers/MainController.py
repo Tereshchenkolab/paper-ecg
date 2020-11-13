@@ -3,7 +3,7 @@ import sys
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtWidgets import QFileDialog
 from views.MainWindow import MainWindow
-from QtHelper import *
+
 
 class MainController:
 
