@@ -1,6 +1,6 @@
 {
-    "app_name": "PyQtHelloWorld",
-    "author": "CS6",
+    "app_name": "PaperECG",
+    "author": "Natalie Coppa and Julian Fortune",
     "main_module": "src/main/python/Main.py",
     "version": "0.0.0"
 }
