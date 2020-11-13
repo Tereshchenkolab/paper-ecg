@@ -13,7 +13,6 @@ from Utility import *
 from views.MainWindow import MainWindow
 from views.EditorWidget import Editor
 from controllers.MainController import MainController
-from model.ImageModel import Image
 
 import os, sys
 

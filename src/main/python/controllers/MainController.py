@@ -1,3 +1,9 @@
+"""
+MainController.py
+Created November 9, 2020
+
+-
+"""
 
 import sys
 from PyQt5 import QtGui, QtWidgets, QtCore
