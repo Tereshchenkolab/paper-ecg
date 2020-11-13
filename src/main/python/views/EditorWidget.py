@@ -6,16 +6,16 @@ Created November 7, 2020
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import sys, os, platform
+import sys
 
 from QtHelper import *
+from Utility import *
 
 class Editor(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
         self.initUi()
-        self.imageWidget
 
 
     def initUi(self):
@@ -72,7 +72,7 @@ class Editor(QtWidgets.QWidget):
         splitter.addWidget(self.imageWidget)
 
         # If on MacOS
-        if platform.system() == "Darwin":
+        if onMacOS:
             tabs.setStyleSheet("""
                 QTabWidget:left {
                     left: 10px;

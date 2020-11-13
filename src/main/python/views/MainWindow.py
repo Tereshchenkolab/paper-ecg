@@ -21,32 +21,31 @@ class MainWindow(QtWidgets.QMainWindow):
     def populateMenuBar(self):
         self.bar = self.menuBar()
 
-        self.addFileMenu()
-
-
-    def addFileMenu(self):
-        self.fileMenu = self.bar.addMenu('File')
-
-        self.fileMenuOpen = createMenuAction(
-            window=self,
-            name="Open",
-            shortcut=QtGui.QKeySequence.Open,
-            statusTip="Open an image file"
-        )
-
-        self.fileMenu.addAction(self.fileMenuOpen)
-
-        self.fileMenu.addSeparator()
-
-        self.fileMenu.addAction(
-            createMenuAction(
-                window=self,
-                name="Export",
-                shortcut="Ctrl+E",
-                statusTip="Export to a signal file"
+        self.bar.addMenu(
+            createMenu(
+                owner=self,
+                name='fileMenu',
+                parent=self.bar,
+                displayName='File',
+                actions=[
+                    createMenuAction(
+                        owner=self,
+                        name="fileMenuOpen",
+                        displayName="Open",
+                        shortcut=QtGui.QKeySequence.Open,
+                        statusTip="Open an image file"
+                    ),
+                    "separator",
+                    createMenuAction(
+                        owner=self,
+                        name="fileMenuExport",
+                        displayName="Export",
+                        shortcut="Ctrl+E",
+                        statusTip="Export to a signal file"
+                    )
+                ]
             )
         )
-
 
     def quit(self):
         print("'quit()' handler called")
