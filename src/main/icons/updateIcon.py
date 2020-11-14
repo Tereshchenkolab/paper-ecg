@@ -1,9 +1,14 @@
-import os
-import sys
-from PIL import Image
-from PIL import ImageOps
+"""
+updateIcon.py
+Created November 13, 2020
 
-# https://pillow.readthedocs.io/en/stable/installation.html#basic-installation
+Refreshes icons/ based on icons/icon.png
+Source: https://github.com/mherrmann/fbs/issues/199
+"""
+
+import os, sys
+from PIL import Image, ImageOps
+
 
 iconDirectory = os.path.abspath(os.path.dirname(sys.argv[0]))
 

@@ -10,8 +10,6 @@ from PyQt5 import QtWidgets, QtGui
 from PyQt5 import uic
 
 from Utility import *
-from views.MainWindow import MainWindow
-from views.EditorWidget import Editor
 from controllers.MainController import MainController
 
 import os, sys
@@ -23,17 +21,11 @@ if __name__ == '__main__':
     def resource(relativePath):
         return context.get_resource(relativePath)
 
-    editor = Editor()
-    window = MainWindow()
-    controller = MainController(editor, window)
+    # Launch the main controller and window
+    controller = MainController()
 
-    window.setWindowTitle("Paper ECG")
-    window.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
-    window.setCentralWidget(editor)
-    window.setContentsMargins(0,0,0,0)
-    window.resize(800, 500)
-    window.show()
-
+    # Hang
     exit_code = context.app.exec_()
+
     print(f"Exiting with status {exit_code}")
     sys.exit(exit_code)

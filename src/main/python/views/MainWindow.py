@@ -10,16 +10,28 @@ import QtWrapper as Qt
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from views.EditorWidget import Editor
+
 
 class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self):
         super().__init__()
 
-        self.initUi()
+        self.buildUI()
 
-    def initUi(self):
+
+    def buildUI(self):
         self.buildMenuBar()
+
+        self.editor = Editor()
+        self.setWindowTitle("Paper ECG")
+        self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
+        self.setCentralWidget(self.editor)
+        self.setContentsMargins(0,0,0,0)
+        self.resize(800, 500)
+        self.show()
+
 
     def buildMenuBar(self):
         return Qt.MenuBar(
@@ -68,6 +80,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             ]
         )
+
 
     def buildEditMenu(self):
         return Qt.Menu(
