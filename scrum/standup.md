@@ -71,19 +71,18 @@ None.
 None.
 
 
-
-## Template
+## November 14
 
 
 ### Natalie
 
 #### Since last meeting
 
-- 
+- Learned more about Python!
 
 #### Until next meeting
 
-- 
+- Work on loading / displaying image data.
 
 #### Blockers
 
@@ -94,11 +93,11 @@ None.
 
 #### Since last meeting
 
-- 
+- Writing a new interface for Qt to simplify our code base.
 
 #### Until next meeting
 
-- 
+- Continue QtWrapper stuff and add comments.
 
 #### Blockers
 
