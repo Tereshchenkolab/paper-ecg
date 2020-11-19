@@ -102,7 +102,23 @@ Now, running `fbs run` should build and run the project.
 
 ### Install `pynenv`
 
+#### macOS
+
 Follow the [installation instructions](https://github.com/pyenv/pyenv#installation) on the `pyenv` GitHub.
+
+#### Linux
+
+Use the automatic [installer](https://github.com/pyenv/pyenv-installer):
+
+```
+$ curl https://pyenv.run | bash
+```
+
+**(Ubuntu) Tip:** If `pyenv` fails because it couldn't find `zlib`, run: `sudo apt-get install zlib1g-dev`.
+
+**Note:** you may need to follow the instructions to add the `pyenv` setup to your `.bashrc`.
+
+Then, follow the pre-requisites for your system in the [troubleshooting guide](https://github.com/pyenv/pyenv/wiki/Common-build-problems) (or try your luck and return here if `pyenv` fails).
 
 ### Download Python 3.6.7
 
@@ -137,7 +153,8 @@ Test this out by running:
 ### Install dependencies
 
 ```
-pip install -r requirements.txt
+$ pip install --upgrade pip
+$ pip install -r requirements.txt
 ```
 
 > ⚠️ This may take several minutes
@@ -145,3 +162,9 @@ pip install -r requirements.txt
 > 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
 
 Now, running `fbs run` should build and run the project.
+
+**(Ubuntu) Tip:** If `fbs run` fails because of `qt.qpa.plugin: Could not load the Qt platform plugin "xcb" ...` try re-installing `xcb`:
+
+    ```
+    sudo apt-get install --reinstall libxcb-xinerama0
+    ```
