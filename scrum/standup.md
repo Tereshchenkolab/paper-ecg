@@ -71,18 +71,17 @@ None.
 None.
 
 
-## November 14
-
+## November 19
 
 ### Natalie
 
 #### Since last meeting
 
-- Learned more about Python!
+- Narrowed down our options for displaying images and bounding boxes
 
 #### Until next meeting
 
-- Work on loading / displaying image data.
+- Implement image viewer and bounding boxes
 
 #### Blockers
 
@@ -93,11 +92,14 @@ None.
 
 #### Since last meeting
 
-- Writing a new interface for Qt to simplify our code base.
+- Wrote the QtWrapper library to make nested Qt code
+- Made an icon for the project
+- Researched singletons in python
 
 #### Until next meeting
 
-- Continue QtWrapper stuff and add comments.
+- Extending the wrapper to more things and refactor editor to use it
+- Get everything running on Linux
 
 #### Blockers
 
