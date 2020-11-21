@@ -104,3 +104,35 @@ None.
 #### Blockers
 
 None.
+
+
+## November 21
+
+### Natalie
+
+#### Since last meeting
+
+- Created moveable/resizeable bounding boxes
+
+#### Until next meeting
+
+- Figure out the size grips for the bounding boxes / other possible approaches
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Figured out how to zoom and pan images (and watched Ratatouille)
+
+#### Until next meeting
+
+- Incorporate QGraphicScence into the codebase and also research other possible bounding box approaches
+
+#### Blockers
+
+None.
