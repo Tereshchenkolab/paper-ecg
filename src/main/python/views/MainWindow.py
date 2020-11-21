@@ -25,16 +25,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.buildMenuBar()
 
         self.editor = Editor()
-        self.setWindowTitle("Paper ECG")
-        self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
         self.setCentralWidget(self.editor)
         self.setContentsMargins(0,0,0,0)
+
+        self.setWindowTitle("Paper ECG")
+        # self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
         self.resize(800, 500)
+
         self.show()
 
 
     def buildMenuBar(self):
-        return Qt.MenuBar(
+        Qt.MenuBar(
             owner=self,
             name='bar',
             menus=[

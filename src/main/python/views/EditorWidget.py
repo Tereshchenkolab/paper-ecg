@@ -46,7 +46,7 @@ class Editor(QtWidgets.QWidget):
         self.showBoxButton.clicked.connect(self.showBoundingBoxButton)
         self.hideBoxButton = QtWidgets.QPushButton("hide bounding box")
         self.hideBoxButton.clicked.connect(self.hideBoundingBoxButton)
-        
+
         globalGroup1Layout.addWidget(self.showBoxButton)
         globalGroup1Layout.addWidget(self.hideBoxButton)
 
@@ -85,30 +85,15 @@ class Editor(QtWidgets.QWidget):
 
         # If on MacOS
         if onMacOS:
-            tabs.setStyleSheet("""
-                QTabWidget:left {
-                    left: 10px;
-                }
-
-                QTabWidget:right {
-                    right: 10px;
-                }
-
-                QTabWidget::pane:top {
-                    top: 40px;
-                }
-
-                QTabWidget::tab-bar {
-                     /* Force it stretch as wide as possible */
-                    width: 1000px;
-                }
-
-                QTabWidget::tab-bar:top {
-                    top: 20px;
-                }
-                QTabWidget::tab-bar:bottom {
-                    bottom: 20px;
-                }
+            tabs.setStyleSheet(
+                """
+                QTabWidget:left { left: 10px; }
+                QTabWidget:right { right: 10px; }
+                QTabWidget::pane:top { top: 40px; }
+                /* Force it stretch as wide as possible */
+                QTabWidget::tab-bar { width: 1000px; }
+                QTabWidget::tab-bar:top { top: 20px; }
+                QTabWidget::tab-bar:bottom { bottom: 20px; }
                 """
             )
 
@@ -121,15 +106,10 @@ class Editor(QtWidgets.QWidget):
             tabsContainer.setObjectName("tabsContainer")
 
             tabsContainer.setStyleSheet("""
-                .QWidget#tabsContainer {
-                    background: rgba(0,0,0,0.1);
-                }
+                .QWidget#tabsContainer { background: rgba(0,0,0,0.1); }
             """)
 
             splitter.setStyleSheet("""
-                QSplitter::handle {
-
-                }
                 QSplitter::handle:vertical {
                     color: rgba(0,0,0,.2) ;
                     width: 2px;
@@ -169,12 +149,12 @@ class BoundingBox(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.SubWindow)
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(QtWidgets.QSizeGrip(self), 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-        layout.addWidget(QtWidgets.QSizeGrip(self), 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
+        layout.addWidget(QtWidgets.QSizeGrip(self._box))
+        layout.addWidget(QtWidgets.QSizeGrip(self._box))
+        self.setLayout(layout)
 
-        #self._box.show()
         self.show()
-         
+
 
     def mousePressEvent(self, event):
         if self.draggable and event.button() == QtCore.Qt.LeftButton:
