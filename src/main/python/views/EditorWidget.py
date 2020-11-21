@@ -23,8 +23,9 @@ class Editor(QtWidgets.QWidget):
         hbox.setContentsMargins(0,0,0,0) # Adds ~10px by default
 
         self.imageWidget = QtWidgets.QLabel()
-        self.imageWidget.setGeometry(0, 0, 500, 500)
-        self.imageWidget.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        self.imageWidget.setBackgroundRole(QtGui.QPalete.Dark)
+        self.imageWidget.setGeometry(0, 0, 200, 200)
+        #self.imageWidget.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         self.imageWidget.setScaledContents(True)
 
         self.box = BoundingBox(self.imageWidget)
@@ -81,6 +82,7 @@ class Editor(QtWidgets.QWidget):
 
         splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
         splitter.addWidget(self.imageWidget)
+        print("image widget position: ", self.imageWidget.pos())
 
         # If on MacOS
         if onMacOS:
