@@ -23,9 +23,8 @@ class Editor(QtWidgets.QWidget):
         hbox.setContentsMargins(0,0,0,0) # Adds ~10px by default
 
         self.imageWidget = QtWidgets.QLabel()
-        self.imageWidget.setBackgroundRole(QtGui.QPalete.Dark)
         self.imageWidget.setGeometry(0, 0, 200, 200)
-        #self.imageWidget.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        self.imageWidget.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         self.imageWidget.setScaledContents(True)
 
         self.box = BoundingBox(self.imageWidget)
