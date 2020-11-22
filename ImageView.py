@@ -8,7 +8,7 @@ Created November 1, 2020
 from PyQt5 import QtGui, uic, QtCore, QtWidgets
 import os, sys
 
-# From: https://github.com/drmatthews/slidecrop_pyqt/blob/0891b5936a307830d62bf58fef270be900d4de84/slidecrop/gui/main.py
+# From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
 class ROIItem(QtWidgets.QGraphicsRectItem):
 
     handleTopLeft = 1
