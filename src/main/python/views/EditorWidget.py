@@ -22,21 +22,17 @@ class Editor(QtWidgets.QWidget):
     def initUi(self):
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0) # Adds ~10px by default
-
-        #self.imageWidget = QtWidgets.QLabel()
-        #self.imageWidget.setGeometry(0, 0, 200, 200)
-        #self.imageWidget.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-        #self.imageWidget.setScaledContents(True)
-
-        #self.box = BoundingBox(self.imageWidget)
-        #self.box.setGeometry(150, 150, 150, 150)
-
+ 
         self.imageViewer = ImageView(None)
 
         self.box = ROIItem(self.imageViewer._scene)
         self.box.setRect(300, 100, 400, 200)
-        print(self.box.isSelected())
+        
+        # Hide bounding box initially
+        self.box.hide()
+
         self.imageViewer._scene.addItem(self.box)
+        print(self.box.isSelected())
 
         # Initialize tab screen
         tabs = QtWidgets.QTabWidget()
@@ -134,77 +130,11 @@ class Editor(QtWidgets.QWidget):
     def displayImage(self, image):
         self.imageViewer.setImage(QtGui.QPixmap(image))
 
+
     def showBoundingBoxButton(self):
         self.box.show()
 
+
     def hideBoundingBoxButton(self):
         self.box.hide()
-
-
-class BoundingBox(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super(BoundingBox, self).__init__(parent)
-
-        self._box = QtWidgets.QRubberBand(QtWidgets.QRubberBand.Rectangle, self)
-
-        self.draggable = False
-        self.dragThreshold = 5
-        self.mousePressPosition = None
-        self.mouseMovePosition = None
-        self.borderRadius = 5
-
-        self.setWindowFlags(QtCore.Qt.SubWindow)
-        layout = QtWidgets.QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(QtWidgets.QSizeGrip(self), 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
-        layout.addWidget(QtWidgets.QSizeGrip(self), 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-        self.setLayout(layout)
-
-        self.show()
-
-
-    def mousePressEvent(self, event):
-        if self.draggable and event.button() == QtCore.Qt.LeftButton:
-            self.mousePressPosition = event.globalPos()
-            print("mouse press position (global): ", self.mousePressPosition)
-            self.mouseMovePosition = event.globalPos() - self.pos()
-            print("mouse press position (local): ", self.mouseMovePosition)
-        super(BoundingBox, self).mousePressEvent(event)
-
-
-    def mouseMoveEvent(self, event):
-        if self.draggable and event.buttons() & QtCore.Qt.LeftButton:
-            globalPos = event.globalPos()
-            moved = globalPos - self.mousePressPosition
-            if moved.manhattanLength() > self.dragThreshold:
-                newLocation = globalPos - self.mouseMovePosition
-                print("new location (global): ", newLocation)
-                self.move(newLocation)
-                self.mouseMovePosition = globalPos - self.pos()
-                print("new location (local): ", self.mouseMovePosition)
-        super(BoundingBox, self).mouseMoveEvent(event)
-
-
-    def mouseReleaseEvent(self, event):
-        if self.mousePressPosition is not None:
-            if event.button() == QtCore.Qt.LeftButton:
-                moved = event.globalPos() - self.mousePressPosition
-                if moved.manhattanLength() > self.dragThreshold:
-                    event.ignore()
-                self.mousePressPosition = None
-        super(BoundingBox, self).mouseReleaseEvent(event)
-
-
-    def resizeEvent(self, event):
-        self._box.resize(self.size())
-
-
-    def hideBoundingBox(self):
-        self._box.hide()
-        self.draggable = False
-
-
-    def showBoundingBox(self):
-        self._box.show()
-        self.draggable = True
 
