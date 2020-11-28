@@ -10,6 +10,7 @@ import sys
 
 from QtWrapper import *
 from Utility import *
+from ImageView import *
 
 class Editor(QtWidgets.QWidget):
 
@@ -22,13 +23,20 @@ class Editor(QtWidgets.QWidget):
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0) # Adds ~10px by default
 
-        self.imageWidget = QtWidgets.QLabel()
-        self.imageWidget.setGeometry(0, 0, 200, 200)
-        self.imageWidget.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-        self.imageWidget.setScaledContents(True)
+        #self.imageWidget = QtWidgets.QLabel()
+        #self.imageWidget.setGeometry(0, 0, 200, 200)
+        #self.imageWidget.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        #self.imageWidget.setScaledContents(True)
 
-        self.box = BoundingBox(self.imageWidget)
-        self.box.setGeometry(150, 150, 150, 150)
+        #self.box = BoundingBox(self.imageWidget)
+        #self.box.setGeometry(150, 150, 150, 150)
+
+        self.imageViewer = ImageView(None)
+
+        self.box = ROIItem(self.imageViewer._scene)
+        self.box.setRect(300, 100, 400, 200)
+        print(self.box.isSelected())
+        self.imageViewer._scene.addItem(self.box)
 
         # Initialize tab screen
         tabs = QtWidgets.QTabWidget()
@@ -80,8 +88,7 @@ class Editor(QtWidgets.QWidget):
         tabs.addTab(leadTab,"Leads")
 
         splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
-        splitter.addWidget(self.imageWidget)
-        print("image widget position: ", self.imageWidget.pos())
+        splitter.addWidget(self.imageViewer)
 
         # If on MacOS
         if onMacOS:
@@ -125,13 +132,13 @@ class Editor(QtWidgets.QWidget):
 
 
     def displayImage(self, image):
-        self.imageWidget.setPixmap(QtGui.QPixmap(image))
+        self.imageViewer.setImage(QtGui.QPixmap(image))
 
     def showBoundingBoxButton(self):
-        self.box.showBoundingBox()
+        self.box.show()
 
     def hideBoundingBoxButton(self):
-        self.box.hideBoundingBox()
+        self.box.hide()
 
 
 class BoundingBox(QtWidgets.QWidget):
@@ -149,8 +156,8 @@ class BoundingBox(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.SubWindow)
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(QtWidgets.QSizeGrip(self._box))
-        layout.addWidget(QtWidgets.QSizeGrip(self._box))
+        layout.addWidget(QtWidgets.QSizeGrip(self), 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
+        layout.addWidget(QtWidgets.QSizeGrip(self), 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.setLayout(layout)
 
         self.show()
