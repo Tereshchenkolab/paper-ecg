@@ -136,3 +136,42 @@ None.
 #### Blockers
 
 None.
+
+
+## November 25 - CANCELED
+
+
+## November 28
+
+### Natalie
+
+#### Since last meeting
+
+- Integrated new image view and bounding box code into existing editor widget
+
+#### Until next meeting
+
+- Figure out how to restrict bounding box to image view canvas
+- Look into adding zoom in/out functionality (pinching, ctrl-scroll, and/or buttons)
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Implemented new image view and bounding box code and figured out way to zoom in and out of image
+- Researched licenses
+
+#### Until next meeting
+
+- Refactor code
+- Add comments and type suggestions
+- Fixed import modules
+
+#### Blockers
+
+None.
