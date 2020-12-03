@@ -175,3 +175,38 @@ None.
 #### Blockers
 
 None.
+
+## December 2
+
+### Natalie
+
+#### Since last meeting
+
+- Worked on Fall Restrospective
+
+#### Until next meeting
+
+- Figure out how to restrict bounding box to image view canvas
+- Look into adding zoom in/out functionality (pinching, ctrl-scroll, and/or buttons)
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Worked on Fall Restrospective
+- Made demo video of our progress
+
+#### Until next meeting
+
+- Refactor code
+- Add comments and type suggestions
+- Fixed import modules
+
+#### Blockers
+
+None.
