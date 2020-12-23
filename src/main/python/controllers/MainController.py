@@ -25,7 +25,7 @@ class MainController:
         self.window.fileMenuOpen.triggered.connect(self.openImageFile)
 
 
-    def openImageFile(self):        
+    def openImageFile(self):
         fileInfo = QtWidgets.QFileDialog.getOpenFileName(self.window, "Open File", "/", "Images (*.png *.jpg)")
         print("file selected: ", fileInfo[0])
         if (fileInfo[0] != ""):

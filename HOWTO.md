@@ -1,4 +1,4 @@
-[Project Homepage](README.md) /  Setup Instructions
+[Project Homepage](README.md) / How To
 
 # How To ...
 
@@ -8,7 +8,7 @@
 ### 2. Remove the target directory
     
     ```
-    rm -rf target/
+    $ rm -rf target/
     ```
 
 ### 3. Refresh the `.../icons/` files:

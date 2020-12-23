@@ -10,7 +10,7 @@ import sys
 
 from QtWrapper import *
 from Utility import *
-from ImageView import *
+from views.ImageView import *
 
 class Editor(QtWidgets.QWidget):
 
@@ -22,12 +22,12 @@ class Editor(QtWidgets.QWidget):
     def initUi(self):
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0) # Adds ~10px by default
- 
+
         self.imageViewer = ImageView(None)
 
         self.box = ROIItem(self.imageViewer._scene)
         self.box.setRect(300, 100, 400, 200)
-        
+
         # Hide bounding box initially
         self.box.hide()
 
