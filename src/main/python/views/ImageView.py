@@ -277,18 +277,25 @@ class ImageView(QtWidgets.QGraphicsView):
         self._scene = QtWidgets.QGraphicsScene(self)
         self._image = QtWidgets.QGraphicsPixmapItem()
         self._scene.addItem(self._image)
+        self._zoom = 0
+        self._empty = True
 
         self.setScene(self._scene)
         self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
+    def hasImage(self):
+        return not self._empty
+
     def setImage(self, pixmap=None):
         # Set it so the user can drag the image to pan
-        # self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
-        self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
+        #self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+        #self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
 
         self._image.setPixmap(pixmap)
+        self._empty = False
+        self.fitInView()
 
     def event(self, event):
         # Detects pinching gesture on macOS
@@ -299,6 +306,42 @@ class ImageView(QtWidgets.QGraphicsView):
             self.scale(scale, scale)
 
         return super().event(event)
+
+    def wheelEvent(self, event):
+        # Zoom in and out using mouse wheel
+        if self.hasImage():
+            if event.angleDelta().y() > 0:
+                factor = 1.25
+                self._zoom += 1
+                # Enable panning when zoomed in on image
+                self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+            else:
+                factor = 0.8
+                self._zoom -= 1
+
+            if self._zoom > 0:
+                self.scale(factor, factor)
+            elif self._zoom == 0:
+                self.fitInView()
+            else:
+                self._zoom = 0
+
+    def fitInView(self, scale = True):
+        # Fit image to QGraphicsView container
+        rect = QtCore.QRectF(self._image.pixmap().rect())
+        if not rect.isNull():
+            self.setSceneRect(rect)
+            if self.hasImage():
+                unity = self.transform().mapRect(QtCore.QRectF(0, 0, 1, 1))
+                self.scale(1 / unity.width(), 1 / unity.height())
+                viewrect = self.viewport().rect()
+                scenerect = self.transform().mapRect(rect)
+                factor = min(viewrect.width() / scenerect.width(),
+                viewrect.height() / scenerect.height())
+                self.scale(factor, factor)
+                # Disable panning when image is fit to view
+                self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
+            self._zoom = 0
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
