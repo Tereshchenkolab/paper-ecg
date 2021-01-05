@@ -6,9 +6,9 @@ Wrapper to simplify interacting with Qt
 """
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QAction, QWidget, QMenu, QMenuBar, QMainWindow
 
-from typing import List, Union, Optional
+from typing import cast, List, Union, Optional
 
 
 class IncompatibleFunction(Exception):
@@ -51,7 +51,6 @@ def bindsToClass(createWidgetFunction):
         setattr(owner, name, widget)
 
         return widget
-
 
     return createAndBind
 
@@ -98,13 +97,14 @@ def Menu(owner: QWidget, name:str, displayName:str, items:List[Union[QAction, Se
     menu = QMenu(displayName) # In this case the `owner` is the main window
     for item in items:
         if type(item) is Separator: menu.addSeparator()
-        elif type(item) is QAction: menu.addAction(item)
+        # Cast `item` : `Union[QAction, Separator] -> QAction` for mypy
+        elif type(item) is QAction: menu.addAction(cast(QAction, item))
 
     return menu
 
 
 @bindsToClass
-def MenuBar(owner: QWidget, name:str, menus: List[QMenu]) -> QMenuBar:
+def MenuBar(owner: QMainWindow, name:str, menus: List[QMenu]) -> QMenuBar:
     """Creates a QMenuBar
 
     Args:
@@ -115,7 +115,8 @@ def MenuBar(owner: QWidget, name:str, menus: List[QMenu]) -> QMenuBar:
     Returns:
         QMenuBar: The menubar created
     """
-    menuBar = owner.menuBar() # In this case the `owner` is the main window
+    # In this case the `owner` is the main window
+    menuBar = owner.menuBar() # type: QMenuBar
     for menu in menus:
         menuBar.addMenu(menu)
 

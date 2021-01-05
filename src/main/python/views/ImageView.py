@@ -5,7 +5,7 @@ Created November 1, 2020
 ...
 """
 
-from PyQt5 import QtGui, uic, QtCore, QtWidgets
+from PyQt5 import QtGui, QtCore, QtWidgets
 import os, sys
 
 # From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
