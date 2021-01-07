@@ -210,3 +210,35 @@ None.
 #### Blockers
 
 None.
+
+
+## January 7 
+
+### Natalie
+
+#### Since last meeting
+
+- Added mouse support for `ImageView`.
+
+#### Until next meeting
+
+- Work on zoom UI.
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Added static type checking via `mypy`.
+
+#### Until next meeting
+
+- Add comments and types, and refactor more UI code
+
+#### Blockers
+
+None.
