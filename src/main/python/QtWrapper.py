@@ -108,7 +108,7 @@ def MenuBar(owner: QMainWindow, name:str, menus: List[QMenu]) -> QMenuBar:
     """Creates a QMenuBar
 
     Args:
-        owner (QWidget): The MainWindow to which the MenuBar will be added
+        owner (QMainWindow): The MainWindow to which the MenuBar will be added
         name (str): The name of the MenuBar property
         menus (List[QMenu]): Menus container in the MenuBar
 
