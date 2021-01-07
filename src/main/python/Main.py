@@ -7,7 +7,6 @@ Entry point for the application
 
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5 import QtWidgets, QtGui
-from PyQt5 import uic
 
 from Utility import *
 from controllers.MainController import MainController

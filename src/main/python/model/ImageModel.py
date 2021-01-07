@@ -15,9 +15,3 @@ class Image:
 
     def getImgPath(self):
         return self.imgPath
-
-    def setImgPath(self, img):
-        self.img = img
-
-    def getImgPath(self):
-        return self.img
