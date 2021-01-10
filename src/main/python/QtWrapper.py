@@ -6,9 +6,9 @@ Wrapper to simplify interacting with Qt
 """
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAction, QWidget, QMenu, QMenuBar, QMainWindow
+from PyQt5.QtWidgets import QAction, QHBoxLayout, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QVBoxLayout, QWidget
 
-from typing import cast, List, Union, Optional
+from typing import cast, List, Optional, Tuple, Union
 
 
 class IncompatibleFunction(Exception):
@@ -121,3 +121,46 @@ def MenuBar(owner: QMainWindow, name:str, menus: List[QMenu]) -> QMenuBar:
         menuBar.addMenu(menu)
 
     return menuBar
+
+
+@bindsToClass
+def VerticalBoxLayout(
+    owner: QWidget,
+    name:str,
+    margins: Optional[Tuple[int, int, int, int]]=None,
+    contents: List[Union[QWidget, QLayout]]=[]
+) -> QVBoxLayout:
+    """[summary]
+
+    Args:
+        owner (QWidget): The class to which the Menu property will be added
+        name (str): The property name of the Menu in the class (not seen by users)
+        margins (Tuple[int, int, int, int]): left, top, right, bottom
+        contents (List[Union[QWidget, QLayout]])
+
+    Returns:
+        QVBoxLayout
+    """
+    verticalBoxLayout = QVBoxLayout()
+
+    if margins is not None:
+        left, top, right, bottom = margins
+        verticalBoxLayout.setContentsMargins(left, top, right, bottom)
+
+    for item in contents:
+        if issubclass(type(item), QWidget):
+            verticalBoxLayout.addWidget(cast(QWidget, item))
+        elif issubclass(type(item), QLayout):
+            verticalBoxLayout.addLayout(cast(QLayout, item))
+
+    return verticalBoxLayout
+
+
+@bindsToClass
+def PushButton(owner: QWidget, name: str, icon:Optional[QtGui.QIcon]=None, text:str=""):
+    if icon is not None:
+        button = QPushButton(icon, text)
+    else:
+        button = QPushButton(text)
+
+    return button
