@@ -242,3 +242,38 @@ None.
 #### Blockers
 
 None.
+
+
+## January 11
+
+### Natalie
+
+#### Since last meeting
+
+- Zoom in and out with shortcuts (ctrl+'+', ctrl+'-').
+- Zoom increments are standardized.
+
+#### Until next meeting
+
+- Implement functionality to isolate the pixels inside the bounding box.
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Augmented QtWrapper.
+- Started to create file for demo-ing UI components.
+
+#### Until next meeting
+
+- Continuing QTWrapper.
+- Editing the image and live reload.
+
+#### Blockers
+
+None.
