@@ -269,7 +269,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             painter.drawText(self.rect(), QtCore.Qt.AlignCenter, "Lead i")
 
 
-# From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
+# From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview 
 class ImageView(QtWidgets.QGraphicsView):
     def __init__(self, parent):
         super().__init__(parent)
@@ -278,12 +278,29 @@ class ImageView(QtWidgets.QGraphicsView):
         self._image = QtWidgets.QGraphicsPixmapItem()
         self._scene.addItem(self._image)
         self._zoom = 0
+        self._scaleFactor = 1.5
         self._empty = True
 
         self.setScene(self._scene)
         self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
+
+        # Enable ctrl+ and ctrl- shortcuts for zoom in/out
+        QtWidgets.QShortcut(
+            QtGui.QKeySequence(QtGui.QKeySequence.ZoomIn),
+            self,
+            context=QtCore.Qt.WidgetShortcut,
+            activated=self.zoomIn,
+        )
+
+        QtWidgets.QShortcut(
+            QtGui.QKeySequence(QtGui.QKeySequence.ZoomOut),
+            self,
+            context=QtCore.Qt.WidgetShortcut,
+            activated=self.zoomOut,
+        )
+
 
     def hasImage(self):
         return not self._empty
@@ -309,22 +326,10 @@ class ImageView(QtWidgets.QGraphicsView):
 
     def wheelEvent(self, event):
         # Zoom in and out using mouse wheel
-        if self.hasImage():
-            if event.angleDelta().y() > 0:
-                factor = 1.25
-                self._zoom += 1
-                # Enable panning when zoomed in on image
-                self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
-            else:
-                factor = 0.8
-                self._zoom -= 1
-
-            if self._zoom > 0:
-                self.scale(factor, factor)
-            elif self._zoom == 0:
-                self.fitInView()
-            else:
-                self._zoom = 0
+        if event.angleDelta().y() > 0:
+            self.zoomIn()
+        else:
+            self.zoomOut()
 
     def fitInView(self, scale = True):
         # Fit image to QGraphicsView container
@@ -342,6 +347,36 @@ class ImageView(QtWidgets.QGraphicsView):
                 # Disable panning when image is fit to view
                 self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
             self._zoom = 0
+
+    #zoomIn and zoomOut based on: https://stackoverflow.com/questions/57713795/zoom-in-and-out-in-widget
+    def zoomIn(self):
+        if self.hasImage():
+            transformScale = QtGui.QTransform()
+            transformScale.scale(self._scaleFactor, self._scaleFactor)
+
+            transform = self.transform() * transformScale
+            self.setTransform(transform)
+            self._zoom += 1
+            
+            self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+
+    def zoomOut(self):
+        if self.hasImage():
+            transformScale = QtGui.QTransform()
+            transformScale.scale(self._scaleFactor, self._scaleFactor)
+            invertedScale, invertible = transformScale.inverted()
+
+            if invertible:
+                if self._zoom > 1:
+                    transform = self.transform() * invertedScale
+                    self.setTransform(transform)
+                    self._zoom -= 1
+                elif self._zoom == 1:
+                    self.fitInView()
+                    self._zoom = 0
+            else:
+                print("scale not invertible")
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
