@@ -6,7 +6,7 @@ Wrapper to simplify interacting with Qt
 """
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAction, QHBoxLayout, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QAction, QGroupBox, QHBoxLayout, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QSplitter, QVBoxLayout, QWidget
 
 from typing import cast, List, Optional, Tuple, Union
 
@@ -133,8 +133,8 @@ def VerticalBoxLayout(
     """[summary]
 
     Args:
-        owner (QWidget): The class to which the Menu property will be added
-        name (str): The property name of the Menu in the class (not seen by users)
+        owner (QWidget): The class to which the property will be added
+        name (str): The property name of the created object in the class (not seen by users)
         margins (Tuple[int, int, int, int]): left, top, right, bottom
         contents (List[Union[QWidget, QLayout]])
 
@@ -157,10 +157,87 @@ def VerticalBoxLayout(
 
 
 @bindsToClass
-def PushButton(owner: QWidget, name: str, icon:Optional[QtGui.QIcon]=None, text:str=""):
+def HorizontalBoxLayout(
+    owner: QWidget,
+    name:str,
+    margins: Optional[Tuple[int, int, int, int]]=None,
+    contents: List[Union[QWidget, QLayout]]=[]
+) -> QHBoxLayout:
+    """[summary]
+
+    Args:
+        owner (QWidget): The class to which the property will be added
+        name (str): The property name of the created object in the class (not seen by users)
+        margins (Tuple[int, int, int, int]): left, top, right, bottom
+        contents (List[Union[QWidget, QLayout]])
+
+    Returns:
+        QVBoxLayout
+    """
+    horizontalBoxLayout = QHBoxLayout()
+
+    if margins is not None:
+        left, top, right, bottom = margins
+        horizontalBoxLayout.setContentsMargins(left, top, right, bottom)
+
+    for item in contents:
+        if issubclass(type(item), QWidget):
+            horizontalBoxLayout.addWidget(cast(QWidget, item))
+        elif issubclass(type(item), QLayout):
+            horizontalBoxLayout.addLayout(cast(QLayout, item))
+
+    return horizontalBoxLayout
+
+
+@bindsToClass
+def GroupBox(
+    owner: QWidget,
+    name:str,
+    title:str, # Shown to user
+    layout: QLayout
+) -> QGroupBox:
+    horizontalBoxLayout = QGroupBox(title)
+    horizontalBoxLayout.setLayout(layout)
+
+    return horizontalBoxLayout
+
+
+@bindsToClass
+def RadioButton(owner: QWidget, name: str, text:str) -> QRadioButton:
+    return QRadioButton(text)
+
+
+@bindsToClass
+def PushButton(owner: QWidget, name: str, icon:Optional[QtGui.QIcon]=None, text:str="") -> QPushButton:
     if icon is not None:
         button = QPushButton(icon, text)
     else:
         button = QPushButton(text)
 
     return button
+
+
+class SplitterOrientation:
+    Horizontal = QtCore.Qt.Horizontal
+    Vertical   = QtCore.Qt.Vertical
+
+
+@bindsToClass
+def HorizontalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSplitter:
+    splitter = QSplitter(QtCore.Qt.Horizontal)
+
+    # NOTE: Splitters can only have QWidgets as children---not QLayouts
+    for widget in contents:
+        splitter.addWidget(widget)
+
+    return splitter
+
+@bindsToClass
+def VerticalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSplitter:
+    splitter = QSplitter(QtCore.Qt.Vertical)
+
+    # NOTE: Splitters can only have QWidgets as children---not QLayouts
+    for widget in contents:
+        splitter.addWidget(widget)
+
+    return splitter
