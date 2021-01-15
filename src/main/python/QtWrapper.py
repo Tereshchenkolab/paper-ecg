@@ -47,8 +47,9 @@ def bindsToClass(createWidgetFunction):
         # Create the widget by calling the decorated function
         widget = createWidgetFunction(*args, **kwargs)
 
-        # Set `owner.name = widget` so the owner class is able to access the widget
-        setattr(owner, name, widget)
+        if owner is not None and name is not None and name != "":
+            # Set `owner.name = widget` so the owner class is able to access the widget
+            setattr(owner, name, widget)
 
         return widget
 
