@@ -122,8 +122,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         s = self.handleSize
         b = self.boundingRect()
-        #print("unmapped: ", b)
-        #print("mapped: ", self.mapToScene(b).boundingRect())
+
         self.handles[self.handleTopLeft] = QtCore.QRectF(b.left(), b.top(), s, s)
         self.handles[self.handleTopMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.top(), s, s)
         self.handles[self.handleTopRight] = QtCore.QRectF(b.right() - s, b.top(), s, s)
@@ -132,11 +131,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.handles[self.handleBottomLeft] = QtCore.QRectF(b.left(), b.bottom() - s, s, s)
         self.handles[self.handleBottomMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.bottom() - s, s, s)
         self.handles[self.handleBottomRight] = QtCore.QRectF(b.right() - s, b.bottom() - s, s, s)
-
-        view = self.parent.views()
-        scenepos = self.mapToScene(b.topLeft())
-        viewpos = view[0].mapFromScene(scenepos)
-        print("box top left: ", viewpos)
 
     def interactiveResize(self, mousePos):
         """
@@ -390,9 +384,6 @@ class ImageView(QtWidgets.QGraphicsView):
             else:
                 print("scale not invertible")
 
-    def mousePressEvent(self, event):
-        print("click pos: ", event.pos())
-        QtWidgets.QGraphicsView.mousePressEvent(self, event)
 
 
 if __name__ == '__main__':
