@@ -23,6 +23,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
     handleSize = +8.0
     handleSpace = -4.0
 
+
     handleCursors = {
         handleTopLeft: QtCore.Qt.SizeFDiagCursor,
         handleTopMiddle: QtCore.Qt.SizeVerCursor,
@@ -121,7 +122,8 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         s = self.handleSize
         b = self.boundingRect()
-        print(b)
+        #print("unmapped: ", b)
+        #print("mapped: ", self.mapToScene(b).boundingRect())
         self.handles[self.handleTopLeft] = QtCore.QRectF(b.left(), b.top(), s, s)
         self.handles[self.handleTopMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.top(), s, s)
         self.handles[self.handleTopRight] = QtCore.QRectF(b.right() - s, b.top(), s, s)
@@ -130,6 +132,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.handles[self.handleBottomLeft] = QtCore.QRectF(b.left(), b.bottom() - s, s, s)
         self.handles[self.handleBottomMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.bottom() - s, s, s)
         self.handles[self.handleBottomRight] = QtCore.QRectF(b.right() - s, b.bottom() - s, s, s)
+
+        view = self.parent.views()
+        scenepos = self.mapToScene(b.topLeft())
+        viewpos = view[0].mapFromScene(scenepos)
+        print("box top left: ", viewpos)
 
     def interactiveResize(self, mousePos):
         """
@@ -286,6 +293,9 @@ class ImageView(QtWidgets.QGraphicsView):
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
+        print("view width: ", self.width())
+        print("view height: ", self.height())
+
         # Enable ctrl+ and ctrl- shortcuts for zoom in/out
         QtWidgets.QShortcut(
             QtGui.QKeySequence(QtGui.QKeySequence.ZoomIn),
@@ -301,6 +311,9 @@ class ImageView(QtWidgets.QGraphicsView):
             activated=self.zoomOut,
         )
 
+    def resizeEvent(self, event):
+        print("graphicsview size ", self.width(), "x", self.height())
+        QtWidgets.QGraphicsView.resizeEvent(self, event)
 
     def hasImage(self):
         return not self._empty
@@ -377,6 +390,10 @@ class ImageView(QtWidgets.QGraphicsView):
             else:
                 print("scale not invertible")
 
+    def mousePressEvent(self, event):
+        print("click pos: ", event.pos())
+        QtWidgets.QGraphicsView.mousePressEvent(self, event)
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
@@ -388,10 +405,9 @@ if __name__ == '__main__':
     viewer.setImage(pixmap)
 
     roi = ROIItem(viewer._scene)
-    roi.setRect(300, 100, 400, 200)
-    print(roi.isSelected())
+    #roi.setRect(300, 100, 400, 200)
+    #print(roi.isSelected())
     viewer._scene.addItem(roi)
-
     viewer.show()
 
     app.exec_()
