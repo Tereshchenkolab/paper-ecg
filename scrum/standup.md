@@ -277,3 +277,38 @@ None.
 #### Blockers
 
 None.
+
+## January 16
+
+### Natalie
+
+#### Since last meeting
+
+- Mapped bounding box coordinates to imageview coordinates
+
+#### Until next meeting
+
+- Restrict bounding box movement within graphics view
+- Don't let bounding box fold in on itself
+- Try to extract portion of image within bounding box (ignoring zoom/resizing events for now)
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Researched QGraphicsView stuff
+- Refactored paint function for ROI
+- Created a plan for executing live reloading of the image
+
+#### Until next meeting
+
+- Finish refactoring editor UI
+
+#### Blockers
+
+None.
