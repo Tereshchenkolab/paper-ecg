@@ -40,7 +40,8 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         Initialize the shape.
         """
         super().__init__(*args)
-        self.parent = parent
+        self.parentScene = parent
+        self.parentViews = self.parentScene.views()
         self.handles = {}
         self.handleSelected = None
         self.mousePressPos = None
@@ -133,10 +134,16 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.handles[self.handleBottomMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.bottom() - s, s, s)
         self.handles[self.handleBottomRight] = QtCore.QRectF(b.right() - s, b.bottom() - s, s, s)
 
-        view = self.parent.views()
-        scenepos = self.mapToScene(b.topLeft())
-        viewpos = view[0].mapFromScene(scenepos)
-        print("box top left: ", viewpos)
+        #scenepos = self.mapToScene(b.topLeft())
+        #viewpos = view[0].mapFromScene(scenepos)
+        tl = self.parentViews[0].mapFromScene(self.mapToScene(b.topLeft()))
+        tr = self.parentViews[0].mapFromScene(self.mapToScene(b.topRight()))
+        bl = self.parentViews[0].mapFromScene(self.mapToScene(b.bottomLeft()))
+        br = self.parentViews[0].mapFromScene(self.mapToScene(b.bottomRight()))
+
+        print("box location: ")
+        print("tl (", tl.x(), ",", tl.y(), ")  tr(", tr.x(), ",", tr.y(), ")")
+        print("bl (", bl.x(), ",", bl.y(), ")  br(", br.x(), ",", br.y(), ")")
 
     def interactiveResize(self, mousePos):
         """
@@ -293,9 +300,6 @@ class ImageView(QtWidgets.QGraphicsView):
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
-        print("view width: ", self.width())
-        print("view height: ", self.height())
-
         # Enable ctrl+ and ctrl- shortcuts for zoom in/out
         QtWidgets.QShortcut(
             QtGui.QKeySequence(QtGui.QKeySequence.ZoomIn),
@@ -313,6 +317,8 @@ class ImageView(QtWidgets.QGraphicsView):
 
     def resizeEvent(self, event):
         print("graphicsview size ", self.width(), "x", self.height())
+        #if self.hasImage(): 
+        #    self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         QtWidgets.QGraphicsView.resizeEvent(self, event)
 
     def hasImage(self):
@@ -325,7 +331,8 @@ class ImageView(QtWidgets.QGraphicsView):
 
         self._image.setPixmap(pixmap)
         self._empty = False
-        self.fitInView()
+        self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+        self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
 
     def event(self, event):
         # Detects pinching gesture on macOS
@@ -344,22 +351,22 @@ class ImageView(QtWidgets.QGraphicsView):
         else:
             self.zoomOut()
 
-    def fitInView(self, scale = True):
+    #def fitInView(self, scale = True):
         # Fit image to QGraphicsView container
-        rect = QtCore.QRectF(self._image.pixmap().rect())
-        if not rect.isNull():
-            self.setSceneRect(rect)
-            if self.hasImage():
-                unity = self.transform().mapRect(QtCore.QRectF(0, 0, 1, 1))
-                self.scale(1 / unity.width(), 1 / unity.height())
-                viewrect = self.viewport().rect()
-                scenerect = self.transform().mapRect(rect)
-                factor = min(viewrect.width() / scenerect.width(),
-                viewrect.height() / scenerect.height())
-                self.scale(factor, factor)
+    #    rect = QtCore.QRectF(self._image.pixmap().rect())
+    #    if not rect.isNull():
+    #        self.setSceneRect(rect)
+    #        if self.hasImage():
+    #            unity = self.transform().mapRect(QtCore.QRectF(0, 0, 1, 1))
+    #            self.scale(1 / unity.width(), 1 / unity.height())
+    #            viewrect = self.viewport().rect()
+    #            scenerect = self.transform().mapRect(rect)
+    #            factor = min(viewrect.width() / scenerect.width(),
+    #            viewrect.height() / scenerect.height())
+    #            self.scale(factor, factor)
                 # Disable panning when image is fit to view
-                self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
-            self._zoom = 0
+    #            self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
+    #        self._zoom = 0
 
     #zoomIn and zoomOut based on: https://stackoverflow.com/questions/57713795/zoom-in-and-out-in-widget
     def zoomIn(self):
@@ -385,7 +392,8 @@ class ImageView(QtWidgets.QGraphicsView):
                     self.setTransform(transform)
                     self._zoom -= 1
                 elif self._zoom == 1:
-                    self.fitInView()
+                    self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+                    self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
                     self._zoom = 0
             else:
                 print("scale not invertible")
