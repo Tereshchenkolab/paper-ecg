@@ -8,7 +8,6 @@ Created November 7, 2020
 import cv2
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pathlib import Path
-import pyqtgraph
 import sys
 
 from QtWrapper import *
@@ -115,8 +114,6 @@ class Editor(QtWidgets.QWidget):
 
 
     def initROI(self):
-        # self.box = pyqtgraph.RectROI(pos=(300, 100), size=(400, 200))
-
         self.box = ROIItem(self.imageViewer._scene)
         self.box.setRect(300, 100, 400, 200)
 
