@@ -99,3 +99,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             ]
         )
+    
+    def resizeEvent(self, event):
+        print("window size ", self.width(), "x", self.height())
+        QtWidgets.QMainWindow.resizeEvent(self, event)

@@ -93,6 +93,7 @@ class Editor(QtWidgets.QWidget):
         self.box.hide()
 
         self.imageViewer._scene.addItem(self.box)
+        self.box.setPos(0,0)
         print(self.box.isSelected())
 
 

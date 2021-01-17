@@ -23,6 +23,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
     handleSize = +8.0
     handleSpace = -4.0
 
+
     handleCursors = {
         handleTopLeft: QtCore.Qt.SizeFDiagCursor,
         handleTopMiddle: QtCore.Qt.SizeVerCursor,
@@ -121,7 +122,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         s = self.handleSize
         b = self.boundingRect()
-        print(b)
+
         self.handles[self.handleTopLeft] = QtCore.QRectF(b.left(), b.top(), s, s)
         self.handles[self.handleTopMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.top(), s, s)
         self.handles[self.handleTopRight] = QtCore.QRectF(b.right() - s, b.top(), s, s)
@@ -286,6 +287,9 @@ class ImageView(QtWidgets.QGraphicsView):
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
+        print("view width: ", self.width())
+        print("view height: ", self.height())
+
         # Enable ctrl+ and ctrl- shortcuts for zoom in/out
         QtWidgets.QShortcut(
             QtGui.QKeySequence(QtGui.QKeySequence.ZoomIn),
@@ -301,6 +305,9 @@ class ImageView(QtWidgets.QGraphicsView):
             activated=self.zoomOut,
         )
 
+    def resizeEvent(self, event):
+        print("graphicsview size ", self.width(), "x", self.height())
+        QtWidgets.QGraphicsView.resizeEvent(self, event)
 
     def hasImage(self):
         return not self._empty
@@ -378,6 +385,7 @@ class ImageView(QtWidgets.QGraphicsView):
                 print("scale not invertible")
 
 
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
 
@@ -388,10 +396,9 @@ if __name__ == '__main__':
     viewer.setImage(pixmap)
 
     roi = ROIItem(viewer._scene)
-    roi.setRect(300, 100, 400, 200)
-    print(roi.isSelected())
+    #roi.setRect(300, 100, 400, 200)
+    #print(roi.isSelected())
     viewer._scene.addItem(roi)
-
     viewer.show()
 
     app.exec_()
