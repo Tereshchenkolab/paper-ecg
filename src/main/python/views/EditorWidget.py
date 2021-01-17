@@ -5,7 +5,10 @@ Created November 7, 2020
 -
 """
 
+import cv2
 from PyQt5 import QtCore, QtGui, QtWidgets
+from pathlib import Path
+import pyqtgraph
 import sys
 
 from QtWrapper import *
@@ -13,6 +16,8 @@ from Utility import *
 from views.ImageView import *
 
 class Editor(QtWidgets.QWidget):
+
+    image = None # The openCV image
 
     def __init__(self):
         super().__init__()
@@ -81,11 +86,37 @@ class Editor(QtWidgets.QWidget):
         self.hideBoxButton.clicked.connect(self.hideBoundingBoxButton)
 
 
-    def displayImage(self, image):
-        self.imageViewer.setImage(QtGui.QPixmap(image))
+    def opencvImageToPixMap(self, image):
+        # SOURCE: https://stackoverflow.com/a/50800745/7737644 (Creative Commons - Credit, share-alike)
+        height, width, channel = self.image.shape
+        bytesPerLine = 3 * width
+
+        pixmap = QtGui.QPixmap(
+            QtGui.QImage(
+                self.image.data,
+                width,
+                height,
+                bytesPerLine,
+                QtGui.QImage.Format_RGB888
+            ).rgbSwapped()
+        )
+
+        return pixmap
+
+
+    def loadImageFromPath(self, path: Path):
+        self.image = cv2.imread(str(path))
+        self.displayImage()
+
+
+    def displayImage(self):
+        pixmap = self.opencvImageToPixMap(self.image)
+        self.imageViewer.setImage(pixmap)
 
 
     def initROI(self):
+        # self.box = pyqtgraph.RectROI(pos=(300, 100), size=(400, 200))
+
         self.box = ROIItem(self.imageViewer._scene)
         self.box.setRect(300, 100, 400, 200)
 
