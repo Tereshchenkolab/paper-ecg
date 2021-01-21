@@ -29,4 +29,4 @@ class MainController:
         fileInfo = QtWidgets.QFileDialog.getOpenFileName(self.window, "Open File", "/", "Images (*.png *.jpg)")
         print("file selected: ", fileInfo[0])
         if (fileInfo[0] != ""):
-            self.window.editor.displayImage(fileInfo[0])   # Attempt to display image in editor (causing issues currently)
+            self.window.editor.displayImage(fileInfo[0])

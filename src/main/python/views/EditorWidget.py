@@ -92,6 +92,7 @@ class Editor(QtWidgets.QWidget):
 
 
     def displayImage(self, image):
+        print("Image width: ", QtGui.QPixmap(image).width(), "height: ", QtGui.QPixmap(image).height())
         self.imageViewer.setImage(QtGui.QPixmap(image))
 
 

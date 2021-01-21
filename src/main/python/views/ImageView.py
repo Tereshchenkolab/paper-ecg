@@ -40,6 +40,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         Initialize the shape.
         """
         super().__init__(*args)
+        self.location = None
         self.parentScene = parent
         self.parentViews = self.parentScene.views()
         self.handles = {}
@@ -109,6 +110,9 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.mousePressPos = None
         self.mousePressRect = None
         self.update()
+        print("box location: ", self.mapToScene(self.boundingRect()).boundingRect())
+        self.parentViews[0].test(self.mapToScene(self.boundingRect()).boundingRect())
+        
 
     def boundingRect(self):
         """
@@ -136,14 +140,30 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         #scenepos = self.mapToScene(b.topLeft())
         #viewpos = view[0].mapFromScene(scenepos)
-        tl = self.parentViews[0].mapFromScene(self.mapToScene(b.topLeft()))
-        tr = self.parentViews[0].mapFromScene(self.mapToScene(b.topRight()))
-        bl = self.parentViews[0].mapFromScene(self.mapToScene(b.bottomLeft()))
-        br = self.parentViews[0].mapFromScene(self.mapToScene(b.bottomRight()))
+        #tl = self.parentViews[0].mapFromScene(self.mapToScene(b.topLeft()))
+        #tr = self.parentViews[0].mapFromScene(self.mapToScene(b.topRight()))
+        #bl = self.parentViews[0].mapFromScene(self.mapToScene(b.bottomLeft()))
+        #br = self.parentViews[0].mapFromScene(self.mapToScene(b.bottomRight()))
 
-        print("box location: ")
-        print("tl (", tl.x(), ",", tl.y(), ")  tr(", tr.x(), ",", tr.y(), ")")
-        print("bl (", bl.x(), ",", bl.y(), ")  br(", br.x(), ",", br.y(), ")")
+        tl = self.parentViews[0].mapFromScene(self.mapToScene(self.handles[self.handleTopLeft]))
+        tr = self.parentViews[0].mapFromScene(self.mapToScene(self.handles[self.handleTopRight]))
+        bl = self.parentViews[0].mapFromScene(self.mapToScene(self.handles[self.handleBottomLeft]))
+        br = self.parentViews[0].mapFromScene(self.mapToScene(self.handles[self.handleBottomRight]))
+        #mappedBox = self.parentViews[0].mapFromScene(self.mapToScene(self.rect()))
+
+        #print("box: ", self.rect())
+        #print("box location: ", self.mapToScene(b).boundingRect())
+
+        #print("mapped box location: ")
+        #sceneMapped = self.mapRectToScene(b)
+        #viewMapped = self.parentViews[0].mapFromScene(sceneMapped).boundingRect()
+        #print(viewMapped)
+        
+        #self.location = sceneMapped
+        #self.location = viewMapped
+        #print("tl (", tl.x(), ",", tl.y(), ")  tr(", tr.x(), ",", tr.y(), ")")
+        #print("bl (", bl.x(), ",", bl.y(), ")  br(", br.x(), ",", br.y(), ")")
+        #self.parentViews[0].test(viewMapped)
 
     def interactiveResize(self, mousePos):
         """
@@ -400,7 +420,15 @@ class ImageView(QtWidgets.QGraphicsView):
 
     def mousePressEvent(self, event):
         print("click pos: ", event.pos())
+        pixel_coord = self.mapToScene(self.mapFromGlobal(event.globalPos()))
+        print("pixel pos: ", pixel_coord.x(), ",", pixel_coord.y())
         QtWidgets.QGraphicsView.mousePressEvent(self, event)
+    
+    def test(self, box):
+        print("test box: ", box)
+        copy = self._image.pixmap().copy(box.toRect())
+        copy.save("test.png")
+        
 
 
 if __name__ == '__main__':
