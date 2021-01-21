@@ -1,6 +1,6 @@
-[Project Homepage](../README.md) / [Sprint Review Documents](README.md) / Sprint 1
+[Project Homepage](../README.md) / [Sprint Review Documents](README.md) / Sprint 3
 
-# Sprint 1
+# Sprint 3
 Jan 4 - Jan 22
 
 
