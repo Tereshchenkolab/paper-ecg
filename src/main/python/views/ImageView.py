@@ -142,33 +142,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.handles[self.handleBottomMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.bottom() - s, s, s)
         self.handles[self.handleBottomRight] = QtCore.QRectF(b.right() - s, b.bottom() - s, s, s)
 
-        #scenepos = self.mapToScene(b.topLeft())
-        #viewpos = view[0].mapFromScene(scenepos)
-        #tl = self.parentViews[0].mapFromScene(self.mapToScene(b.topLeft()))
-        #tr = self.parentViews[0].mapFromScene(self.mapToScene(b.topRight()))
-        #bl = self.parentViews[0].mapFromScene(self.mapToScene(b.bottomLeft()))
-        #br = self.parentViews[0].mapFromScene(self.mapToScene(b.bottomRight()))
-
-        tl = self.parentViews[0].mapFromScene(self.mapToScene(self.handles[self.handleTopLeft]))
-        tr = self.parentViews[0].mapFromScene(self.mapToScene(self.handles[self.handleTopRight]))
-        bl = self.parentViews[0].mapFromScene(self.mapToScene(self.handles[self.handleBottomLeft]))
-        br = self.parentViews[0].mapFromScene(self.mapToScene(self.handles[self.handleBottomRight]))
-        #mappedBox = self.parentViews[0].mapFromScene(self.mapToScene(self.rect()))
-
-        #print("box: ", self.rect())
-        #print("box location: ", self.mapToScene(b).boundingRect())
-
-        #print("mapped box location: ")
-        #sceneMapped = self.mapRectToScene(b)
-        #viewMapped = self.parentViews[0].mapFromScene(sceneMapped).boundingRect()
-        #print(viewMapped)
-        
-        #self.location = sceneMapped
-        #self.location = viewMapped
-        #print("tl (", tl.x(), ",", tl.y(), ")  tr(", tr.x(), ",", tr.y(), ")")
-        #print("bl (", bl.x(), ",", bl.y(), ")  br(", br.x(), ",", br.y(), ")")
-        #self.parentViews[0].test(viewMapped)
-
     def interactiveResize(self, mousePos):
         """
         Perform shape interactive resize.
@@ -232,7 +205,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             self.setRect(rect)
 
         elif self.handleSelected == self.handleMiddleRight:
-            print("MR")
             fromX = self.mousePressRect.right()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             if toX - boundingRect.left() > self.minWidth:
