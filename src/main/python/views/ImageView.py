@@ -40,12 +40,19 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         Initialize the shape.
         """
         super().__init__(*args)
+        # Pixel data within the bounding box region
         self.pixelData = None
-        # minimum width and height of box (in pixels)
+        
+        # Minimum width and height of box (in pixels)
         self.minHeight = 50
         self.minWidth = 50
+        
+        # QGraphicsScene that contains this ROIItem instance
         self.parentScene = parent
+
+        # QGraphicsView that displays the parentScene
         self.parentViews = self.parentScene.views()
+
         self.handles = {}
         self.handleSelected = None
         self.mousePressPos = None
@@ -284,6 +291,9 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 64)))
         painter.drawRect(self.rect())
 
+        painter.setFont(QtGui.QFont('Default', 50))
+        fontMetrics = QtGui.QFontMetrics(painter.font())
+
         if self.isSelected():
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
             painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 255)))
@@ -293,7 +303,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
                 # if self.handleSelected is None or handle == self.handleSelected:
                 painter.drawEllipse(rect)
         else:
-            painter.setFont(QtGui.QFont('Default', 50))
             painter.drawText(self.rect(), QtCore.Qt.AlignCenter, "Lead i")
 
 
