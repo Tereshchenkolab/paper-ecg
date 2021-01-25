@@ -427,8 +427,6 @@ class ImageView(QtWidgets.QGraphicsView):
     #    print("pixel pos: ", pixel_coord.x(), ",", pixel_coord.y())
     #    QtWidgets.QGraphicsView.mousePressEvent(self, event)
     
-        
-
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
