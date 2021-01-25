@@ -115,13 +115,14 @@ class Editor(QtWidgets.QWidget):
 
     def initROI(self):
         self.box = ROIItem(self.imageViewer._scene)
-        self.box.setRect(300, 100, 400, 200)
+        self.box.setRect(0, 0, 400, 200)
+        self.box.setPos(0,0)
+        self.box.setPos(0,0)
 
         # Hide bounding box initially
         self.box.hide()
 
         self.imageViewer._scene.addItem(self.box)
-        #self.box.setPos(0,0)
         #print(self.box.isSelected())
 
 
