@@ -351,3 +351,39 @@ None.
 #### Blockers
 
 None.
+
+
+## January 25
+
+### Natalie
+
+#### Since last meeting
+
+- Extracts sub-image from within bounding box!!
+- Bounding box doesn't turn inside out and won't go outside the image!!
+
+#### Until next meeting
+
+- Cleaning up branch to merge to master.
+- Fixing automic resizing bug.
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Image edits! (contrast, brightness, rotation)
+
+#### Until next meeting
+
+- Polish and merge image edits.
+- Learn about signals (write up).
+- Finish refactoring editor UI.
+
+#### Blockers
+
+None.
