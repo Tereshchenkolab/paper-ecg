@@ -13,6 +13,7 @@ import sys
 from QtWrapper import *
 from Utility import *
 from views.ImageView import *
+from model.EditableImage import EditableImage
 
 class Editor(QtWidgets.QWidget):
 
@@ -31,27 +32,45 @@ class Editor(QtWidgets.QWidget):
 
         self.imageViewer = ImageView(None)
 
-        VerticalBoxLayout(self, "globalLayout", contents=[
-            GroupBox(self, "globalGroup1", title="Color Adjustments", layout=
-                VerticalBoxLayout(self, "globalGroup1Layout", contents=[
-                    QtWidgets.QSlider(QtCore.Qt.Horizontal),
-                    QtWidgets.QSlider(QtCore.Qt.Horizontal),
-                    QtWidgets.QSlider(QtCore.Qt.Horizontal),
-                    PushButton(self, "showBoxButton", text="show bounding box"),
-                    PushButton(self, "hideBoxButton", text="hide bounding box")
-                ])
-            )
-        ])
+        Widget(
+            owner=self,
+            name="globalScrollContents",
+            horizontalPolicy=QtWidgets.QSizePolicy.Expanding,
+            verticalPolicy=QtWidgets.QSizePolicy.Fixed,
+            layout=
 
-        globalScrollContents = QtWidgets.QWidget()
-        globalScrollContents.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        globalScrollContents.setLayout(self.globalLayout)
+            VerticalBoxLayout(
+                self,
+                "globalLayout",
+                contents=[
+
+                GroupBox(
+                    owner=self,
+                    name="globalGroup1",
+                    title="Color Adjustments",
+                    layout=
+
+                    VerticalBoxLayout(
+                        owner=self,
+                        name="globalGroup1Layout",
+                        contents=[
+
+                        HorizontalSlider(self, "brightnessSlider"),
+                        HorizontalSlider(self, "contrastSlider"),
+                        HorizontalSlider(self, "rotationSlider"),
+                        PushButton(self, "showBoxButton", text="show bounding box"),
+                        PushButton(self, "hideBoxButton", text="hide bounding box")
+                    ])
+                )
+            ])
+        )
 
         globalScrollArea = QtWidgets.QScrollArea()
         globalScrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         globalScrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         globalScrollArea.setWidgetResizable(True)
-        globalScrollArea.setWidget(globalScrollContents)
+        # Contents
+        globalScrollArea.setWidget(self.globalScrollContents)
 
         globalTab = globalScrollArea
 
@@ -84,8 +103,23 @@ class Editor(QtWidgets.QWidget):
         self.showBoxButton.clicked.connect(self.showBoundingBoxButton)
         self.hideBoxButton.clicked.connect(self.hideBoundingBoxButton)
 
+        # Image editing controls
+        self.brightnessSlider.sliderReleased.connect(self.adjustBrightness)
+        self.brightnessSlider.sliderMoved.connect(self.adjustBrightness)
+        self.brightnessSlider.setRange(-127,127)
 
-    def opencvImageToPixMap(self, image):
+        self.contrastSlider.sliderReleased.connect(self.adjustContrast)
+        self.contrastSlider.sliderMoved.connect(self.adjustContrast)
+        self.contrastSlider.setRange(-127,127)
+
+        self.rotationSlider.sliderReleased.connect(self.adjustRotation)
+        self.rotationSlider.sliderMoved.connect(self.adjustRotation)
+        self.rotationSlider.setRange(-15 * 10, 15 * 10)
+
+
+
+
+    def numpyToPixMap(self, image):
         # SOURCE: https://stackoverflow.com/a/50800745/7737644 (Creative Commons - Credit, share-alike)
         height, width, channel = self.image.shape
         bytesPerLine = 3 * width
@@ -103,13 +137,42 @@ class Editor(QtWidgets.QWidget):
         return pixmap
 
 
+    def adjustBrightness(self, value = None):
+        if value is None:
+            value = self.brightnessSlider.value()
+
+        self.image.edits.brightness = value
+        self.image.applyEdits()
+        self.displayImage()
+
+
+    def adjustContrast(self, value = None):
+        if value is None:
+            value = self.contrastSlider.value()
+
+        self.image.edits.contrast = value
+        self.image.applyEdits()
+        self.displayImage()
+
+
+    def adjustRotation(self, value = None):
+        if value is None:
+            value = self.rotationSlider.value()
+
+        value = float(value/10)
+
+        self.image.edits.rotation = value
+        self.image.applyEdits()
+        self.displayImage()
+
+
     def loadImageFromPath(self, path: Path):
-        self.image = cv2.imread(str(path))
+        self.image = EditableImage(path)
         self.displayImage()
 
 
     def displayImage(self):
-        pixmap = self.opencvImageToPixMap(self.image)
+        pixmap = self.image.pixmap
         self.imageViewer.setImage(pixmap)
 
 

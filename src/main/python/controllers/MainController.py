@@ -28,7 +28,11 @@ class MainController:
 
     def openImageFile(self):
         path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg)"))
-        self.window.editor.loadImageFromPath(path)
+
+        if path is not None:
+            self.window.editor.loadImageFromPath(path)
+        else:
+            print("[Warning] No image selected")
 
 
     def openFileBrowser(self, caption: str, fileType: str, initialPath: str ="") -> str:
