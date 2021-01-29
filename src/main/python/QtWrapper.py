@@ -6,7 +6,7 @@ Wrapper to simplify interacting with Qt
 """
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAction, QGroupBox, QHBoxLayout, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QSplitter, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QAction, QGroupBox, QHBoxLayout, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QSizePolicy, QSlider, QSplitter, QVBoxLayout, QWidget
 
 from typing import cast, List, Optional, Tuple, Union
 
@@ -233,6 +233,7 @@ def HorizontalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSp
 
     return splitter
 
+
 @bindsToClass
 def VerticalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSplitter:
     splitter = QSplitter(QtCore.Qt.Vertical)
@@ -242,3 +243,50 @@ def VerticalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSpli
         splitter.addWidget(widget)
 
     return splitter
+
+
+@bindsToClass
+def Widget(
+    owner: QWidget,
+    name: str,
+    horizontalPolicy: Optional[QSizePolicy.Policy] =None,
+    verticalPolicy: Optional[QSizePolicy.Policy] =None,
+    layout: Optional[QLayout] = None
+) -> QWidget:
+    """[summary]
+
+    Args:
+        owner (QWidget): [description]
+        name (str): [description]
+        layout (QLayout): [description]
+        horizontalPolicy (QSizePolicy.Policy, optional): [description]. Defaults to None.
+        verticalPolicy (QSizePolicy.Policy, optional): [description]. Defaults to None.
+
+    Returns:
+        QWidget: [description]
+    """
+    widget = QWidget()
+
+    sizePolicy = widget.sizePolicy()
+
+    if horizontalPolicy is not None:
+        sizePolicy.setHorizontalPolicy(horizontalPolicy)
+
+    if verticalPolicy is not None:
+        sizePolicy.setVerticalPolicy(verticalPolicy)
+
+    widget.setSizePolicy(sizePolicy)
+
+    if layout is not None:
+        widget.setLayout(layout)
+
+    return widget
+
+
+@bindsToClass
+def HorizontalSlider(
+    owner: QWidget,
+    name: str,
+) -> QSlider:
+    """[summary]"""
+    return QSlider(QtCore.Qt.Horizontal)
