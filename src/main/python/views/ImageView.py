@@ -270,10 +270,10 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             painter.drawText(self.rect(), QtCore.Qt.AlignCenter, "Lead i")
 
 
-# From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview 
+# From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
 class ImageView(QtWidgets.QGraphicsView):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
 
         self._scene = QtWidgets.QGraphicsScene(self)
         self._image = QtWidgets.QGraphicsPixmapItem()
@@ -319,7 +319,6 @@ class ImageView(QtWidgets.QGraphicsView):
 
         self._image.setPixmap(pixmap)
         self._empty = False
-        self.fitInView()
 
     def event(self, event):
         # Detects pinching gesture on macOS
@@ -364,7 +363,7 @@ class ImageView(QtWidgets.QGraphicsView):
             transform = self.transform() * transformScale
             self.setTransform(transform)
             self._zoom += 1
-            
+
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
 
     def zoomOut(self):

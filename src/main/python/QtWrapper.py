@@ -6,14 +6,25 @@ Wrapper to simplify interacting with Qt
 """
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAction, QGroupBox, QHBoxLayout, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QSizePolicy, QSlider, QSplitter, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget
 
 from typing import cast, List, Optional, Tuple, Union
 
 
-class IncompatibleFunction(Exception):
-    """Thrown when a decorated function is incompatible with the decorator."""
+class SplitterOrientation:
+    Horizontal = QtCore.Qt.Horizontal
+    Vertical = QtCore.Qt.Vertical
+
+
+class Separator():
+    """A dummy type to represent a menu separator"""
     pass
+
+
+class Tab:
+    def __init__(self, label: str, widget: QWidget):
+        self.label = label
+        self.widget = widget
 
 
 def bindsToClass(createWidgetFunction):
@@ -32,6 +43,8 @@ def bindsToClass(createWidgetFunction):
                 print(self.example)
     """
     def createAndBind(*args, **kwargs):
+        owner, name = None, None
+
         # Try to extract the `owner` and `name` parameters
         if "owner" in kwargs and "name" in kwargs:
             owner, name = kwargs["owner"], kwargs["name"]
@@ -39,13 +52,12 @@ def bindsToClass(createWidgetFunction):
             owner, name = args[0], kwargs["name"]
         elif len(args) >= 2:
             owner, name = args[:2]
-        else:
-            # If `owner` and `name` can't be found, just throw an
-            # error to explain what happened
-            raise IncompatibleFunction(f"Function '{createWidgetFunction.__name__}' missing 'owner' and 'name' parameters required by @bindsToClass decorator.")
 
         # Create the widget by calling the decorated function
         widget = createWidgetFunction(*args, **kwargs)
+
+        # Improve ease of debugging (this error presents as a segfault)
+        assert widget is not None, f"Widget creation function '{createWidgetFunction.__name__}' returned None"
 
         if owner is not None and name is not None and name != "":
             # Set `owner.name = widget` so the owner class is able to access the widget
@@ -57,112 +69,48 @@ def bindsToClass(createWidgetFunction):
 
 
 @bindsToClass
-def MenuAction(owner: QWidget, name:str, displayName:str, shortcut:Optional[Union[str, QtGui.QKeySequence]], statusTip: Optional[str]) -> QAction:
-    """Creates a MenuAction
+def ComboBox(
+    items: List[str],
+    owner: Optional[QWidget] = None,
+    name: Optional[str] = None,
+) -> QComboBox:
+    """[summary]"""
 
-    Args:
-        owner (QWidget): The class to which the Menu property will be added
-        name (str): The property name of the Menu in the class (not seen by users)
-        displayName (str): The name displayed to the user in the menu list for this action
-        shortcut (Union[str, QtGui.QKeySequence]): The keyboard shortcut to trigger the action
-        statusTip (str): ???
-    """
-    action = QAction('&' + displayName, owner) # In this case the owner is the main window
-    if shortcut:
-        action.setShortcut(shortcut)
-    if statusTip:
-        action.setStatusTip(statusTip)
+    comboBox = QComboBox()
+    comboBox.addItems(items)
 
-    return action
-
-
-class Separator():
-    """A dummy type to represent a menu separator
-    """
-    pass
+    return comboBox
 
 
 @bindsToClass
-def Menu(owner: QWidget, name:str, displayName:str, items:List[Union[QAction, Separator]]) -> QMenu:
-    """Creates a QMenu
-
-    Args:
-        owner (QWidget): The class to which the Menu property will be added
-        name (str): The property name of the Menu in the class (not seen by users)
-        displayName (str): The Menu name displayed to the user
-        items (List[Union[QAction, Separator]]): Items to display in the menu
-
-    Returns:
-        QMenu: Menu
-    """
-    menu = QMenu(displayName) # In this case the `owner` is the main window
-    for item in items:
-        if type(item) is Separator: menu.addSeparator()
-        # Cast `item` : `Union[QAction, Separator] -> QAction` for mypy
-        elif type(item) is QAction: menu.addAction(cast(QAction, item))
-
-    return menu
-
-
-@bindsToClass
-def MenuBar(owner: QMainWindow, name:str, menus: List[QMenu]) -> QMenuBar:
-    """Creates a QMenuBar
-
-    Args:
-        owner (QMainWindow): The MainWindow to which the MenuBar will be added
-        name (str): The name of the MenuBar property
-        menus (List[QMenu]): Menus container in the MenuBar
-
-    Returns:
-        QMenuBar: The menubar created
-    """
-    # In this case the `owner` is the main window
-    menuBar = owner.menuBar() # type: QMenuBar
-    for menu in menus:
-        menuBar.addMenu(menu)
-
-    return menuBar
-
-
-@bindsToClass
-def VerticalBoxLayout(
+def Custom(
     owner: QWidget,
-    name:str,
-    margins: Optional[Tuple[int, int, int, int]]=None,
-    contents: List[Union[QWidget, QLayout]]=[]
-) -> QVBoxLayout:
-    """[summary]
+    name: str,
+    widget: QWidget
+):
+    """Wraps any sort of custom Widget so it can fit in the QtWrapper paradigm"""
+    return widget
 
-    Args:
-        owner (QWidget): The class to which the property will be added
-        name (str): The property name of the created object in the class (not seen by users)
-        margins (Tuple[int, int, int, int]): left, top, right, bottom
-        contents (List[Union[QWidget, QLayout]])
 
-    Returns:
-        QVBoxLayout
-    """
-    verticalBoxLayout = QVBoxLayout()
+@bindsToClass
+def GroupBox(
+    title: str,  # Shown to user
+    layout: QLayout,
+    owner: QWidget = None,
+    name: str = None
+) -> QGroupBox:
+    horizontalBoxLayout = QGroupBox(title)
+    horizontalBoxLayout.setLayout(layout)
 
-    if margins is not None:
-        left, top, right, bottom = margins
-        verticalBoxLayout.setContentsMargins(left, top, right, bottom)
-
-    for item in contents:
-        if issubclass(type(item), QWidget):
-            verticalBoxLayout.addWidget(cast(QWidget, item))
-        elif issubclass(type(item), QLayout):
-            verticalBoxLayout.addLayout(cast(QLayout, item))
-
-    return verticalBoxLayout
+    return horizontalBoxLayout
 
 
 @bindsToClass
 def HorizontalBoxLayout(
-    owner: QWidget,
-    name:str,
-    margins: Optional[Tuple[int, int, int, int]]=None,
-    contents: List[Union[QWidget, QLayout]]=[]
+    owner: QWidget = None,
+    name: str = None,
+    margins: Optional[Tuple[int, int, int, int]] = None,
+    contents: List[Union[QWidget, QLayout]] = []
 ) -> QHBoxLayout:
     """[summary]
 
@@ -191,40 +139,20 @@ def HorizontalBoxLayout(
 
 
 @bindsToClass
-def GroupBox(
-    owner: QWidget,
-    name:str,
-    title:str, # Shown to user
-    layout: QLayout
-) -> QGroupBox:
-    horizontalBoxLayout = QGroupBox(title)
-    horizontalBoxLayout.setLayout(layout)
-
-    return horizontalBoxLayout
+def HorizontalSlider(
+    owner: QWidget = None,
+    name: str = None,
+) -> QSlider:
+    """[summary]"""
+    return QSlider(QtCore.Qt.Horizontal)
 
 
 @bindsToClass
-def RadioButton(owner: QWidget, name: str, text:str) -> QRadioButton:
-    return QRadioButton(text)
-
-
-@bindsToClass
-def PushButton(owner: QWidget, name: str, icon:Optional[QtGui.QIcon]=None, text:str="") -> QPushButton:
-    if icon is not None:
-        button = QPushButton(icon, text)
-    else:
-        button = QPushButton(text)
-
-    return button
-
-
-class SplitterOrientation:
-    Horizontal = QtCore.Qt.Horizontal
-    Vertical   = QtCore.Qt.Vertical
-
-
-@bindsToClass
-def HorizontalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSplitter:
+def HorizontalSplitter(
+    contents=List[QWidget],
+    owner: QWidget = None,
+    name: str = None
+) -> QSplitter:
     splitter = QSplitter(QtCore.Qt.Horizontal)
 
     # NOTE: Splitters can only have QWidgets as children---not QLayouts
@@ -235,7 +163,199 @@ def HorizontalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSp
 
 
 @bindsToClass
-def VerticalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSplitter:
+def Label(
+    owner: QWidget = None,
+    name: str = None,
+    text: str = None
+) -> QLabel:
+
+    return QLabel(text)
+
+
+@bindsToClass
+def Menu(
+    items: List[Union[QAction, Separator]],
+    owner: QWidget = None,
+    name: str = None,
+    displayName: str = None
+) -> QMenu:
+    """Creates a QMenu
+
+    Args:
+        owner (QWidget): The class to which the Menu property will be added
+        name (str): The property name of the Menu in the class (not seen by users)
+        displayName (str): The Menu name displayed to the user
+        items (List[Union[QAction, Separator]]): Items to display in the menu
+
+    Returns:
+        QMenu: Menu
+    """
+    menu = QMenu(displayName)  # In this case the `owner` is the main window
+    for item in items:
+        if type(item) is Separator:
+            menu.addSeparator()
+            # Cast `item` : `Union[QAction, Separator] -> QAction` for mypy
+        elif type(item) is QAction:
+            menu.addAction(cast(QAction, item))
+
+    return menu
+
+
+@bindsToClass
+def MenuAction(
+    shortcut: Optional[Union[str, QtGui.QKeySequence]],
+    statusTip: Optional[str],
+    owner: QWidget = None,
+    name: str = None,
+    displayName: str = None
+) -> QAction:
+    """Creates a MenuAction
+
+    Args:
+        owner (QWidget): The class to which the Menu property will be added
+        name (str): The property name of the Menu in the class (not seen by users)
+        displayName (str): The name displayed to the user in the menu list for this action
+        shortcut (Union[str, QtGui.QKeySequence]): The keyboard shortcut to trigger the action
+        statusTip (str): ???
+    """
+    action = QAction(
+        '&' + displayName, owner
+    )  # In this case the owner is the main window
+    if shortcut:
+        action.setShortcut(shortcut)
+    if statusTip:
+        action.setStatusTip(statusTip)
+
+    return action
+
+
+@bindsToClass
+def MenuBar(
+    owner: QMainWindow, menus: List[QMenu], name: str = None
+) -> QMenuBar:
+    """Creates a QMenuBar
+
+    Args:
+        owner (QMainWindow): The MainWindow to which the MenuBar will be added
+        name (str): The name of the MenuBar property
+        menus (List[QMenu]): Menus container in the MenuBar
+
+    Returns:
+        QMenuBar: The menubar created
+    """
+    # In this case the `owner` is the main window
+    menuBar = owner.menuBar()  # type: QMenuBar
+    for menu in menus:
+        menuBar.addMenu(menu)
+
+    return menuBar
+
+
+@bindsToClass
+def PushButton(
+    owner: QWidget = None,
+    name: str = None,
+    icon: Optional[QtGui.QIcon] = None,
+    text: str = ""
+) -> QPushButton:
+    if icon is not None:
+        button = QPushButton(icon, text)
+    else:
+        button = QPushButton(text)
+
+    return button
+
+
+
+@bindsToClass
+def RadioButton(
+    text: str, owner: QWidget = None, name: str = None
+) -> QRadioButton:
+    return QRadioButton(text)
+
+
+@bindsToClass
+def ScrollArea(
+    innerWidget: QWidget,
+    owner: Optional[QWidget] = None,
+    name: Optional[str] = None,
+    horizontalScrollBarPolicy: Optional[QtCore.Qt.ScrollBarPolicy] = None,
+    verticalScrollBarPolicy: Optional[QtCore.Qt.ScrollBarPolicy] = None,
+    widgetIsResizable: Optional[bool] = None
+) -> QScrollArea:
+    """[summary]"""
+
+    scrollArea = QScrollArea()
+
+    if horizontalScrollBarPolicy is not None:
+        scrollArea.setHorizontalScrollBarPolicy(horizontalScrollBarPolicy)
+
+    if verticalScrollBarPolicy is not None:
+        scrollArea.setVerticalScrollBarPolicy(verticalScrollBarPolicy)
+
+    if widgetIsResizable is not None:
+        scrollArea.setWidgetResizable(widgetIsResizable)
+
+    scrollArea.setWidget(innerWidget)
+
+    return scrollArea
+
+
+@bindsToClass
+def TabWidget(
+    tabs: List[Tab],
+    owner: Optional[QWidget] = None,
+    name: Optional[str] = None,
+) -> QTabWidget:
+    """[summary]"""
+
+    tabWidget = QTabWidget()
+
+    for tab in tabs:
+        tabWidget.addTab(tab.widget, tab.label)
+
+    return tabWidget
+
+
+@bindsToClass
+def VerticalBoxLayout(
+    owner: QWidget = None,
+    name: str = None,
+    margins: Optional[Tuple[int, int, int, int]] = None,
+    contents: List[Union[QWidget, QLayout]] = []
+) -> QVBoxLayout:
+    """[summary]
+
+    Args:
+        owner (QWidget): The class to which the property will be added
+        name (str): The property name of the created object in the class (not seen by users)
+        margins (Tuple[int, int, int, int]): left, top, right, bottom
+        contents (List[Union[QWidget, QLayout]])
+
+    Returns:
+        QVBoxLayout
+    """
+    verticalBoxLayout = QVBoxLayout()
+
+    if margins is not None:
+        left, top, right, bottom = margins
+        verticalBoxLayout.setContentsMargins(left, top, right, bottom)
+
+    for item in contents:
+        if issubclass(type(item), QWidget):
+            verticalBoxLayout.addWidget(cast(QWidget, item))
+        elif issubclass(type(item), QLayout):
+            verticalBoxLayout.addLayout(cast(QLayout, item))
+
+    return verticalBoxLayout
+
+
+@bindsToClass
+def VerticalSplitter(
+    contents=List[QWidget],
+    owner: QWidget = None,
+    name: str = None
+) -> QSplitter:
     splitter = QSplitter(QtCore.Qt.Vertical)
 
     # NOTE: Splitters can only have QWidgets as children---not QLayouts
@@ -247,10 +367,10 @@ def VerticalSplitter(owner: QWidget, name: str, contents=List[QWidget]) -> QSpli
 
 @bindsToClass
 def Widget(
-    owner: QWidget,
-    name: str,
-    horizontalPolicy: Optional[QSizePolicy.Policy] =None,
-    verticalPolicy: Optional[QSizePolicy.Policy] =None,
+    owner: QWidget = None,
+    name: str = None,
+    horizontalPolicy: Optional[QSizePolicy.Policy] = None,
+    verticalPolicy: Optional[QSizePolicy.Policy] = None,
     layout: Optional[QLayout] = None
 ) -> QWidget:
     """[summary]
@@ -281,12 +401,3 @@ def Widget(
         widget.setLayout(layout)
 
     return widget
-
-
-@bindsToClass
-def HorizontalSlider(
-    owner: QWidget,
-    name: str,
-) -> QSlider:
-    """[summary]"""
-    return QSlider(QtCore.Qt.Horizontal)
