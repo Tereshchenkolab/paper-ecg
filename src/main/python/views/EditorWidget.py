@@ -80,16 +80,11 @@ class Editor(QtWidgets.QWidget):
                                                 name="globalGroup1Layout",
                                                 contents=[
 
-                                                Label(self, "brightnessLabel", "Brightness"),
-                                                # HorizontalBoxLayout(
-                                                #     contents=[
-
-                                                #     ,
-                                                    HorizontalSlider(self, "brightnessSlider"),
-                                                # ]),
-                                                QtWidgets.QLabel("Contrast"),
+                                                Label("Brightness"),
+                                                HorizontalSlider(self, "brightnessSlider"),
+                                                Label("Contrast"),
                                                 HorizontalSlider(self, "contrastSlider"),
-                                                QtWidgets.QLabel("Rotation"),
+                                                Label("Rotation"),
                                                 HorizontalSlider(self, "rotationSlider"),
                                                 PushButton(self, "showBoxButton", text="show bounding box"),
                                                 PushButton(self, "hideBoxButton", text="hide bounding box")

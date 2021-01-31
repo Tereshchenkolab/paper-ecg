@@ -164,9 +164,9 @@ def HorizontalSplitter(
 
 @bindsToClass
 def Label(
+    text: str,
     owner: QWidget = None,
-    name: str = None,
-    text: str = None
+    name: str = None
 ) -> QLabel:
 
     return QLabel(text)
