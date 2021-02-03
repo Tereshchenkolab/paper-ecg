@@ -387,3 +387,35 @@ None.
 #### Blockers
 
 None.
+
+## February 2
+
+### Natalie
+
+#### Since last meeting
+
+- Trying to fix bugs when restricting bounding box movement
+
+#### Until next meeting
+
+- Create button to add new bounding boxes for each lead
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Finished editor UI refactor
+- Polished controls
+
+#### Until next meeting
+
+- Image processing framework 
+
+#### Blockers
+
+None.
