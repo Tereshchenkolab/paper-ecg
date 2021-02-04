@@ -25,7 +25,7 @@ class Editor(QtWidgets.QWidget):
         self.connectUI()
 
         # Initialize a single ROI as a demo
-        self.initROI()
+        # self.initROI()
 
         # Hide panel until an image is loaded
         # self.editPanel.hide()
@@ -114,8 +114,8 @@ class Editor(QtWidgets.QWidget):
 
 
     def connectUI(self):
-        self.showBoxButton.clicked.connect(self.showBoundingBoxButton)
-        self.hideBoxButton.clicked.connect(self.hideBoundingBoxButton)
+        # self.showBoxButton.clicked.connect(self.showBoundingBoxButton)
+        # self.hideBoxButton.clicked.connect(self.hideBoundingBoxButton)
 
         # Image editing controls
         self.brightnessSlider.sliderReleased.connect(self.adjustBrightness)
@@ -209,23 +209,23 @@ class Editor(QtWidgets.QWidget):
         self.imageViewer.setImage(pixmap)
 
 
-    def initROI(self):
-        self.box = ROIItem(self.imageViewer._scene)
-        self.box.setRect(0, 0, 400, 200)
-        self.box.setPos(0,0)
-        self.box.setPos(0,0)
+    # def initROI(self):
+    #     self.box = ROIItem(self.imageViewer._scene)
+    #     self.box.setRect(0, 0, 400, 200)
+    #     self.box.setPos(0,0)
+    #     self.box.setPos(0,0)
 
-        # Hide bounding box initially
-        self.box.hide()
+    #     # Hide bounding box initially
+    #     self.box.hide()
 
-        self.imageViewer._scene.addItem(self.box)
-        self.box.setPos(0,0)
-
-
-    def showBoundingBoxButton(self):
-        self.box.show()
+    #     self.imageViewer._scene.addItem(self.box)
+    #     self.box.setPos(0,0)
 
 
-    def hideBoundingBoxButton(self):
-        self.box.hide()
+    # def showBoundingBoxButton(self):
+    #     self.box.show()
+
+
+    # def hideBoundingBoxButton(self):
+    #     self.box.hide()
 

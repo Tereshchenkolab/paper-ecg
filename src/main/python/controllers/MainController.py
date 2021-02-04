@@ -10,6 +10,7 @@ from pathlib import Path
 from PyQt5 import QtGui, QtWidgets, QtCore
 
 from views.MainWindow import MainWindow
+from views.ImageView import *
 
 
 class MainController:
@@ -24,6 +25,7 @@ class MainController:
         Hook UI up to handlers in the controller
         """
         self.window.fileMenuOpen.triggered.connect(self.openImageFile)
+        self.window.leadMenuAdd.triggered.connect(self.addLead)
 
 
     def openImageFile(self):
@@ -54,3 +56,14 @@ class MainController:
         )
 
         return absolutePath
+    
+    def addLead(self):
+        print("add lead triggered")
+        
+        box = ROIItem(self.window.editor.imageViewer._scene)
+        box.setRect(0, 0, 400, 200)
+        box.setPos(0,0)
+
+        self.window.editor.imageViewer._scene.addItem(box)
+
+        box.show()
