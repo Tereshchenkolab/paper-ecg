@@ -264,26 +264,27 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         self.updateHandlesPos()
 
-    def itemChange(self, change, value):
-        print("item change: ", change)
-        if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
-            if self.parentScene is not None:
-                newPos = value
-                boxRect = self.mapToScene(self.boundingRect()).boundingRect()
-                sceneRect = self.parentScene.sceneRect()
+    #DO NOT DELETE - still working on bugs in movement restriction
+    # def itemChange(self, change, value):
+    #     print("item change: ", change)
+    #     if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
+    #         if self.parentScene is not None:
+    #             newPos = value
+    #             boxRect = self.mapToScene(self.boundingRect()).boundingRect()
+    #             sceneRect = self.parentScene.sceneRect()
                 
-                print("value: ", value)
-                print("box rect: ", boxRect)
-                print("box top left: ", boxRect.topLeft())
-                print("scene rect: ", sceneRect)
-                print(sceneRect.contains(boxRect))
+    #             print("value: ", value)
+    #             print("box rect: ", boxRect)
+    #             print("box top left: ", boxRect.topLeft())
+    #             print("scene rect: ", sceneRect)
+    #             print(sceneRect.contains(boxRect))
 
-                rR = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
-                if not rR.contains(value):
-                    x = min(max(rR.left(), value.x()), rR.right())
-                    y = min(max(rR.top(), value.y()), rR.bottom())
-                    return QtCore.QPointF(x, y)
-        return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
+    #             rR = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
+    #             if not rR.contains(value):
+    #                 x = min(max(rR.left(), value.x()), rR.right())
+    #                 y = min(max(rR.top(), value.y()), rR.bottom())
+    #                 return QtCore.QPointF(x, y)
+    #     return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
 
     def shape(self):
         """
@@ -419,11 +420,6 @@ class ImageView(QtWidgets.QGraphicsView):
             else:
                 print("scale not invertible")
 
-    #def mousePressEvent(self, event):
-    #    print("click pos: ", event.pos())
-    #    pixel_coord = self.mapToScene(self.mapFromGlobal(event.globalPos()))
-    #    print("pixel pos: ", pixel_coord.x(), ",", pixel_coord.y())
-    #    QtWidgets.QGraphicsView.mousePressEvent(self, event)
     
 
 if __name__ == '__main__':
