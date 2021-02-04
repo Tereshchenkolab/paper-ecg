@@ -27,73 +27,87 @@ class Editor(QtWidgets.QWidget):
         # Initialize a single ROI as a demo
         self.initROI()
 
+        # Hide panel until an image is loaded
+        # self.editPanel.hide()
+
 
     def initUI(self):
 
-        self.imageViewer = ImageView(None)
-
-        Widget(
-            owner=self,
-            name="globalScrollContents",
-            horizontalPolicy=QtWidgets.QSizePolicy.Expanding,
-            verticalPolicy=QtWidgets.QSizePolicy.Fixed,
-            layout=
-
-            VerticalBoxLayout(
-                self,
-                "globalLayout",
-                contents=[
-
-                GroupBox(
-                    owner=self,
-                    name="globalGroup1",
-                    title="Color Adjustments",
-                    layout=
-
-                    VerticalBoxLayout(
-                        owner=self,
-                        name="globalGroup1Layout",
-                        contents=[
-
-                        HorizontalSlider(self, "brightnessSlider"),
-                        HorizontalSlider(self, "contrastSlider"),
-                        HorizontalSlider(self, "rotationSlider"),
-                        PushButton(self, "showBoxButton", text="show bounding box"),
-                        PushButton(self, "hideBoxButton", text="hide bounding box")
-                    ])
-                )
-            ])
-        )
-
-        globalScrollArea = QtWidgets.QScrollArea()
-        globalScrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        globalScrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        globalScrollArea.setWidgetResizable(True)
-        # Contents
-        globalScrollArea.setWidget(self.globalScrollContents)
-
-        globalTab = globalScrollArea
-
-        leadSelector = QtWidgets.QComboBox()
-        leadSelector.addItems(["Lead I", "Lead II", "Lead III"])
-
-        leadTab = QtWidgets.QWidget()
-
-        leadTab.layout = QtWidgets.QVBoxLayout(self)
-        leadTab.layout.addWidget(leadSelector)
-
-        leadTab.setLayout(leadTab.layout)
-
-        # Initialize tab screen
-        tabs = QtWidgets.QTabWidget()
-        tabs.addTab(globalTab,"Image")
-        tabs.addTab(leadTab,"Leads")
-
         self.setLayout(
             HorizontalBoxLayout(self, "main", margins=(0,0,0,0), contents=[
-                HorizontalSplitter(self, "splitter", [
-                    self.imageViewer,
-                    tabs
+                HorizontalSplitter([
+
+                    Custom(
+                        owner=self,
+                        name="imageViewer",
+                        widget=ImageView()
+                    ),
+
+                    TabWidget(
+                        owner=self,
+                        name="editPanel",
+                        tabs=[
+
+                        Tab("Image",
+                            ScrollArea(
+                                owner=self,
+                                name="scrollArea",
+                                horizontalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOff,
+                                verticalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOn,
+                                widgetIsResizable=True,
+                                innerWidget=
+
+                                Widget(
+                                    owner=self,
+                                    name="globalScrollContents",
+                                    horizontalPolicy=QtWidgets.QSizePolicy.Expanding,
+                                    verticalPolicy=QtWidgets.QSizePolicy.Fixed,
+                                    layout=
+
+                                    VerticalBoxLayout(
+                                        self,
+                                        "globalLayout",
+                                        contents=[
+
+                                        GroupBox(
+                                            owner=self,
+                                            name="globalGroup1",
+                                            title="Image Adjustments",
+                                            layout=
+
+                                            VerticalBoxLayout(
+                                                owner=self,
+                                                name="globalGroup1Layout",
+                                                contents=[
+
+                                                Label("Brightness"),
+                                                HorizontalSlider(self, "brightnessSlider"),
+                                                Label("Contrast"),
+                                                HorizontalSlider(self, "contrastSlider"),
+                                                Label("Rotation"),
+                                                HorizontalSlider(self, "rotationSlider"),
+                                                PushButton(self, "showBoxButton", text="show bounding box"),
+                                                PushButton(self, "hideBoxButton", text="hide bounding box")
+                                            ])
+                                        )
+                                    ])
+                                )
+                            )
+                        ),
+                        Tab("Leads",
+                            Widget(
+                                owner=self,
+                                name="leadTab",
+                                layout=
+
+                                VerticalBoxLayout(
+                                    contents=[
+                                        ComboBox(["Lead I", "Lead II", "Lead III"])
+                                    ]
+                                )
+                            )
+                        )
+                    ])
                 ])
             ])
         )
@@ -141,34 +155,53 @@ class Editor(QtWidgets.QWidget):
         if value is None:
             value = self.brightnessSlider.value()
 
-        self.image.edits.brightness = value
-        self.image.applyEdits()
-        self.displayImage()
+        if self.image is not None:
+            self.image.edits.brightness = value
+            self.image.applyEdits()
+            self.displayImage()
 
 
     def adjustContrast(self, value = None):
         if value is None:
             value = self.contrastSlider.value()
 
-        self.image.edits.contrast = value
-        self.image.applyEdits()
-        self.displayImage()
+        if self.image is not None:
+            self.image.edits.contrast = value
+            self.image.applyEdits()
+            self.displayImage()
 
 
     def adjustRotation(self, value = None):
         if value is None:
             value = self.rotationSlider.value()
 
+        # This slider is scaled up to give more fine control
         value = float(value/10)
 
-        self.image.edits.rotation = value
-        self.image.applyEdits()
-        self.displayImage()
+        if self.image is not None:
+            self.image.edits.rotation = value
+            self.image.applyEdits()
+            self.displayImage()
+
+
+    def resetImageEditControls(self):
+        # TODO: Implement this (and call when a new image is loaded ... ?)
+        # IDEA: Only show the image editing controls when there is a image loaded?
+        pass
 
 
     def loadImageFromPath(self, path: Path):
         self.image = EditableImage(path)
         self.displayImage()
+        self.onImageAppear()
+
+
+    def onImageAppear(self):
+        """Called when a new image is opened"""
+        self.editPanel.show()
+
+        # Adjust zoom to fit image in view
+        self.imageViewer.fitInView()
 
 
     def displayImage(self):
@@ -186,7 +219,11 @@ class Editor(QtWidgets.QWidget):
         self.box.hide()
 
         self.imageViewer._scene.addItem(self.box)
+<<<<<<< HEAD
         #print(self.box.isSelected())
+=======
+        self.box.setPos(0,0)
+>>>>>>> master
 
 
     def showBoundingBoxButton(self):
