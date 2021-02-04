@@ -42,6 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
             menus=[
                 self.buildFileMenu(),
                 self.buildEditMenu(),
+                self.buildLeadMenu(),
                 Qt.Menu(
                     owner=self,
                     name='windowMenu',
@@ -100,6 +101,23 @@ class MainWindow(QtWidgets.QMainWindow):
             ]
         )
     
+
+    def buildLeadMenu(self):
+        return Qt.Menu(
+            owner=self,
+            name='leadMenu',
+            displayName='Lead',
+            items=[
+               Qt.MenuAction(
+                    owner=self,
+                    name="leadMenuAdd",
+                    displayName="Add",
+                    shortcut=None,
+                    statusTip="Add lead data"
+                ) 
+            ]
+        )
+
     def resizeEvent(self, event):
         print("window size ", self.width(), "x", self.height())
         QtWidgets.QMainWindow.resizeEvent(self, event)
