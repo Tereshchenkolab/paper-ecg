@@ -11,6 +11,7 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 
 from views.MainWindow import MainWindow
 from views.ImageView import *
+from QtWrapper import *
 
 
 class MainController:
@@ -25,7 +26,7 @@ class MainController:
         Hook UI up to handlers in the controller
         """
         self.window.fileMenuOpen.triggered.connect(self.openImageFile)
-        self.window.leadMenuAdd.triggered.connect(self.addLead)
+        self.window.leadMenuAdd.triggered.connect(self.showAddLeadDialog)
 
 
     def openImageFile(self):
@@ -57,13 +58,48 @@ class MainController:
 
         return absolutePath
     
-    def addLead(self):
-        print("add lead triggered")
-        
+    def showAddLeadDialog(self):
+        self.leadDialog = QtWidgets.QDialog()
+        self.leadDialog.setWindowTitle("Add Lead")
+        self.leadDialog.setMinimumSize(300, 200)
+        self.leadDialog.setLayout(VerticalBoxLayout(self, "main", margins=(0,0,0,0), 
+            contents=[
+                VerticalBoxLayout(
+                    owner=self,
+                    name="dialogBoxMainLayout",
+                    contents=[
+                        ComboBox(["Lead I", "Lead II", "Lead III"], owner=self.leadDialog, name="leadCombo"),
+                        PushButton(self.leadDialog, "acceptButton", text="select")
+                    ]
+                )
+            ]))
+
+        self.leadDialog.acceptButton.clicked.connect(self.selected)
+
+        retVal = self.leadDialog.exec_()
+        if retVal == 0:
+            print("cancelled")
+
+
+    def selected(self):
+        print("selection made")
+        selection = self.leadDialog.leadCombo.currentText()
+
+        self.addLead(selection)
+
+        self.leadDialog.accept()
+
+
+    def addLead(self, selection):
+
+        print("lead selected: ", selection)
+
         box = ROIItem(self.window.editor.imageViewer._scene)
+        box.setLeadId(selection)
         box.setRect(0, 0, 400, 200)
         box.setPos(0,0)
 
         self.window.editor.imageViewer._scene.addItem(box)
+        print(self.window.editor.imageViewer._scene.items())
 
         box.show()

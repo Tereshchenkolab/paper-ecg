@@ -85,9 +85,9 @@ class Editor(QtWidgets.QWidget):
                                                 Label("Contrast"),
                                                 HorizontalSlider(self, "contrastSlider"),
                                                 Label("Rotation"),
-                                                HorizontalSlider(self, "rotationSlider"),
-                                                PushButton(self, "showBoxButton", text="show bounding box"),
-                                                PushButton(self, "hideBoxButton", text="hide bounding box")
+                                                HorizontalSlider(self, "rotationSlider")
+                                                #PushButton(self, "showBoxButton", text="show bounding box"),
+                                                #PushButton(self, "hideBoxButton", text="hide bounding box")
                                             ])
                                         )
                                     ])

@@ -40,6 +40,9 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         Initialize the shape.
         """
         super().__init__(*args)
+
+        self.leadId = None
+
         # Pixel data within the bounding box region
         self.pixelData = None
         
@@ -94,6 +97,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         Executed when the mouse is pressed on the item.
         """
+        print("button: ", mouseEvent.button())
         self.handleSelected = self.handleAt(mouseEvent.pos())
         if self.handleSelected:
             self.mousePressPos = mouseEvent.pos()
@@ -265,8 +269,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.updateHandlesPos()
 
     #DO NOT DELETE - still working on bugs in movement restriction
-    # def itemChange(self, change, value):
-    #     print("item change: ", change)
+    def itemChange(self, change, value):
     #     if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
     #         if self.parentScene is not None:
     #             newPos = value
@@ -284,7 +287,12 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
     #                 x = min(max(rR.left(), value.x()), rR.right())
     #                 y = min(max(rR.top(), value.y()), rR.bottom())
     #                 return QtCore.QPointF(x, y)
-    #     return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
+        if change == QtWidgets.QGraphicsRectItem.ItemSelectedChange:
+            if value == True:
+                print("selected")
+            else:
+                print("not selected")
+        return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
 
     def shape(self):
         """
@@ -301,7 +309,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         Paint the node in the graphic view.
         """
-        # painter.setBrush(QBrush(QColor(255, 0, 0, 100)))
         painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0), 2.0, QtCore.Qt.SolidLine))
         painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 64)))
         painter.drawRect(self.rect())
@@ -318,7 +325,10 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
                 # if self.handleSelected is None or handle == self.handleSelected:
                 painter.drawEllipse(rect)
         else:
-            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, "Lead i")
+            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId)
+
+    def setLeadId(self, lead):
+        self.leadId = lead
 
 
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
