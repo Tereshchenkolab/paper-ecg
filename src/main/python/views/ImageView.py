@@ -127,7 +127,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
         print("box location: ", mappedBox)
         self.pixelData = self.parentViews[0]._image.pixmap().copy(mappedBox.toRect())
-        self.pixelData.save("test.png")
+        self.pixelData.save(self.leadId + ".png")
         
 
     def boundingRect(self):
@@ -335,6 +335,8 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 class ImageView(QtWidgets.QGraphicsView):
     def __init__(self):
         super().__init__()
+
+        self.setMinimumSize(600, 400)
 
         self._scene = QtWidgets.QGraphicsScene(self)
         self._image = QtWidgets.QGraphicsPixmapItem()
