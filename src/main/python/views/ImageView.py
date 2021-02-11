@@ -269,7 +269,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.updateHandlesPos()
 
     #DO NOT DELETE - still working on bugs in movement restriction
-    def itemChange(self, change, value):
+    #def itemChange(self, change, value):
     #     if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
     #         if self.parentScene is not None:
     #             newPos = value
