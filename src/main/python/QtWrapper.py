@@ -72,7 +72,7 @@ def bindsToClass(createWidgetFunction):
 def ComboBox(
     items: List[str],
     owner: Optional[QWidget] = None,
-    name: Optional[str] = None,
+    name: Optional[str] = None
 ) -> QComboBox:
     """[summary]"""
 

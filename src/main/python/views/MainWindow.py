@@ -42,6 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
             menus=[
                 self.buildFileMenu(),
                 self.buildEditMenu(),
+                self.buildLeadMenu(),
                 Qt.Menu(
                     owner=self,
                     name='windowMenu',
@@ -100,6 +101,100 @@ class MainWindow(QtWidgets.QMainWindow):
             ]
         )
     
+
+    def buildLeadMenu(self):
+        return Qt.Menu(
+            owner=self,
+            name='leadMenu',
+            displayName='Leads',
+            items=[
+               Qt.MenuAction(
+                    owner=self,
+                    name="addLead1",
+                    displayName="Add Lead I",
+                    shortcut=QtGui.QKeySequence('Ctrl+1'),
+                    statusTip="Add Lead I"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLead2",
+                    displayName="Add Lead II",
+                    shortcut=QtGui.QKeySequence('Ctrl+2'),
+                    statusTip="Add Lead II"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLead3",
+                    displayName="Add Lead III",
+                    shortcut=QtGui.QKeySequence('Ctrl+3'),
+                    statusTip="Add Lead III"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadaVR",
+                    displayName="Add Lead aVR",
+                    shortcut=QtGui.QKeySequence('Ctrl+4'),
+                    statusTip="Add Lead aVR"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadaVL",
+                    displayName="Add Lead aVL",
+                    shortcut=QtGui.QKeySequence('Ctrl+5'),
+                    statusTip="Add Lead aVL"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadaVF",
+                    displayName="Add Lead aVF",
+                    shortcut=QtGui.QKeySequence('Ctrl+6'),
+                    statusTip="Add Lead aVF"
+                ), 
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadV1",
+                    displayName="Add Lead V1",
+                    shortcut=QtGui.QKeySequence('Ctrl+7'),
+                    statusTip="Add Lead V1"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadV2",
+                    displayName="Add Lead V2",
+                    shortcut=QtGui.QKeySequence('Ctrl+8'),
+                    statusTip="Add Lead V2"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadV3",
+                    displayName="Add Lead V3",
+                    shortcut=QtGui.QKeySequence('Ctrl+9'),
+                    statusTip="Add Lead V3"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadV4",
+                    displayName="Add Lead V4",
+                    shortcut=QtGui.QKeySequence('Ctrl+0'),
+                    statusTip="Add Lead V4"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadV5",
+                    displayName="Add Lead V5",
+                    shortcut=QtGui.QKeySequence('Ctrl+['),
+                    statusTip="Add Lead V5"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadV6",
+                    displayName="Add Lead V6",
+                    shortcut=QtGui.QKeySequence('Ctrl+]'),
+                    statusTip="Add Lead V6"
+                )
+            ]
+        )
+
     def resizeEvent(self, event):
         print("window size ", self.width(), "x", self.height())
         QtWidgets.QMainWindow.resizeEvent(self, event)
