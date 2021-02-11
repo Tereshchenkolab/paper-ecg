@@ -419,3 +419,34 @@ None.
 #### Blockers
 
 None.
+
+## February 10
+
+### Natalie
+
+#### Since last meeting
+
+- Created menu bar buttons/shortcuts to add lead bounding boxes
+
+#### Until next meeting
+
+- Finish up the add lead buttons and merge to master
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Started implementing caching framework for image rotation/color
+
+#### Until next meeting
+
+- Start implementing functionality from literature reviews
+
+#### Blockers
+
+None.
