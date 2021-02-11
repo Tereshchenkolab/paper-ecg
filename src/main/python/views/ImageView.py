@@ -287,12 +287,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
     #                 x = min(max(rR.left(), value.x()), rR.right())
     #                 y = min(max(rR.top(), value.y()), rR.bottom())
     #                 return QtCore.QPointF(x, y)
-        if change == QtWidgets.QGraphicsRectItem.ItemSelectedChange:
-            if value == True:
-                print("selected")
-            else:
-                print("not selected")
-        return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
+    #    return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
 
     def shape(self):
         """

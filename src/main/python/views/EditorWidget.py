@@ -86,8 +86,6 @@ class Editor(QtWidgets.QWidget):
                                                 HorizontalSlider(self, "contrastSlider"),
                                                 Label("Rotation"),
                                                 HorizontalSlider(self, "rotationSlider")
-                                                #PushButton(self, "showBoxButton", text="show bounding box"),
-                                                #PushButton(self, "hideBoxButton", text="hide bounding box")
                                             ])
                                         )
                                     ])
@@ -114,8 +112,6 @@ class Editor(QtWidgets.QWidget):
 
 
     def connectUI(self):
-        # self.showBoxButton.clicked.connect(self.showBoundingBoxButton)
-        # self.hideBoxButton.clicked.connect(self.hideBoundingBoxButton)
 
         # Image editing controls
         self.brightnessSlider.sliderReleased.connect(self.adjustBrightness)
@@ -208,24 +204,4 @@ class Editor(QtWidgets.QWidget):
         pixmap = self.image.pixmap
         self.imageViewer.setImage(pixmap)
 
-
-    # def initROI(self):
-    #     self.box = ROIItem(self.imageViewer._scene)
-    #     self.box.setRect(0, 0, 400, 200)
-    #     self.box.setPos(0,0)
-    #     self.box.setPos(0,0)
-
-    #     # Hide bounding box initially
-    #     self.box.hide()
-
-    #     self.imageViewer._scene.addItem(self.box)
-    #     self.box.setPos(0,0)
-
-
-    # def showBoundingBoxButton(self):
-    #     self.box.show()
-
-
-    # def hideBoundingBoxButton(self):
-    #     self.box.hide()
 

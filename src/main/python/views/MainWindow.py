@@ -168,15 +168,29 @@ class MainWindow(QtWidgets.QMainWindow):
                     owner=self,
                     name="addLeadV3",
                     displayName="Add Lead V3",
-                    shortcut=QtGui.QKeySequence('Ctrl+8'),
+                    shortcut=QtGui.QKeySequence('Ctrl+9'),
                     statusTip="Add Lead V3"
                 ),
                 Qt.MenuAction(
                     owner=self,
                     name="addLeadV4",
                     displayName="Add Lead V4",
-                    shortcut=QtGui.QKeySequence('Ctrl+9'),
+                    shortcut=QtGui.QKeySequence('Ctrl+0'),
                     statusTip="Add Lead V4"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadV5",
+                    displayName="Add Lead V5",
+                    shortcut=QtGui.QKeySequence('Ctrl+['),
+                    statusTip="Add Lead V5"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="addLeadV6",
+                    displayName="Add Lead V6",
+                    shortcut=QtGui.QKeySequence('Ctrl+]'),
+                    statusTip="Add Lead V6"
                 )
             ]
         )

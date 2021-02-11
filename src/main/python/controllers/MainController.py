@@ -26,12 +26,19 @@ class MainController:
         Hook UI up to handlers in the controller
         """
         self.window.fileMenuOpen.triggered.connect(self.openImageFile)
+
         self.window.addLead1.triggered.connect(lambda: self.addLead("I", self.window.addLead1))
         self.window.addLead2.triggered.connect(lambda: self.addLead("II", self.window.addLead2))
         self.window.addLead3.triggered.connect(lambda: self.addLead("III", self.window.addLead3))
         self.window.addLeadaVR.triggered.connect(lambda: self.addLead("aVR", self.window.addLeadaVR))
         self.window.addLeadaVL.triggered.connect(lambda: self.addLead("aVL", self.window.addLeadaVL))
         self.window.addLeadaVF.triggered.connect(lambda: self.addLead("aVF", self.window.addLeadaVF))
+        self.window.addLeadV1.triggered.connect(lambda: self.addLead("V1", self.window.addLeadV1))
+        self.window.addLeadV2.triggered.connect(lambda: self.addLead("V2", self.window.addLeadV2))
+        self.window.addLeadV3.triggered.connect(lambda: self.addLead("V3", self.window.addLeadV3))
+        self.window.addLeadV4.triggered.connect(lambda: self.addLead("V4", self.window.addLeadV4))
+        self.window.addLeadV5.triggered.connect(lambda: self.addLead("V5", self.window.addLeadV5))
+        self.window.addLeadV6.triggered.connect(lambda: self.addLead("V6", self.window.addLeadV6))
 
 
     def openImageFile(self):
@@ -62,37 +69,6 @@ class MainController:
         )
 
         return absolutePath
-    
-    # def showAddLeadDialog(self):
-    #     self.leadDialog = QtWidgets.QDialog()
-    #     self.leadDialog.setWindowTitle("Add Lead")
-    #     self.leadDialog.setMinimumSize(300, 200)
-    #     self.leadDialog.setLayout(VerticalBoxLayout(self, "main", margins=(0,0,0,0), 
-    #         contents=[
-    #             VerticalBoxLayout(
-    #                 owner=self,
-    #                 name="dialogBoxMainLayout",
-    #                 contents=[
-    #                     ComboBox(["Lead I", "Lead II", "Lead III"], owner=self.leadDialog, name="leadCombo"),
-    #                     PushButton(self.leadDialog, "acceptButton", text="select")
-    #                 ]
-    #             )
-    #         ]))
-
-    #     self.leadDialog.acceptButton.clicked.connect(self.selected)
-
-    #     retVal = self.leadDialog.exec_()
-    #     if retVal == 0:
-    #         print("cancelled")
-
-
-    # def selected(self):
-    #     print("selection made")
-    #     selection = self.leadDialog.leadCombo.currentText()
-
-    #     self.addLead(selection)
-
-    #     self.leadDialog.accept()
 
 
     def addLead(self, selection, action):
