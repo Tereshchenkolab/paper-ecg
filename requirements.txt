@@ -4,10 +4,10 @@ PyQt5==5.15.1
 
 # Numerical/image
 numpy
-opencv-python>=4.4
+scipy
+opencv-python-headless>=4.4
 qimage2ndarray
 
 # Helper
-matplotlib
 mypy
 pathlib
