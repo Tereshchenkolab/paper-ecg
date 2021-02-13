@@ -4,6 +4,7 @@ Created November 9, 2020
 
 -
 """
+from typing import Tuple
 from PyQt5 import QtCore, QtGui
 import cv2
 import numpy as np
@@ -60,7 +61,7 @@ def applyContrast(inputImage, contrast: int):
     return cv2.addWeighted(inputImage, alpha_c, inputImage, 0, gamma_c)
 
 
-def applyRotation(inputImage, angle: float):
+def applyRotation(inputImage, angle: float, border: Tuple[int] = (255,255,255)):
     height, width = inputImage.shape[:2]
     center = (width // 2, height // 2)
 
@@ -71,7 +72,11 @@ def applyRotation(inputImage, angle: float):
         rotationMatrix,
         (width, height),
         flags=cv2.INTER_CUBIC,
-        borderMode=cv2.BORDER_REPLICATE
+        borderMode=cv2.BORDER_CONSTANT,
+        borderValue=border,
     )
 
     return rotated
+
+def pixelToTuple(pixel):
+    return (int(pixel[0][0][0]), int(pixel[0][0][1]), int(pixel[0][0][2]))

@@ -152,9 +152,7 @@ class Editor(QtWidgets.QWidget):
             value = self.brightnessSlider.value()
 
         if self.image is not None:
-            self.image.edits.brightness = value
-            self.image.applyEdits()
-            self.displayImage()
+            self.displayImage(self.image.withBrightness(value))
 
 
     def adjustContrast(self, value = None):
@@ -162,9 +160,7 @@ class Editor(QtWidgets.QWidget):
             value = self.contrastSlider.value()
 
         if self.image is not None:
-            self.image.edits.contrast = value
-            self.image.applyEdits()
-            self.displayImage()
+            self.displayImage(self.image.withContrast(value))
 
 
     def adjustRotation(self, value = None):
@@ -175,9 +171,7 @@ class Editor(QtWidgets.QWidget):
         value = float(value/10)
 
         if self.image is not None:
-            self.image.edits.rotation = value
-            self.image.applyEdits()
-            self.displayImage()
+            self.displayImage(self.image.withRotation(value))
 
 
     def resetImageEditControls(self):
@@ -188,7 +182,7 @@ class Editor(QtWidgets.QWidget):
 
     def loadImageFromPath(self, path: Path):
         self.image = EditableImage(path)
-        self.displayImage()
+        self.displayImage(self.image.getPixmap())
         self.onImageAppear()
 
 
@@ -200,8 +194,7 @@ class Editor(QtWidgets.QWidget):
         self.imageViewer.fitInView()
 
 
-    def displayImage(self):
-        pixmap = self.image.pixmap
+    def displayImage(self, pixmap):
         self.imageViewer.setImage(pixmap)
 
 
