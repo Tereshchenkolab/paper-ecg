@@ -97,7 +97,10 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         Executed when the mouse is pressed on the item.
         """
-        print("button: ", mouseEvent.button())
+        print("MousePressEvent: ", mouseEvent.pos())
+        print("Pos: ", self.pos())
+        print("top left handle: ", self.handles[self.handleTopLeft])
+        self.mousePressPos = mouseEvent.pos()
         self.handleSelected = self.handleAt(mouseEvent.pos())
         if self.handleSelected:
             self.mousePressPos = mouseEvent.pos()
@@ -109,10 +112,18 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         Executed when the mouse is being moved over the item while being pressed.
         """
+        # mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
+        # print("mouseMoveEvent scene: ", mouseEvent.scenePos())
+        # leftOffset = abs(self.mousePressPos.x()-self.handles[self.handleTopLeft].x())
+        # rightOffset = abs(self.handles[self.handleTopRight].x()-self.mousePressPos.x())
+        # print("left offset: ", leftOffset)
+        # print("right offset: ", rightOffset)
         if self.handleSelected is not None:
             self.interactiveResize(mouseEvent.pos())
         else:
             self.updateHandlesPos()
+            # if mouseEvent.scenePos().x()-leftOffset >= 0 and mouseEvent.scenePos().x()+rightOffset <= self.parentScene.width():
+
             super().mouseMoveEvent(mouseEvent)
 
     def mouseReleaseEvent(self, mouseEvent):
@@ -143,6 +154,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         s = self.handleSize
         b = self.boundingRect()
+        # b = self.mapToScene(self.boundingRect()).boundingRect()
 
         self.handles[self.handleTopLeft] = QtCore.QRectF(b.left(), b.top(), s, s)
         self.handles[self.handleTopMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.top(), s, s)
@@ -159,6 +171,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         offset = self.handleSize + self.handleSpace
         boundingRect = self.boundingRect()
+        # boundingRect = self.mapToScene(self.boundingRect()).boundingRect()
         rect = self.rect()
         diff = QtCore.QPointF(0, 0)
 
@@ -269,25 +282,29 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.updateHandlesPos()
 
     #DO NOT DELETE - still working on bugs in movement restriction
-    #def itemChange(self, change, value):
-    #     if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
-    #         if self.parentScene is not None:
-    #             newPos = value
-    #             boxRect = self.mapToScene(self.boundingRect()).boundingRect()
-    #             sceneRect = self.parentScene.sceneRect()
-                
-    #             print("value: ", value)
-    #             print("box rect: ", boxRect)
-    #             print("box top left: ", boxRect.topLeft())
-    #             print("scene rect: ", sceneRect)
-    #             print(sceneRect.contains(boxRect))
+    def itemChange(self, change, value):
+        if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
+            if self.parentScene is not None:
+                boxRect = self.boundingRect()
+                sceneRect = self.parentScene.sceneRect()
+                print("value: ", value)
+                offsetX = value.x()+self.handles[self.handleTopLeft].x()
+                offsetY = value.y()+self.handles[self.handleTopLeft].y()
+                print("offset value: (", offsetX, ",", offsetY, ")")
 
-    #             rR = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
-    #             if not rR.contains(value):
-    #                 x = min(max(rR.left(), value.x()), rR.right())
-    #                 y = min(max(rR.top(), value.y()), rR.bottom())
-    #                 return QtCore.QPointF(x, y)
-    #    return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
+                if not sceneRect.contains(offsetX, offsetY):
+                    x = value.x()
+                    y = value.y()
+                    if offsetX < 1:
+                        x = 0-self.handles[self.handleTopLeft].x()
+                    elif offsetX+boxRect.width() >= sceneRect.right():
+                        x = sceneRect.right()-boxRect.width()-self.handles[self.handleTopLeft].x()
+                    if offsetY < 1:
+                        y = 0-self.handles[self.handleTopLeft].y()
+                    # x = min(max(sceneRect.left(), offsetX), sceneRect.right())
+                    # y = min(max(sceneRect.top(), offsetY), sceneRect.bottom())
+                    return QtCore.QPointF(x, y)
+        return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
 
     def shape(self):
         """
@@ -362,6 +379,7 @@ class ImageView(QtWidgets.QGraphicsView):
 
     def resizeEvent(self, event):
         print("graphicsview size ", self.width(), "x", self.height())
+        print("scene size ", self._scene.width(), "x", self._scene.height())
         #if self.hasImage(): 
         #    self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         QtWidgets.QGraphicsView.resizeEvent(self, event)
