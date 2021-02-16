@@ -285,24 +285,25 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
     def itemChange(self, change, value):
         if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
             if self.parentScene is not None:
-                boxRect = self.boundingRect()
+                boxRect = self.mapToScene(self.boundingRect()).boundingRect()
                 sceneRect = self.parentScene.sceneRect()
-                print("value: ", value)
+                # print("value: ", value)
                 offsetX = value.x()+self.handles[self.handleTopLeft].x()
                 offsetY = value.y()+self.handles[self.handleTopLeft].y()
-                print("offset value: (", offsetX, ",", offsetY, ")")
-
-                if not sceneRect.contains(offsetX, offsetY):
+                # print("offset value: (", offsetX, ",", offsetY, ")")
+                # print("box width: ", boxRect.width())
+                rr = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
+                if not rr.contains(offsetX, offsetY):
                     x = value.x()
                     y = value.y()
                     if offsetX < 1:
                         x = 0-self.handles[self.handleTopLeft].x()
-                    elif offsetX+boxRect.width() >= sceneRect.right():
+                    if offsetX+boxRect.width() >= sceneRect.width():
                         x = sceneRect.right()-boxRect.width()-self.handles[self.handleTopLeft].x()
                     if offsetY < 1:
                         y = 0-self.handles[self.handleTopLeft].y()
-                    # x = min(max(sceneRect.left(), offsetX), sceneRect.right())
-                    # y = min(max(sceneRect.top(), offsetY), sceneRect.bottom())
+                    elif offsetY+boxRect.height() >= sceneRect.bottom():
+                        y = sceneRect.bottom()-boxRect.height()-self.handles[self.handleTopLeft].y()
                     return QtCore.QPointF(x, y)
         return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
 
