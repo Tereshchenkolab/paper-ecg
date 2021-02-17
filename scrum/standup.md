@@ -450,3 +450,36 @@ None.
 #### Blockers
 
 None.
+
+
+
+## February 16
+
+### Natalie
+
+#### Since last meeting
+
+- Cracked the problem of restricting bounding box movement **with** resizing!
+
+#### Until next meeting
+
+- Restrict the bounding box during resizing.
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Made some test images using the app to aid in developing extraction algorithms.
+
+#### Until next meeting
+
+- Start implementing signal extraction algorithms.
+
+#### Blockers
+
+None.
