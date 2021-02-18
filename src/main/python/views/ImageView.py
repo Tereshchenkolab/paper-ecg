@@ -97,9 +97,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         Executed when the mouse is pressed on the item.
         """
-        print("MousePressEvent: ", mouseEvent.pos())
-        print("Pos: ", self.pos())
-        print("top left handle: ", self.handles[self.handleTopLeft])
+        self.updateHandlesPos()
         self.mousePressPos = mouseEvent.pos()
         self.handleSelected = self.handleAt(mouseEvent.pos())
         if self.handleSelected:
@@ -112,18 +110,10 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         Executed when the mouse is being moved over the item while being pressed.
         """
-        # mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
-        # print("mouseMoveEvent scene: ", mouseEvent.scenePos())
-        # leftOffset = abs(self.mousePressPos.x()-self.handles[self.handleTopLeft].x())
-        # rightOffset = abs(self.handles[self.handleTopRight].x()-self.mousePressPos.x())
-        # print("left offset: ", leftOffset)
-        # print("right offset: ", rightOffset)
         if self.handleSelected is not None:
             self.interactiveResize(mouseEvent.pos())
         else:
             self.updateHandlesPos()
-            # if mouseEvent.scenePos().x()-leftOffset >= 0 and mouseEvent.scenePos().x()+rightOffset <= self.parentScene.width():
-
             super().mouseMoveEvent(mouseEvent)
 
     def mouseReleaseEvent(self, mouseEvent):
@@ -154,7 +144,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         s = self.handleSize
         b = self.boundingRect()
-        # b = self.mapToScene(self.boundingRect()).boundingRect()
 
         self.handles[self.handleTopLeft] = QtCore.QRectF(b.left(), b.top(), s, s)
         self.handles[self.handleTopMiddle] = QtCore.QRectF(b.center().x() - s / 2, b.top(), s, s)
@@ -170,8 +159,9 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         Perform shape interactive resize.
         """
         offset = self.handleSize + self.handleSpace
+        sceneRect = self.parentScene.sceneRect()
         boundingRect = self.boundingRect()
-        # boundingRect = self.mapToScene(self.boundingRect()).boundingRect()
+        mappedRect = self.mapToScene(self.boundingRect()).boundingRect()
         rect = self.rect()
         diff = QtCore.QPointF(0, 0)
 
@@ -182,21 +172,26 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             fromY = self.mousePressRect.top()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            if boundingRect.bottom() - toY > self.minHeight:
+            print("mapped rect: ", mappedRect)
+            print("bounding rect: ", boundingRect)
+            print("mouse pos", mousePos)
+            print("fromX: ", fromX)
+            print("toX", toX)
+            if boundingRect.bottom() - toY > self.minHeight and mappedRect.y() - (boundingRect.y()-toY) >= sceneRect.top():
                 diff.setY(toY - fromY)
                 boundingRect.setTop(toY)
                 rect.setTop(boundingRect.top() + offset)
-            if boundingRect.right() - toX > self.minWidth:
-                diff.setX(toX - fromX)
-                boundingRect.setLeft(toX)
-                rect.setLeft(boundingRect.left() + offset)
+            if boundingRect.right() - toX > self.minWidth and mappedRect.x() - (boundingRect.x()-toX) >= sceneRect.left():
+                    diff.setX(toX - fromX)
+                    boundingRect.setLeft(toX)
+                    rect.setLeft(boundingRect.left() + offset)
             self.setRect(rect)
 
         elif self.handleSelected == self.handleTopMiddle:
 
             fromY = self.mousePressRect.top()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            if boundingRect.bottom() - toY > self.minHeight:
+            if boundingRect.bottom() - toY > self.minHeight and mappedRect.y() - (boundingRect.y()-toY) >= sceneRect.top():
                 diff.setY(toY - fromY)
                 boundingRect.setTop(toY)
                 rect.setTop(boundingRect.top() + offset)
@@ -208,11 +203,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             fromY = self.mousePressRect.top()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            if boundingRect.bottom() - toY > self.minHeight: 
+            if boundingRect.bottom() - toY > self.minHeight and mappedRect.y() - (boundingRect.y()-toY) >= sceneRect.top(): 
                 diff.setY(toY - fromY)
                 boundingRect.setTop(toY)
                 rect.setTop(boundingRect.top() + offset)
-            if toX - boundingRect.left() > self.minWidth:
+            if toX - boundingRect.left() > self.minWidth and mappedRect.topRight().x() - (boundingRect.topRight().x()-toX) <= sceneRect.right():
                 diff.setX(toX - fromX)
                 boundingRect.setRight(toX)
                 rect.setRight(boundingRect.right() - offset)
@@ -222,7 +217,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
             fromX = self.mousePressRect.left()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
-            if boundingRect.right() - toX > self.minWidth:
+            if boundingRect.right() - toX > self.minWidth and mappedRect.x() - (boundingRect.x()-toX) >= sceneRect.left():
                 diff.setX(toX - fromX)
                 boundingRect.setLeft(toX)
                 rect.setLeft(boundingRect.left() + offset)
@@ -231,7 +226,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         elif self.handleSelected == self.handleMiddleRight:
             fromX = self.mousePressRect.right()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
-            if toX - boundingRect.left() > self.minWidth:
+            if toX - boundingRect.left() > self.minWidth and mappedRect.right() - (boundingRect.right()-toX) <= sceneRect.right():
                 diff.setX(toX - fromX)
                 boundingRect.setRight(toX)
                 rect.setRight(boundingRect.right() - offset)
@@ -243,11 +238,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             fromY = self.mousePressRect.bottom()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            if toY - boundingRect.top() > self.minHeight:
+            if toY - boundingRect.top() > self.minHeight and mappedRect.bottomLeft().y() - (boundingRect.bottomLeft().y()-toY) <= sceneRect.bottom():
                 diff.setY(toY - fromY)
                 boundingRect.setBottom(toY)
                 rect.setBottom(boundingRect.bottom() - offset)
-            if boundingRect.right() - toX > self.minWidth:
+            if boundingRect.right() - toX > self.minWidth and mappedRect.x() - (boundingRect.x()-toX) >= sceneRect.left():
                 diff.setX(toX - fromX)
                 boundingRect.setLeft(toX)
                 rect.setLeft(boundingRect.left() + offset)
@@ -257,7 +252,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
             fromY = self.mousePressRect.bottom()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            if toY - boundingRect.top() > self.minHeight:
+            if toY - boundingRect.top() > self.minHeight and mappedRect.bottom() - (boundingRect.bottom()-toY) <= sceneRect.bottom():
                 diff.setY(toY - fromY)
                 boundingRect.setBottom(toY)
                 rect.setBottom(boundingRect.bottom() - offset)
@@ -269,11 +264,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             fromY = self.mousePressRect.bottom()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            if toY - boundingRect.top() > self.minHeight:
+            if toY - boundingRect.top() > self.minHeight and mappedRect.bottomRight().y() - (boundingRect.bottomRight().y()-toY) <= sceneRect.bottom():
                 diff.setY(toY - fromY)
                 boundingRect.setBottom(toY)
                 rect.setBottom(boundingRect.bottom() - offset)
-            if toX - boundingRect.left() > self.minWidth:
+            if toX - boundingRect.left() > self.minWidth and mappedRect.bottomRight().x() - (boundingRect.bottomRight().x()-toX) <= sceneRect.right():
                 diff.setX(toX - fromX)
                 boundingRect.setRight(toX)
                 rect.setRight(boundingRect.right() - offset)
@@ -281,7 +276,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         self.updateHandlesPos()
 
-    #DO NOT DELETE - still working on bugs in movement restriction
     def itemChange(self, change, value):
         if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
             if self.parentScene is not None:
@@ -297,11 +291,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
                     x = value.x()
                     y = value.y()
                     if offsetX < 1:
-                        x = 0-self.handles[self.handleTopLeft].x()
+                        x = sceneRect.left()-self.handles[self.handleTopLeft].x()
                     if offsetX+boxRect.width() >= sceneRect.width():
                         x = sceneRect.right()-boxRect.width()-self.handles[self.handleTopLeft].x()
                     if offsetY < 1:
-                        y = 0-self.handles[self.handleTopLeft].y()
+                        y = sceneRect.top()-self.handles[self.handleTopLeft].y()
                     elif offsetY+boxRect.height() >= sceneRect.bottom():
                         y = sceneRect.bottom()-boxRect.height()-self.handles[self.handleTopLeft].y()
                     return QtCore.QPointF(x, y)
@@ -445,7 +439,6 @@ class ImageView(QtWidgets.QGraphicsView):
                     self._zoom = 0
             else:
                 print("scale not invertible")
-
     
 
 if __name__ == '__main__':
