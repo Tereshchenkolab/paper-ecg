@@ -45,11 +45,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         # Pixel data within the bounding box region
         self.pixelData = None
-        
+
         # Minimum width and height of box (in pixels)
         self.minHeight = 50
         self.minWidth = 50
-        
+
         # QGraphicsScene that contains this ROIItem instance
         self.parentScene = parent
 
@@ -128,7 +128,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         print("box location: ", mappedBox)
         self.pixelData = self.parentViews[0]._image.pixmap().copy(mappedBox.toRect())
         self.pixelData.save(self.leadId + ".png")
-        
+
 
     def boundingRect(self):
         """
@@ -195,7 +195,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             fromY = self.mousePressRect.top()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            if boundingRect.bottom() - toY > self.minHeight: 
+            if boundingRect.bottom() - toY > self.minHeight:
                 diff.setY(toY - fromY)
                 boundingRect.setTop(toY)
                 rect.setTop(boundingRect.top() + offset)
@@ -275,7 +275,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
     #             newPos = value
     #             boxRect = self.mapToScene(self.boundingRect()).boundingRect()
     #             sceneRect = self.parentScene.sceneRect()
-                
+
     #             print("value: ", value)
     #             print("box rect: ", boxRect)
     #             print("box top left: ", boxRect.topLeft())
@@ -287,7 +287,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
     #                 x = min(max(rR.left(), value.x()), rR.right())
     #                 y = min(max(rR.top(), value.y()), rR.bottom())
     #                 return QtCore.QPointF(x, y)
-    #    return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
+    #    return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)
 
     def shape(self):
         """
@@ -362,7 +362,7 @@ class ImageView(QtWidgets.QGraphicsView):
 
     def resizeEvent(self, event):
         print("graphicsview size ", self.width(), "x", self.height())
-        #if self.hasImage(): 
+        #if self.hasImage():
         #    self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         QtWidgets.QGraphicsView.resizeEvent(self, event)
 
@@ -427,7 +427,7 @@ class ImageView(QtWidgets.QGraphicsView):
             else:
                 print("scale not invertible")
 
-    
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])

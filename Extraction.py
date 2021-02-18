@@ -10,9 +10,11 @@ def showGreyscaleImage(image):
     plt.imshow(image, cmap='gray')
     plt.show()
 
+
 def showColorImage(image):
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.show()
+
 
 path = "leadPictures/slighty-noisey-aVL-small.png"
 # path = "leadPictures/slighty-noisey-aVL.png"

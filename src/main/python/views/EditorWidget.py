@@ -5,15 +5,15 @@ Created November 7, 2020
 -
 """
 
-import cv2
-from PyQt5 import QtCore, QtGui, QtWidgets
 from pathlib import Path
-import sys
 
-from QtWrapper import *
+from ..model.EditableImage import EditableImage
+from PyQt5 import QtCore, QtGui, QtWidgets
+from ..QtWrapper import *
 from Utility import *
-from views.ImageView import *
-from model.EditableImage import EditableImage
+
+from ..views.ImageView import *
+
 
 class Editor(QtWidgets.QWidget):
 
@@ -29,7 +29,6 @@ class Editor(QtWidgets.QWidget):
 
         # Hide panel until an image is loaded
         # self.editPanel.hide()
-
 
     def initUI(self):
 
@@ -110,7 +109,6 @@ class Editor(QtWidgets.QWidget):
             ])
         )
 
-
     def connectUI(self):
 
         # Image editing controls
@@ -125,9 +123,6 @@ class Editor(QtWidgets.QWidget):
         self.rotationSlider.sliderReleased.connect(self.adjustRotation)
         self.rotationSlider.sliderMoved.connect(self.adjustRotation)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
-
-
-
 
     def numpyToPixMap(self, image):
         # SOURCE: https://stackoverflow.com/a/50800745/7737644 (Creative Commons - Credit, share-alike)
@@ -146,7 +141,6 @@ class Editor(QtWidgets.QWidget):
 
         return pixmap
 
-
     def adjustBrightness(self, value = None):
         if value is None:
             value = self.brightnessSlider.value()
@@ -154,14 +148,12 @@ class Editor(QtWidgets.QWidget):
         if self.image is not None:
             self.displayImage(self.image.withBrightness(value))
 
-
     def adjustContrast(self, value = None):
         if value is None:
             value = self.contrastSlider.value()
 
         if self.image is not None:
             self.displayImage(self.image.withContrast(value))
-
 
     def adjustRotation(self, value = None):
         if value is None:
@@ -173,18 +165,15 @@ class Editor(QtWidgets.QWidget):
         if self.image is not None:
             self.displayImage(self.image.withRotation(value))
 
-
     def resetImageEditControls(self):
         # TODO: Implement this (and call when a new image is loaded ... ?)
         # IDEA: Only show the image editing controls when there is a image loaded?
         pass
 
-
     def loadImageFromPath(self, path: Path):
         self.image = EditableImage(path)
         self.displayImage(self.image.getPixmap())
         self.onImageAppear()
-
 
     def onImageAppear(self):
         """Called when a new image is opened"""
@@ -193,8 +182,5 @@ class Editor(QtWidgets.QWidget):
         # Adjust zoom to fit image in view
         self.imageViewer.fitInView()
 
-
     def displayImage(self, pixmap):
         self.imageViewer.setImage(pixmap)
-
-
