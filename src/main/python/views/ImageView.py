@@ -45,11 +45,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         # Pixel data within the bounding box region
         self.pixelData = None
-        
+
         # Minimum width and height of box (in pixels)
         self.minHeight = 50
         self.minWidth = 50
-        
+
         # QGraphicsScene that contains this ROIItem instance
         self.parentScene = parent
 
@@ -129,7 +129,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         print("box location: ", mappedBox)
         self.pixelData = self.parentViews[0]._image.pixmap().copy(mappedBox.toRect())
         self.pixelData.save(self.leadId + ".png")
-        
+
 
     def boundingRect(self):
         """
@@ -203,7 +203,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             fromY = self.mousePressRect.top()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
+<<<<<<< HEAD
             if boundingRect.bottom() - toY > self.minHeight and mappedRect.y() - (boundingRect.y()-toY) >= sceneRect.top(): 
+=======
+            if boundingRect.bottom() - toY > self.minHeight:
+>>>>>>> 6eca1f0febccdc45769077b9aa99cec33bf48f3c
                 diff.setY(toY - fromY)
                 boundingRect.setTop(toY)
                 rect.setTop(boundingRect.top() + offset)
@@ -276,6 +280,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         self.updateHandlesPos()
 
+<<<<<<< HEAD
     def itemChange(self, change, value):
         if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
             if self.parentScene is not None:
@@ -300,6 +305,28 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
                         y = sceneRect.bottom()-boxRect.height()-self.handles[self.handleTopLeft].y()
                     return QtCore.QPointF(x, y)
         return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
+=======
+    #DO NOT DELETE - still working on bugs in movement restriction
+    #def itemChange(self, change, value):
+    #     if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
+    #         if self.parentScene is not None:
+    #             newPos = value
+    #             boxRect = self.mapToScene(self.boundingRect()).boundingRect()
+    #             sceneRect = self.parentScene.sceneRect()
+
+    #             print("value: ", value)
+    #             print("box rect: ", boxRect)
+    #             print("box top left: ", boxRect.topLeft())
+    #             print("scene rect: ", sceneRect)
+    #             print(sceneRect.contains(boxRect))
+
+    #             rR = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
+    #             if not rR.contains(value):
+    #                 x = min(max(rR.left(), value.x()), rR.right())
+    #                 y = min(max(rR.top(), value.y()), rR.bottom())
+    #                 return QtCore.QPointF(x, y)
+    #    return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)
+>>>>>>> 6eca1f0febccdc45769077b9aa99cec33bf48f3c
 
     def shape(self):
         """
@@ -374,8 +401,12 @@ class ImageView(QtWidgets.QGraphicsView):
 
     def resizeEvent(self, event):
         print("graphicsview size ", self.width(), "x", self.height())
+<<<<<<< HEAD
         print("scene size ", self._scene.width(), "x", self._scene.height())
         #if self.hasImage(): 
+=======
+        #if self.hasImage():
+>>>>>>> 6eca1f0febccdc45769077b9aa99cec33bf48f3c
         #    self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         QtWidgets.QGraphicsView.resizeEvent(self, event)
 
@@ -439,7 +470,12 @@ class ImageView(QtWidgets.QGraphicsView):
                     self._zoom = 0
             else:
                 print("scale not invertible")
+<<<<<<< HEAD
     
+=======
+
+
+>>>>>>> 6eca1f0febccdc45769077b9aa99cec33bf48f3c
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
