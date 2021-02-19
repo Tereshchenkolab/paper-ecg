@@ -47,7 +47,7 @@ def otsuThresholdSelection(image: np.ndarray):
     return k
 
 
-def mallawaarachchiBasic(image):
+def mallawaarachchiBasic(image, useBlur: bool = False):
     """The most straightforward implementation of binarization from Mallawaarachchi et. al., 2014"""
 
     # "The first [this] method tends to preserve significantly more information than the second does. For traces with minimal
@@ -56,7 +56,10 @@ def mallawaarachchiBasic(image):
     greyscaleImage = standardGreyscaleConversion(image)
 
     # Apply blur to reduce noise (⚠️ not in the paper)
-    blurredImage = blur(greyscaleImage, kernelSize=3)
+    if useBlur:
+        blurredImage = blur(greyscaleImage, kernelSize=3)
+    else:
+        blurredImage = greyscaleImage
 
     # Get the threshold using the method from Otsu
     # TODO: What about using greyscale for threshold?
