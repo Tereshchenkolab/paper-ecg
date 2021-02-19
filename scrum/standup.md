@@ -483,3 +483,35 @@ None.
 #### Blockers
 
 None.
+
+
+## February 19
+
+### Natalie
+
+#### Since last meeting
+
+- Fixed bounding boxes so they stay inside image even with resizing!
+
+#### Until next meeting
+
+- Planning out detail and look into zoom stuff!
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Implemented Mallarachi, 2014 binarization and a basic extraction algorithm.
+
+#### Until next meeting
+
+- Implement grid extraction, maybe plan out the whole conversion process.
+
+#### Blockers
+
+None.
