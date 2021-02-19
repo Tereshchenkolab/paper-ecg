@@ -7,12 +7,12 @@ Created November 7, 2020
 
 from pathlib import Path
 
-from ..model.EditableImage import EditableImage
+from model.EditableImage import EditableImage
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ..QtWrapper import *
+from QtWrapper import *
 from Utility import *
 
-from ..views.ImageView import *
+from views.ImageView import *
 
 
 class Editor(QtWidgets.QWidget):
