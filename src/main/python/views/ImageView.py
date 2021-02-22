@@ -126,8 +126,10 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.mousePressRect = None
         self.update()
         mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
+        box = self.mapToScene(self.rect()).boundingRect()
         print("box location: ", mappedBox)
-        self.pixelData = self.parentViews[0]._image.pixmap().copy(mappedBox.toRect())
+        print("rect: ", box)
+        self.pixelData = self.parentViews[0]._image.pixmap().copy(box.toRect())
         self.pixelData.save(self.leadId + ".png")
 
 
@@ -373,20 +375,14 @@ class ImageView(QtWidgets.QGraphicsView):
         )
 
     def resizeEvent(self, event):
-        print("graphicsview size ", self.width(), "x", self.height())
-        print("scene size ", self._scene.width(), "x", self._scene.height())
-        #if self.hasImage(): 
-        #    self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+        if self.hasImage() and not self.verticalScrollBar().isVisible() and not self.horizontalScrollBar().isVisible(): 
+           self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         QtWidgets.QGraphicsView.resizeEvent(self, event)
 
     def hasImage(self):
         return not self._empty
 
     def setImage(self, pixmap=None):
-        # Set it so the user can drag the image to pan
-        #self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
-        #self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
-
         self._image.setPixmap(pixmap)
         self._empty = False
         self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
