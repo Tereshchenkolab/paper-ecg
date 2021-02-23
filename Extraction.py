@@ -21,7 +21,7 @@ path = "leadPictures/slighty-noisey-aVL-small.png"
 
 # path = "../Test Images/Mocks/test2.png"
 # path = "../Test Images/Larisa/ZEL297(9).jpg"
-
+# path = "data/700px-AMI_inferior_2.jpg"
 
 testImage = loadImage(path)
 
@@ -31,7 +31,12 @@ showGreyscaleImage(binaryImage)
 # plt.show()
 
 #signal = SignalExtraction.horizontalScanLookBehind(binaryImage)
-signal = SignalExtraction.naïveHorizontalScan(binaryImage)
+signal = SignalExtraction.horizontalScanLookBehind(binaryImage)
 
-plt.plot(signal, c='blueviolet', linewidth=2)
+plt.imshow(signal, cmap='spring')
 plt.show()
+
+# print(signal)
+
+# plt.plot(signal, c='blueviolet', linewidth=2)
+# plt.show()
