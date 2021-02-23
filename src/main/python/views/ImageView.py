@@ -278,30 +278,43 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         self.updateHandlesPos()
 
+
     def itemChange(self, change, value):
         if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
             if self.parentScene is not None:
-                boxRect = self.mapToScene(self.boundingRect()).boundingRect()
-                sceneRect = self.parentScene.sceneRect()
-                # print("value: ", value)
-                offsetX = value.x()+self.handles[self.handleTopLeft].x()
-                offsetY = value.y()+self.handles[self.handleTopLeft].y()
-                # print("offset value: (", offsetX, ",", offsetY, ")")
-                # print("box width: ", boxRect.width())
-                rr = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
-                if not rr.contains(offsetX, offsetY):
-                    x = value.x()
-                    y = value.y()
-                    if offsetX < 1:
-                        x = sceneRect.left()-self.handles[self.handleTopLeft].x()
-                    if offsetX+boxRect.width() >= sceneRect.width():
-                        x = sceneRect.right()-boxRect.width()-self.handles[self.handleTopLeft].x()
-                    if offsetY < 1:
-                        y = sceneRect.top()-self.handles[self.handleTopLeft].y()
-                    elif offsetY+boxRect.height() >= sceneRect.bottom():
-                        y = sceneRect.bottom()-boxRect.height()-self.handles[self.handleTopLeft].y()
-                    return QtCore.QPointF(x, y)
+                return self.restrictMovement(value)
+        
+        if change == QtWidgets.QGraphicsRectItem.ItemSelectedChange:
+            if value == True:
+                self.setZValue(1)
+            else:
+                self.setZValue(0)
+
         return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
+
+    def restrictMovement(self, value):
+        boxRect = self.mapToScene(self.boundingRect()).boundingRect()
+        sceneRect = self.parentScene.sceneRect()
+
+        x = value.x()+self.handles[self.handleTopLeft].x()
+        y = value.y()+self.handles[self.handleTopLeft].y()
+
+        relativeRect = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
+        
+        if not relativeRect.contains(x, y):
+            newX = value.x()
+            newY = value.y()
+            if x < 1:
+                newX = sceneRect.left()-self.handles[self.handleTopLeft].x()+self.handleSpace
+            if x+boxRect.width() >= sceneRect.width():
+                newX = sceneRect.right()-boxRect.width()-self.handles[self.handleTopLeft].x()-self.handleSpace
+            if y < 1:
+                newY = sceneRect.top()-self.handles[self.handleTopLeft].y()+self.handleSpace
+            elif y+boxRect.height() >= sceneRect.bottom():
+                newY = sceneRect.bottom()-boxRect.height()-self.handles[self.handleTopLeft].y()-self.handleSpace
+            return QtCore.QPointF(newX, newY)
+        else:
+            return QtCore.QPointF(value.x(), value.y())
 
     def shape(self):
         """
@@ -318,23 +331,28 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         """
         Paint the node in the graphic view.
         """
-        painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0), 2.0, QtCore.Qt.SolidLine))
-        painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 64)))
-        painter.drawRect(self.rect())
+        # painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0), 2.0, QtCore.Qt.SolidLine))
+        # painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 64)))
+        # painter.drawRect(self.rect())
 
         painter.setFont(QtGui.QFont('Default', 50))
         fontMetrics = QtGui.QFontMetrics(painter.font())
 
         if self.isSelected():
+            painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0), 2.0, QtCore.Qt.SolidLine))
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 64)))
+            painter.drawRect(self.rect())
+
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
             painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 255)))
             painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0, 255), 2.0, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
             for handle, rect in self.handles.items():
-                # print(self.handles.items())
-                # if self.handleSelected is None or handle == self.handleSelected:
-                painter.drawEllipse(rect)
+                painter.drawRect(rect)
         else:
+            painter.setPen(QtGui.QPen(QtGui.QColor(200, 200, 200), 2.0, QtCore.Qt.SolidLine))
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(211, 211, 211, 64)))
             painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId)
+            painter.drawRect(self.rect())
 
     def setLeadId(self, lead):
         self.leadId = lead
