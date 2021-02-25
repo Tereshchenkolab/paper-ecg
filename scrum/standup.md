@@ -515,3 +515,39 @@ None.
 #### Blockers
 
 None.
+
+
+## February 24
+
+### Natalie
+
+#### Since last meeting
+
+- Fixed zooming issues on window resizing
+- Bounding box changes colors when selected/deselected
+- Refactored ROIItem our of ImageView
+- Added offset to image capturing to grab data from inside lines of the box
+
+#### Until next meeting
+
+- Designing the editor panel
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Implementing a new, more robust, way to extract the signal
+
+#### Until next meeting
+
+- Finish the robust stuff
+- Write algorithm to detect size of grid
+
+#### Blockers
+
+None.
