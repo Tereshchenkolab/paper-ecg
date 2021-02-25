@@ -11,6 +11,7 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 
 from views.MainWindow import MainWindow
 from views.ImageView import *
+from views.ROIView import *
 from QtWrapper import *
 
 
@@ -72,16 +73,15 @@ class MainController:
 
 
     def addLead(self, selection, action):
+        if self.window.editor.imageViewer.hasImage():
+            # Disable menu action so user can't add more than one bounding box for an individual lead
+            action.setEnabled(False)
 
-        # Disable menu action so user can't add more than one bounding box for an individual lead
-        action.setEnabled(False)
+            box = ROIItem(self.window.editor.imageViewer._scene)
+            box.setLeadId(selection)
+            box.setRect(0, 0, 400, 200)
+            box.setPos(0,0)
 
-        box = ROIItem(self.window.editor.imageViewer._scene)
-        box.setLeadId(selection)
-        box.setRect(0, 0, 400, 200)
-        box.setPos(0,0)
+            self.window.editor.imageViewer._scene.addItem(box)
 
-        self.window.editor.imageViewer._scene.addItem(box)
-        print(self.window.editor.imageViewer._scene.items())
-
-        box.show()
+            box.show()

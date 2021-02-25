@@ -13,6 +13,7 @@ from QtWrapper import *
 from Utility import *
 
 from views.ImageView import *
+from views.ROIView import *
 
 
 class Editor(QtWidgets.QWidget):
@@ -180,7 +181,7 @@ class Editor(QtWidgets.QWidget):
         self.editPanel.show()
 
         # Adjust zoom to fit image in view
-        self.imageViewer.fitInView()
+        self.imageViewer.fitInView(QtCore.QRectF(self.image.getPixmap().rect()), QtCore.Qt.KeepAspectRatio)
 
     def displayImage(self, pixmap):
         self.imageViewer.setImage(pixmap)
