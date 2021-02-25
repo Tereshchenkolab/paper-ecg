@@ -13,6 +13,7 @@ from QtWrapper import *
 from Utility import *
 
 from views.ImageView import *
+from views.ROIView import *
 
 
 class Editor(QtWidgets.QWidget):

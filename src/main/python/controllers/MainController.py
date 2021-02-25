@@ -11,6 +11,7 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 
 from views.MainWindow import MainWindow
 from views.ImageView import *
+from views.ROIView import *
 from QtWrapper import *
 
 
