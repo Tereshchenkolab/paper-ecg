@@ -291,16 +291,15 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         boxRect = self.mapToScene(self.boundingRect()).boundingRect()
         handleOffset = self.handleSpace
         sceneRect = self.parentScene.sceneRect()
-
-        """        
-        'value' represents the amount the item has moved along the x,y plane
-        so we calculate the actual (x,y) position that the item is moving to 
-        """
+       
+        # 'value' represents the amount the item is being moved along the x,y plane so we calculate the actual (x,y) position the item is moving to 
         x = value.x()+self.handles[self.handleTopLeft].x()
         y = value.y()+self.handles[self.handleTopLeft].y()
 
         relativeRect = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
         
+        
+        # If item is being moved out of bounds, override the appropriate x,y values to keep item within scene
         if not relativeRect.contains(x, y):
             if x < 1:
                 value.setX(sceneRect.left()-self.handles[self.handleTopLeft].x()+self.handleSpace)
