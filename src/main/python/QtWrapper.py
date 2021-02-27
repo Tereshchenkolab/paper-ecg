@@ -6,7 +6,7 @@ Wrapper to simplify interacting with Qt
 """
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget, QStackedWidget
 
 from typing import cast, List, Optional, Tuple, Union
 
@@ -316,6 +316,20 @@ def TabWidget(
 
     return tabWidget
 
+@bindsToClass
+def StackedWidget(
+    widgets: List[QWidget],
+    owner: Optional[QWidget] = None,
+    name: Optional[str] = None,
+) -> QStackedWidget:
+    """[summary]"""
+
+    stackedWidget = QStackedWidget()
+
+    for widget in widgets:
+        stackedWidget.addWidget(widget)
+
+    return stackedWidget
 
 @bindsToClass
 def VerticalBoxLayout(

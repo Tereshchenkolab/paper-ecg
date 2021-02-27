@@ -36,26 +36,23 @@ class Editor(QtWidgets.QWidget):
         self.setLayout(
             HorizontalBoxLayout(self, "main", margins=(0,0,0,0), contents=[
                 HorizontalSplitter([
-
                     Custom(
                         owner=self,
                         name="imageViewer",
                         widget=ImageView()
                     ),
 
-                    TabWidget(
+                    ScrollArea(
                         owner=self,
-                        name="editPanel",
-                        tabs=[
-
-                        Tab("Image",
-                            ScrollArea(
+                        name="scrollArea",
+                        horizontalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOff,
+                        verticalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOn,
+                        widgetIsResizable=True,
+                        innerWidget=
+                            StackedWidget(
                                 owner=self,
-                                name="scrollArea",
-                                horizontalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOff,
-                                verticalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOn,
-                                widgetIsResizable=True,
-                                innerWidget=
+                                name="editPanel",
+                                widgets=[
 
                                 Widget(
                                     owner=self,
@@ -89,26 +86,40 @@ class Editor(QtWidgets.QWidget):
                                             ])
                                         )
                                     ])
-                                )
-                            )
-                        ),
-                        Tab("Leads",
-                            Widget(
-                                owner=self,
-                                name="leadTab",
-                                layout=
+                                ),
+                                Widget(
+                                    owner=self,
+                                    name="localScrollContents",
+                                    horizontalPolicy=QtWidgets.QSizePolicy.Expanding,
+                                    verticalPolicy=QtWidgets.QSizePolicy.Fixed,
+                                    layout=
 
-                                VerticalBoxLayout(
-                                    contents=[
-                                        ComboBox(["Lead I", "Lead II", "Lead III"])
-                                    ]
+                                    VerticalBoxLayout(
+                                        self,
+                                        "globalLayout",
+                                        contents=[]
+                                    )
                                 )
-                            )
+                            ])
                         )
+                        # Tab("Leads",
+                        #     Widget(
+                        #         owner=self,
+                        #         name="leadTab",
+                        #         layout=
+
+                        #         VerticalBoxLayout(
+                        #             contents=[
+                        #                 ComboBox(["Lead I", "Lead II", "Lead III"])
+                        #             ]
+                        #         )
+                        #     )
+                        # )
                     ])
                 ])
-            ])
+            # ])
         )
+        self.setEditPanel()
 
     def connectUI(self):
 
@@ -185,3 +196,9 @@ class Editor(QtWidgets.QWidget):
 
     def displayImage(self, pixmap):
         self.imageViewer.setImage(pixmap)
+
+    def setEditPanel(self, localView=False):
+        if localView == True:
+            self.editPanel.setCurrentIndex(1)
+        else:
+            self.editPanel.setCurrentIndex(0)

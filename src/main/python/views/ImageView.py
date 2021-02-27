@@ -11,6 +11,9 @@ import os, sys
 
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
 class ImageView(QtWidgets.QGraphicsView):
+    itemSelected = QtCore.pyqtSignal(object, bool)
+    itemDeselected = QtCore.pyqtSignal(object)
+    
     def __init__(self):
         super().__init__()
 
