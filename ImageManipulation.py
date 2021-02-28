@@ -114,15 +114,28 @@ def openImage(binaryImage):
     return opened
 
 
-def extractGridUsingKernels(binaryImage):
+def extractGridUsingKernels(colorImage):
+    gray = cv2.cvtColor(colorImage, cv2.COLOR_BGR2GRAY) # Uses equation (2) from `2014 - ECG dig IEEE (Mallawaarachchi)`
+
+    _, binaryImage = cv2.threshold(gray, 240, 256, cv2.THRESH_BINARY_INV)
+
     opened = openImage(binaryImage)
+    opened = openImage(opened)
 
     # Subtract the opened image from the binary image
-    final = cv2.subtract(binaryImage, opened)
-    element = cv2.getStructuringElement(cv2.MORPH_CROSS, (2,2))
-    final = cv2.erode(final, element)
+    subtracted = cv2.subtract(binaryImage, opened)
 
-    displayGreyscaleImage(final, title="final")
+    final = cv2.erode(
+        subtracted,
+        cv2.getStructuringElement(cv2.MORPH_CROSS, (2,2))
+    )
+
+    displayImages([
+        (binaryImage, Color.greyscale, "Binary"),
+        (opened, Color.greyscale, "Opened"),
+        (subtracted, Color.greyscale, "Subtracted"),
+        (final, Color.greyscale, "Final")
+    ])
 
     return final
 
@@ -130,18 +143,18 @@ def extractGridUsingKernels(binaryImage):
 def traceGridlines(colorImage):
     # Convert to grayscale
     gray = cv2.cvtColor(colorImage, cv2.COLOR_BGR2GRAY) # Uses equation (2) from `2014 - ECG dig IEEE (Mallawaarachchi)`
-    # displayImages([(gray, Color.greyscale, "Gray")])
+    displayImages([(gray, Color.greyscale, "Gray")])
 
-    _, binary = cv2.threshold(gray, 120, 256, cv2.THRESH_BINARY_INV)
+    _, binary = cv2.threshold(gray, 240, 256, cv2.THRESH_BINARY_INV)
     displayImages([(binary, Color.greyscale, "Binary")])
 
     # Find the lines in the background grid
     gridBinary = extractGridUsingKernels(binary)
 
-    lines = houghLines(gridBinary)
+    lines = houghLines(binary)
     overlayImage = overlayLines(lines, cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR))
 
-    # displayColorImage(overlayImage)
+    displayColorImage(overlayImage)
 
     return lines
 
@@ -216,199 +229,25 @@ def cropImageToGrid(colorImage, imageToCrop):
     return croppedImage
 
 
-def cropToGridAndIsolateLinesDemo():
+def cropToGridAndIsolateLinesDemo(image):
     # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.50 PM.png"
     # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.19 PM.png"
     # imagePath = 'fullScan.png'
     # path = 'image.png'
 
-    # Load in image in color
-    image = cv2.imread(imagePath, 1)
-
-    gridPartOfImage = cropImageToGrid(image, image)
+    # gridPartOfImage = cropImageToGrid(image, image)
 
     # Convert to grayscale
-    gray = cv2.cvtColor(gridPartOfImage, cv2.COLOR_BGR2GRAY) # Uses equation (2) from `2014 - ECG dig IEEE (Mallawaarachchi)`
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # Uses equation (2) from `2014 - ECG dig IEEE (Mallawaarachchi)`
     # displayImages([(gray, Color.greyscale, "Gray")])
 
-    _, binary = cv2.threshold(gray, 100, 256, cv2.THRESH_BINARY_INV)
-    # displayImages([(binary, Color.greyscale, "Binary")])
+    _, binary = cv2.threshold(gray, 20, 256, cv2.THRESH_BINARY_INV)
+    # # displayImages([(binary, Color.greyscale, "Binary")])
 
     element = cv2.getStructuringElement(cv2.MORPH_ERODE, (2,2))
     binary = cv2.erode(binary, element)
 
-    # lines = traceGridlines(gridPartOfImage)
+    lines = traceGridlines(image)
 
     # overlayImage = overlayLines(lines, cv2.cvtColor(binary, cv2.COLOR_GRAY2BGR))
-    displayImages([(binary, Color.BGR, "Grid and signal")])
-
-
-def contiguousRegionsDemo():
-    # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.50 PM.png"
-    # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.19 PM.png"
-    path = 'fullScan.png'
-    # path = "../Test Images/Larisa/LAU8 tracé 8.JPG"
-    # path = "../Test Images/Mocks/test1.png"
-    # path = 'image.png'
-
-    # Load in image in color
-    image = cv2.imread(path, 1)
-
-    image = cropImageToGrid(image, image)
-
-    # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # Uses equation (2) from `2014 - ECG dig IEEE (Mallawaarachchi)`
-    displayImages([(gray, Color.greyscale, "Gray")])
-
-    _, binary = cv2.threshold(gray, 100, 256, cv2.THRESH_BINARY_INV)
-    # displayImages([(binary, Color.greyscale, "Binary")])
-
-    element = cv2.getStructuringElement(cv2.MORPH_ERODE, (2,2))
-    binary = cv2.erode(binary, element)
-
-    # displayImages([(binary, Color.BGR, "Starting point")])
-
-    explored = set()
-    width, height = binary.shape
-
-    regions = []
-
-    for y in range(height):
-        for x in range(width):
-            if binary[x][y] > 0 and (x, y) not in explored:
-                contiguousPixels = []
-                frontier = [(x, y)]
-
-                while frontier != []:
-                    (x,y) = frontier.pop()
-
-                    printStuff = False
-
-                    if (x, y) == (1129,1115):
-                        printStuff = True
-                        print("Trouble maker >:(")
-
-                    # Check any reason to discard this pixel:
-
-                    # (1) Outside the image boundaries
-                    if (x < 0 or x >= width
-                        or y < 0 or y >= height):
-                        if printStuff: print("Outside boundaries")
-                        continue
-
-                    # (2) Already visited
-                    if (x,y) in explored:
-                        if printStuff: print("Already Visited")
-                        continue
-
-                    # (3) Black pixel
-                    if binary[x][y] == 0:
-                        if printStuff: print("Black")
-                        continue
-
-                    # Add this pixel to the region!
-
-                    contiguousPixels.append((x,y))
-                    explored.add((x,y))
-
-                    if printStuff: print("Exploring neighbors...")
-
-                    # Explore all of the neighbors of this pixel:
-
-                    # Explore up
-                    frontier.append((x, y-1))
-                    # Explore left-up
-                    frontier.append((x-1, y-1))
-                    # Explore left
-                    frontier.append((x-1, y))
-                    # Explore left-down
-                    frontier.append((x-1, y+1))
-                    # Explore down
-                    frontier.append((x, y+1))
-                    # Explore right-down
-                    frontier.append((x+1, y+1))
-                    # Explore right
-                    frontier.append((x+1, y))
-                    # Explore right-up
-                    frontier.append((x+1, y-1))
-
-                regions.append(contiguousPixels)
-
-    regionMatrices = []
-
-    for region in regions:
-        minX = float('inf')
-        minY = float('inf')
-        maxX = 0
-        maxY = 0
-
-        for (x,y) in region:
-            if x < minX:
-                minX = x
-            if y < minY:
-                minY = y
-            if x > maxX:
-                maxX = x
-            if y > maxY:
-                maxY = y
-
-        regionMatrix = np.zeros((maxX-minX+1, maxY-minY+1), dtype=np.uint8)
-
-        for (x,y) in region:
-            regionMatrix[x-minX][y-minY] = 1
-
-        regionMatrices.append(((minX, minY), regionMatrix))
-
-    displayImages([(binary, Color.BGR, "Starting point")])
-
-    # Make an empty color (3-channel) image the same size as the original
-    isolatedRegions = np.array([[[0 for _ in range(3)] for _ in range(image.shape[1])] for _ in range(image.shape[0])], dtype=np.uint8)
-
-    for ((x,y), pixels) in regionMatrices:
-        colors = [random.randint(75,255) for _ in range(3)]
-        for pixelX, pixelRow in enumerate(pixels):
-            for pixelY, pixelValue in enumerate(pixelRow):
-                if pixelValue != 0:
-                    for index, color in enumerate(colors):
-                        isolatedRegions[x + pixelX][y + pixelY][index] = color
-
-    displayImages([(isolatedRegions, Color.BGR, "Extracted")])
-
-
-def thresholdExperiments():
-    # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.50 PM.png"
-    # path = "../Test Images/ECG Sample Images From Cleveland Clinic/Screen Shot 2020-03-21 at 12.00.19 PM.png"
-    path = 'fullScan.png'
-    # path = "../Test Images/Larisa/LAU8 tracé 8.JPG"
-    # path = "../Test Images/Mocks/test1.png"
-    # path = 'image.png'
-
-    # Load in image in color
-    image = cv2.imread(path, 1)
-
-    # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # Uses equation (2) from `2014 - ECG dig IEEE (Mallawaarachchi)`
-    displayImages([(gray, Color.greyscale, "Gray")])
-
-    # Show the histogram
-    plt.hist(gray.ravel(),256,[0,256]); plt.show()
-
-    _, binary = cv2.threshold(gray, 200, 256, cv2.THRESH_BINARY_INV)
-    displayImages([(binary, Color.greyscale, "Binary")])
-
-
-def main():
-    thresholdExperiments()
-    contiguousRegionsDemo()
-
-
-if __name__ == "__main__":
-    main()
-
-
-# NOTE: IDEA ABOUT CONTIGUOUS REGIONS AND IDENTIFYING THE ECG SIGNALS
-# I should try writing an algorithm to isolate all of the contiguous regions on connected pixels in a binary image.
-# I can use a hash to store visited pixels. I traverse through the image and when I find an active pixel, use dfs to build a sparse array holding all pixels connect to that first one. The whole way through I will be adding things to the hash so I don't try to run this again later.
-# I can then use these contiguous regions to identify the ECG signals, by making some feature-extraction functions, like maxHeight, which finds the max instantaneous height of the region when scanning left to right.
-# The ECG signals will span a very large width but are very skinny.
-# This could also lead to recognizing text by downsampling the region and checking against som predifined character rasters. Would be complicated to identify nearby letters to join together, but seems doable.
+    # displayImages([(binary, Color.BGR, "Grid and signal")]) # , (overlayImage, Color.BGR, "overlayImage")])
