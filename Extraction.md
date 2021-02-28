@@ -6,15 +6,23 @@
 ## Overview
 
 ```
-                  ┌─────  Grid Mask   ───── Grid Size (px) ───────┐
-                  │     (Binary Image)      (height, width)       │
- Cropped Lead  ───┤                                          Integration ───── Scaled Signal
- (Color Image)    │                                             │ │ │
-                  └────   Lead Mask   ───── Signal Trace ───────┘ │ │
-                        (Binary Image)        (array)             │ │
-                                                                  │ │
-                                                                  │ │
- Supplied by user:                       Grid Scale (mV and mm/s) ┘ └ Lead Offset (Seconds)
+                                      Modular
+                      ┌─────────────────────────────────────┐
+
+                  ┌──── Grid Detection ───── Grid Extraction ───────────┐
+                  │     (Binary Image)       (height, width)            │
+ Cropped Lead  ───┤                                               Integration ───── Scaled Signal
+ (Color Image)    │                                                   │ │ │
+                  └──── Lead Detection ───── Lead Extraction ─────────┘ │ │
+                        (Binary Image)          (array)                 │ │
+                                                                        │ │
+                      └─────────────────────────────────────┘           │ │
+                                      Modular                           │ │
+                                                                        │ │
+                                            ┌                           │ │
+                           Supplied by user │  Grid Scale (mV and mm/s) ┘ │
+                                            │       Lead Offset (Seconds) ┘
+                                            └
 ```
 
 
