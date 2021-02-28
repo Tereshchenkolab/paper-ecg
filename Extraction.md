@@ -28,8 +28,6 @@
 
 ## Lead Mask
 
-***
-
 Color Image -> Binary Image
 
 
@@ -62,8 +60,6 @@ Color Image -> Binary Image
 
 ### Signal Trace
 
-***
-
 Binary Image -> Array
 
 ...
@@ -72,8 +68,6 @@ Binary Image -> Array
 
 ### Grid Mask
 
-***
-
 Color Image -> Binary Image
 
 ...
@@ -81,8 +75,6 @@ Color Image -> Binary Image
 
 
 ### Grid Size
-
-***
 
 Color Image -> Binary Image
 
