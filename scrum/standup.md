@@ -551,3 +551,37 @@ None.
 #### Blockers
 
 None.
+
+
+## February 28
+
+### Natalie
+
+#### Since last meeting
+
+- Designed and started implementing global and lead-specific editor panels
+
+#### Until next meeting
+
+- A lot of code refactoring
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Finished algorithm but wasn't robust - not worth spending more time on
+- Researched a class of algorithm called "snakes"
+- Got grid detection algorithm working
+
+#### Until next meeting
+
+- More grid detection scaling
+
+#### Blockers
+
+None.
