@@ -4,8 +4,8 @@ from cv2 import imread as loadImage
 from cv2 import imwrite as writeImage
 import numpy as np
 
-from src.main.python.extraction import Binarization, SignalExtraction
-from ImageManipulation import *
+from src.main.python.ECGToolkit import Common, GridDetection, SignalDetection, SignalExtraction, Vision, Visualization
+
 
 def showGreyscaleImage(image):
     plt.imshow(image, cmap='Greys')
@@ -28,14 +28,25 @@ path = "leadPictures/slighty-noisey-aVL.png"
 
 testImage = loadImage(path)
 
+binary = GridDetection.extractGridUsingKernels(testImage)
+lines = Vision.houghLines(binary, threshold=80)
 
-# binaryImage = Binarization.mallawaarachchiBasic(testImage, useBlur=False)
+overlayImage = Visualization.overlayLines(lines, testImage)
+showColorImage(overlayImage)
 
-# showGreyscaleImage(testImage)
-extractGridUsingKernels(testImage)
-# plt.show()
+verticalLines = sorted(Vision.getLinesInDirection(lines, 90))
 
-# signal = SignalExtraction.traceLines(binaryImage)
+horizontalLines = sorted(Vision.getLinesInDirection(lines, 0))
 
-# plt.plot(signal, c='blueviolet', linewidth=2)
-# plt.show()
+distances = Common.calculateDistancesBetweenValues(horizontalLines)
+gridSpacing = Common.mode(distances) # Could use median or mode...
+print(gridSpacing)
+
+distances = Common.calculateDistancesBetweenValues(verticalLines)
+gridSpacing = Common.mode(distances) # Could use median or mode...
+print(gridSpacing)
+
+
+
+
+plt.show()

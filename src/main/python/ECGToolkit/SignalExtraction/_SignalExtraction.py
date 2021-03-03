@@ -2,7 +2,7 @@
 SignalExtraction.py
 Created February 17, 2021
 
--
+Provides methods for converting binary image of signal into signal data.
 """
 
 
@@ -10,44 +10,8 @@ from typing import Any, Callable, Generator, Iterable, Optional, Tuple, TypeVar,
 import numpy as np
 from math import sqrt, asin, pi
 from heapq import heapify, heappop, heappush, heapreplace
-from functools import partial
 
-import matplotlib.pyplot as plt
-
-List = list
-Int = int
-Float = float
-
-A = TypeVar("A")
-B = TypeVar("B")
-Numeric = Union[Float, Int]
-
-def reversedRange(stop):
-        return range(stop-1, -1, -1)
-
-def inclusiveRange(start, stop):
-    return range(start, stop+1)
-
-def neg(inputValue: Int) -> Int:
-    return -1 * inputValue
-
-def upperClamp(value: Numeric, limit: Numeric) -> Numeric:
-    return value if (value < limit) else limit
-
-def lowerClamp(value: Numeric, limit: Numeric) -> Numeric:
-    return value if (value > limit) else limit
-
-def mapList(elements: Iterable[A], func: Callable[[A], B]) -> Iterable[B]:
-    return list(map(func, elements))
-
-def flatten(listOfLists: Iterable[Iterable[A]]) -> Iterable[A]:
-    return [e for _list in listOfLists for e in _list]
-
-def flatMap(elements: Iterable[A], func: Callable[[A], Iterable[Iterable[B]]]) -> Iterable[B]:
-    return flatten(mapList(elements, func))
-
-def filterList(elements: Iterable[A], func: Callable[[A], A]) -> Iterable[A]:
-    return list(filter(func, elements))
+from ..Common import *
 
 
 def findFirstLastNonZeroPixels(oneDimImage: np.ndarray) -> Tuple[int, int]:
@@ -316,10 +280,3 @@ def traceLines(image: np.ndarray, radius: int = 12, orientationSmoothing: int = 
 
     return signal
 
-
-if __name__ == "__main__":
-    pass
-
-
-# TODO
-# * Implement function for determining likelihood of point being in signal (weight proximity higher)
