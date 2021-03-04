@@ -292,7 +292,6 @@ def PushButton(
     return button
 
 
-
 @bindsToClass
 def RadioButton(
     text: str, owner: QWidget = None, name: str = None
@@ -342,6 +341,7 @@ def TabWidget(
 
     return tabWidget
 
+
 @bindsToClass
 def StackedWidget(
     widgets: List[QWidget],
@@ -356,6 +356,7 @@ def StackedWidget(
         stackedWidget.addWidget(widget)
 
     return stackedWidget
+
 
 @bindsToClass
 def VerticalBoxLayout(
