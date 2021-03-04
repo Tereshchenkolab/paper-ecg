@@ -89,8 +89,5 @@ class MainController:
             box.show()
 
     def updateEditorPane(self, item, selected):
-        print("update editor panel")
-        print("item: ", item.getLeadId())
-        print("selected: ", selected)
-        self.window.editor.setEditPanel(selected)
+        self.window.editor.setEditPanel(item, selected)
 

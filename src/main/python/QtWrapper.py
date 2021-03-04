@@ -6,7 +6,7 @@ Wrapper to simplify interacting with Qt
 """
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget, QStackedWidget
+from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget, QStackedWidget, QSpinBox, QDoubleSpinBox
 
 from typing import cast, List, Optional, Tuple, Union
 
@@ -80,6 +80,32 @@ def ComboBox(
     comboBox.addItems(items)
 
     return comboBox
+
+
+@bindsToClass
+def SpinBox(
+    owner: QWidget,
+    name: str
+) -> QSpinBox:
+    spinbox = QSpinBox()
+    return spinbox
+
+
+@bindsToClass
+def DoubleSpinBox(
+    owner: QWidget,
+    name: str,
+    minVal: float,
+    maxVal: float,
+    prefix: Optional[str] = None,
+    suffix: Optional[str] = None
+) -> QDoubleSpinBox:
+    spinbox = QDoubleSpinBox()
+    spinbox.setMinimum(minVal)
+    spinbox.setMaximum(maxVal)
+    spinbox.setPrefix(prefix)
+    spinbox.setSuffix(suffix)
+    return spinbox
 
 
 @bindsToClass

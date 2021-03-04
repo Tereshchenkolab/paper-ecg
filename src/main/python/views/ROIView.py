@@ -119,8 +119,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.update()
         mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
         box = self.mapToScene(self.rect()).boundingRect()
-        print("box location: ", mappedBox)
-        print("rect: ", box)
         self.pixelData = self.parentViews[0]._image.pixmap().copy(box.toRect())
         self.pixelData.save(self.leadId + ".png")
 

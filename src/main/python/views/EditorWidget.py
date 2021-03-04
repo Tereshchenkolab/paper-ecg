@@ -14,6 +14,8 @@ from Utility import *
 
 from views.ImageView import *
 from views.ROIView import *
+from views.EditPanelLeadView import *
+from views.EditPanelGlobalView import *
 
 
 class Editor(QtWidgets.QWidget):
@@ -23,7 +25,7 @@ class Editor(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.connectUI()
+        # self.connectUI()
 
         # Initialize a single ROI as a demo
         # self.initROI()
@@ -32,7 +34,6 @@ class Editor(QtWidgets.QWidget):
         # self.editPanel.hide()
 
     def initUI(self):
-
         self.setLayout(
             HorizontalBoxLayout(self, "main", margins=(0,0,0,0), contents=[
                 HorizontalSplitter([
@@ -46,95 +47,38 @@ class Editor(QtWidgets.QWidget):
                         owner=self,
                         name="scrollArea",
                         horizontalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOff,
-                        verticalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOn,
+                        verticalScrollBarPolicy=QtCore.Qt.ScrollBarAsNeeded,
                         widgetIsResizable=True,
                         innerWidget=
                             StackedWidget(
                                 owner=self,
                                 name="editPanel",
                                 widgets=[
-
-                                Widget(
-                                    owner=self,
-                                    name="globalScrollContents",
-                                    horizontalPolicy=QtWidgets.QSizePolicy.Expanding,
-                                    verticalPolicy=QtWidgets.QSizePolicy.Fixed,
-                                    layout=
-
-                                    VerticalBoxLayout(
-                                        self,
-                                        "globalLayout",
-                                        contents=[
-
-                                        GroupBox(
-                                            owner=self,
-                                            name="globalGroup1",
-                                            title="Image Adjustments",
-                                            layout=
-
-                                            VerticalBoxLayout(
-                                                owner=self,
-                                                name="globalGroup1Layout",
-                                                contents=[
-
-                                                Label("Brightness"),
-                                                HorizontalSlider(self, "brightnessSlider"),
-                                                Label("Contrast"),
-                                                HorizontalSlider(self, "contrastSlider"),
-                                                Label("Rotation"),
-                                                HorizontalSlider(self, "rotationSlider")
-                                            ])
-                                        )
-                                    ])
-                                ),
-                                Widget(
-                                    owner=self,
-                                    name="localScrollContents",
-                                    horizontalPolicy=QtWidgets.QSizePolicy.Expanding,
-                                    verticalPolicy=QtWidgets.QSizePolicy.Fixed,
-                                    layout=
-
-                                    VerticalBoxLayout(
-                                        self,
-                                        "globalLayout",
-                                        contents=[]
+                                    Custom(
+                                        owner=self,
+                                        name="EditPanelGlobalView",
+                                        widget=EditPanelGlobalView(self)
+                                    ),
+                                    Custom(
+                                        owner=self,
+                                        name="EditPanelLeadView",
+                                        widget=EditPanelLeadView()
                                     )
-                                )
-                            ])
+                                ]
+                            )
                         )
-                        # Tab("Leads",
-                        #     Widget(
-                        #         owner=self,
-                        #         name="leadTab",
-                        #         layout=
-
-                        #         VerticalBoxLayout(
-                        #             contents=[
-                        #                 ComboBox(["Lead I", "Lead II", "Lead III"])
-                        #             ]
-                        #         )
-                        #     )
-                        # )
                     ])
-                ])
-            # ])
+                ]
+            )
         )
         self.setEditPanel()
 
-    def connectUI(self):
-
-        # Image editing controls
-        self.brightnessSlider.sliderReleased.connect(self.adjustBrightness)
-        self.brightnessSlider.sliderMoved.connect(self.adjustBrightness)
-        self.brightnessSlider.setRange(-127,127)
-
-        self.contrastSlider.sliderReleased.connect(self.adjustContrast)
-        self.contrastSlider.sliderMoved.connect(self.adjustContrast)
-        self.contrastSlider.setRange(-127,127)
-
-        self.rotationSlider.sliderReleased.connect(self.adjustRotation)
-        self.rotationSlider.sliderMoved.connect(self.adjustRotation)
-        self.rotationSlider.setRange(-15 * 10, 15 * 10)
+    def setEditPanel(self, roi=None, detailView=False):
+        if detailView == True:
+            self.EditPanelLeadView.setTitle(roi.leadId)
+            self.editPanel.setCurrentIndex(1)
+        else:
+            self.editPanel.setCurrentIndex(0)
 
     def numpyToPixMap(self, image):
         # SOURCE: https://stackoverflow.com/a/50800745/7737644 (Creative Commons - Credit, share-alike)
@@ -155,21 +99,21 @@ class Editor(QtWidgets.QWidget):
 
     def adjustBrightness(self, value = None):
         if value is None:
-            value = self.brightnessSlider.value()
+            value = self.EditPanelGlobalView.brightnessSlider.value()
 
         if self.image is not None:
             self.displayImage(self.image.withBrightness(value))
 
     def adjustContrast(self, value = None):
         if value is None:
-            value = self.contrastSlider.value()
+            value = self.EditPanelGlobalView.contrastSlider.value()
 
         if self.image is not None:
             self.displayImage(self.image.withContrast(value))
 
     def adjustRotation(self, value = None):
         if value is None:
-            value = self.rotationSlider.value()
+            value = self.EditPanelGlobalView.rotationSlider.value()
 
         # This slider is scaled up to give more fine control
         value = float(value/10)
@@ -197,8 +141,4 @@ class Editor(QtWidgets.QWidget):
     def displayImage(self, pixmap):
         self.imageViewer.setImage(pixmap)
 
-    def setEditPanel(self, localView=False):
-        if localView == True:
-            self.editPanel.setCurrentIndex(1)
-        else:
-            self.editPanel.setCurrentIndex(0)
+
