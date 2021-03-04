@@ -552,29 +552,17 @@ None.
 
 None.
 
-<<<<<<< HEAD
-
-=======
->>>>>>> editor-panes
 ## February 28
 
 ### Natalie
 
 #### Since last meeting
 
-<<<<<<< HEAD
 - Designed and started implementing global and lead-specific editor panels
 
 #### Until next meeting
 
 - A lot of code refactoring
-=======
-- 
-
-#### Until next meeting
-
-- 
->>>>>>> editor-panes
 
 #### Blockers
 
