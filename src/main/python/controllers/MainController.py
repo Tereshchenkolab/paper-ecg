@@ -41,6 +41,8 @@ class MainController:
         self.window.addLeadV5.triggered.connect(lambda: self.addLead("V5", self.window.addLeadV5))
         self.window.addLeadV6.triggered.connect(lambda: self.addLead("V6", self.window.addLeadV6))
 
+        self.window.editor.imageViewer.itemSelected.connect(self.updateEditorPane)
+
 
     def openImageFile(self):
         path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg)"))
@@ -83,5 +85,9 @@ class MainController:
             box.setPos(0,0)
 
             self.window.editor.imageViewer._scene.addItem(box)
-
+            
             box.show()
+
+    def updateEditorPane(self, item, selected):
+        self.window.editor.setEditPanel(item, selected)
+

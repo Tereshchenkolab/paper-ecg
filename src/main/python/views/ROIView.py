@@ -119,8 +119,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.update()
         mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
         box = self.mapToScene(self.rect()).boundingRect()
-        print("box location: ", mappedBox)
-        print("rect: ", box)
         self.pixelData = self.parentViews[0]._image.pixmap().copy(box.toRect())
         self.pixelData.save(self.leadId + ".png")
 
@@ -166,11 +164,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             fromY = self.mousePressRect.top()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            # print("mapped rect: ", mappedRect)
-            # print("bounding rect: ", boundingRect)
-            # print("mouse pos", mousePos)
-            # print("fromX: ", fromX)
-            # print("toX", toX)
+
             if boundingRect.bottom() - toY > self.minHeight and mappedRect.y() - (boundingRect.y()-toY) >= sceneRect.top():
                 diff.setY(toY - fromY)
                 boundingRect.setTop(toY)
@@ -277,6 +271,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
                 return self.restrictMovement(value)
         
         if change == QtWidgets.QGraphicsRectItem.ItemSelectedChange:
+            self.parentViews[0].itemSelected.emit(self, value)
             if value == True:
                 self.setZValue(1)
             else:
@@ -353,3 +348,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
     def setLeadId(self, lead):
         self.leadId = lead
+
+    def getLeadId(self):
+        return self.leadId
