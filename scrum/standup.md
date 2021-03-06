@@ -552,6 +552,7 @@ None.
 
 None.
 
+
 ## February 28
 
 ### Natalie
@@ -580,6 +581,44 @@ None.
 #### Until next meeting
 
 - More grid detection scaling
+
+#### Blockers
+
+None.
+
+
+## March 5
+
+### Natalie
+
+#### Since last meeting
+
+- Added detail panel
+- Fixed grab handles
+- Highlights active bounding box in red
+
+#### Until next meeting
+
+- Connecting UI to image processing
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Architected extraction process
+- ECGToolkit refactor
+- Implemented grid size extraction
+
+#### Until next meeting
+
+- Create function for integrating the grid size and the signal array to create scaled signal.
+- Create baseline selection function.
+- Output to file.
 
 #### Blockers
 
