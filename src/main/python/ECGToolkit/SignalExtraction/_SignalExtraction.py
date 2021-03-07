@@ -16,7 +16,7 @@ from ..Common import *
 
 def findFirstLastNonZeroPixels(oneDimImage: np.ndarray) -> Tuple[int, int]:
 
-    def reverseEnumerate(array: np.ndarray) -> Generator[int,Any]:
+    def reverseEnumerate(array: np.ndarray):
         for index in reversedRange(len(array)):
             yield index, array[index]
 

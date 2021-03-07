@@ -28,25 +28,31 @@ path = "leadPictures/slighty-noisey-aVL.png"
 
 testImage = loadImage(path)
 
-binary = GridDetection.extractGridUsingKernels(testImage)
-lines = Vision.houghLines(binary, threshold=80)
+gridBinary = GridDetection.extractGridUsingKernels(testImage)
+lines = Vision.houghLines(gridBinary, threshold=80)
 
 overlayImage = Visualization.overlayLines(lines, testImage)
-showColorImage(overlayImage)
+
 
 verticalLines = sorted(Vision.getLinesInDirection(lines, 90))
-
 horizontalLines = sorted(Vision.getLinesInDirection(lines, 0))
 
-distances = Common.calculateDistancesBetweenValues(horizontalLines)
-gridSpacing = Common.mode(distances) # Could use median or mode...
-print(gridSpacing)
+# distances = Common.calculateDistancesBetweenValues(horizontalLines)
+# gridSpacing = Common.mode(distances) # Could use median or mode...
+# print(gridSpacing)
 
-distances = Common.calculateDistancesBetweenValues(verticalLines)
-gridSpacing = Common.mode(distances) # Could use median or mode...
-print(gridSpacing)
+# distances = Common.calculateDistancesBetweenValues(verticalLines)
+# gridSpacing = Common.mode(distances) # Could use median or mode...
+# print(gridSpacing)
 
+signalBinary = SignalDetection.mallawaarachchi(testImage, useBlur=True)
+plt.figure(figsize=(14,6))
+showGreyscaleImage(signalBinary)
+plt.show()
 
+signal = SignalExtraction.naïveHorizontalScan(signalBinary)
 
-
+plt.figure(figsize=(14,6))
+showColorImage(overlayImage)
+plt.plot(signal, c="limegreen")
 plt.show()

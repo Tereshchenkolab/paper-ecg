@@ -36,6 +36,7 @@ def displayGreyscaleImage(image, title=""):
 
 
 def overlayLines(lines, colorImage):
+    newImage = colorImage.copy()
     for rho,theta in lines:
         a = np.cos(theta)
         b = np.sin(theta)
@@ -47,9 +48,9 @@ def overlayLines(lines, colorImage):
         y2 = int(y0 - 10000*(a))
 
         # Draw line on the image
-        cv2.line(colorImage, (x1,y1), (x2,y2), (153,108,180))
+        cv2.line(newImage, (x1,y1), (x2,y2), (85, 19, 248))
 
-    return colorImage
+    return newImage
 
 
 # Display a list of images [(image, color, title)] where color is Color.greyscale or .BGR.

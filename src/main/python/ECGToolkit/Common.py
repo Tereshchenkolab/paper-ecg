@@ -29,7 +29,7 @@ Numeric = Union[Float, Int]
 
 
 def reversedRange(stop):
-        return range(stop-1, -1, -1)
+    return range(stop-1, -1, -1)
 
 def inclusiveRange(start, stop):
     return range(start, stop+1)
