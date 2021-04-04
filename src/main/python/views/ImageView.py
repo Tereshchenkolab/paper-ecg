@@ -13,6 +13,7 @@ import os, sys
 class ImageView(QtWidgets.QGraphicsView):
     itemSelected = QtCore.pyqtSignal(object, bool)
     itemDeselected = QtCore.pyqtSignal(object)
+    itemMoved = QtCore.pyqtSignal(object)
     
     def __init__(self):
         super().__init__()

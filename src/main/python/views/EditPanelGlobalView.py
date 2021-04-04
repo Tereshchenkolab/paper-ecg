@@ -44,12 +44,26 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.controlsLayout.addRow(
             Label(
                 owner=self,
-                name="gridScaleLabel",
-                text="Grid scale: "
+                name="timeScaleLabel",
+                text="Time Scale: "
             ),
             DoubleSpinBox(
                 owner=self,
-                name="gridScaleSpinBox",
+                name="timeScaleSpinBox",
+                minVal=0.0,
+                maxVal=500.0,
+                suffix=" mm/s"
+            )
+        )
+        self.controlsLayout.addRow(
+            Label(
+                owner=self,
+                name="voltScaleLabel",
+                text="Voltage Scale: "
+            ),
+            DoubleSpinBox(
+                owner=self,
+                name="voltScaleSpinBox",
                 minVal=0.0,
                 maxVal=500.0,
                 suffix=" mm/mV"

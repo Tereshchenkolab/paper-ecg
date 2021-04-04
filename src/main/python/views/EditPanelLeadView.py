@@ -45,5 +45,5 @@ class EditPanelLeadView(QtWidgets.QWidget):
 
 
     def setTitle(self, leadId):
-        self.title.setText("Lead " + leadId)
+        self.title.setText("Lead " + leadId.name)
 

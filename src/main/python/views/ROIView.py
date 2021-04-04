@@ -1,4 +1,5 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
+from model.LeadModel import LeadIdEnum
 
 # From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
 class ROIItem(QtWidgets.QGraphicsRectItem):
@@ -27,13 +28,13 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         handleBottomRight: QtCore.Qt.SizeFDiagCursor,
     }
 
-    def __init__(self, parent, *args):
+    def __init__(self, parent, leadId, *args):
         """
         Initialize the shape.
         """
         super().__init__(*args)
 
-        self.leadId = None
+        self.leadId = leadId
 
         # Pixel data within the bounding box region
         self.pixelData = None
@@ -120,7 +121,8 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
         box = self.mapToScene(self.rect()).boundingRect()
         self.pixelData = self.parentViews[0]._image.pixmap().copy(box.toRect())
-        self.pixelData.save(self.leadId + ".png")
+        self.pixelData.save(self.leadId.name + ".png")
+        self.parentViews[0].itemMoved.emit(self)
 
 
     def boundingRect(self):
@@ -343,7 +345,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             # Set color (grey) and draw box (unselected) 
             painter.setPen(QtGui.QPen(QtGui.QColor(128, 128, 128), 2.0, QtCore.Qt.SolidLine))
             painter.setBrush(QtGui.QBrush(QtGui.QColor(128, 128, 128, 64)))
-            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId)
+            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId.name)
             painter.drawRect(self.rect())
 
     def setLeadId(self, lead):
