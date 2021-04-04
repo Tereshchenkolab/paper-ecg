@@ -23,6 +23,7 @@ class Editor(QtWidgets.QWidget):
     leadStartTimeChanged = QtCore.pyqtSignal(object, float)
     gridVoltScaleChanged = QtCore.pyqtSignal(float)
     gridTimeScaleChanged = QtCore.pyqtSignal(float)
+    digitizeButtonClicked = QtCore.pyqtSignal()
 
     image = None # The openCV image
 
@@ -75,15 +76,17 @@ class Editor(QtWidgets.QWidget):
                 ]
             )
         )
-        self.setEditPanel()
+        self.editPanel.setCurrentIndex(0)
 
-    def setEditPanel(self, lead=None, detailView=False):
-        if detailView == True:
+    def showGlobalView(self, voltScale, timeScale):
+            self.EditPanelGlobalView.voltScaleSpinBox.setValue(voltScale)
+            self.EditPanelGlobalView.timeScaleSpinBox.setValue(timeScale)
+            self.editPanel.setCurrentIndex(0)
+
+    def showLeadDetailView(self, lead):
             self.EditPanelLeadView.setTitle(lead.leadId)
             self.EditPanelLeadView.leadStartTimeSpinBox.setValue(lead.leadStartTime)
             self.editPanel.setCurrentIndex(1)
-        else:
-            self.editPanel.setCurrentIndex(0)
 
     def numpyToPixMap(self, image):
         # SOURCE: https://stackoverflow.com/a/50800745/7737644 (Creative Commons - Credit, share-alike)

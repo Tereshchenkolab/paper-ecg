@@ -43,11 +43,12 @@ class MainController:
         self.window.addLeadV5.triggered.connect(lambda: self.addLead(LeadIdEnum.V5, self.window.addLeadV5))
         self.window.addLeadV6.triggered.connect(lambda: self.addLead(LeadIdEnum.V6, self.window.addLeadV6))
 
-        self.window.editor.imageViewer.itemSelected.connect(self.switchEditorPane)
+        self.window.editor.imageViewer.itemSelected.connect(self.setEditorPane)
         self.window.editor.imageViewer.itemMoved.connect(self.updateEcgLead)
         self.window.editor.leadStartTimeChanged.connect(self.updateLeadStartTime)
         self.window.editor.gridTimeScaleChanged.connect(self.updateEcgTimeScale)
         self.window.editor.gridVoltScaleChanged.connect(self.updateEcgVoltScale)
+        self.window.editor.digitizeButtonClicked.connect(self.digitize)
 
 
     def openImageFile(self):
@@ -97,9 +98,12 @@ class MainController:
             self.ecgModel.leads[leadId.value] = lead
 
 
-    def switchEditorPane(self, leadId, selected):
-        lead = self.ecgModel.leads[leadId.value]
-        self.window.editor.setEditPanel(lead, selected)
+    def setEditorPane(self, leadId, leadSelected):
+        if leadSelected == True and leadId is not None:
+            lead = self.ecgModel.leads[leadId.value]
+            self.window.editor.showLeadDetailView(lead)
+        else:
+            self.window.editor.showGlobalView(self.ecgModel.gridVoltageScale, self.ecgModel.gridTimeScale)
 
     def updateEcgLead(self, lead):
         print("update ecg lead: ", lead.leadId.value)
@@ -118,3 +122,8 @@ class MainController:
         print("update lead " + leadId.name + " start time to: " + str(value))
         self.ecgModel.leads[leadId.value].leadStartTime = value
 
+    def digitize(self):
+        print("digitize button clicked")
+        print("current data ECG data:\ngrid volt scale: " + str(self.ecgModel.gridVoltageScale) + 
+                "\ngrid time scale: " + str(self.ecgModel.gridTimeScale))
+        self.ecgModel.printLeadInfo()

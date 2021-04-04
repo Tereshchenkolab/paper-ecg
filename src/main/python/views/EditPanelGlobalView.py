@@ -86,9 +86,21 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         )
 
         self.mainLayout.addLayout(self.controlsLayout)
+        
+        self.mainLayout.addWidget(
+            PushButton(
+                owner=self,
+                name="digitizeButton",
+                text="Digitize"
+            ),
+            alignment=QtCore.Qt.AlignBottom | QtCore.Qt.AlignCenter
+        )
+
         self.setLayout(self.mainLayout)
-        self.voltScaleSpinBox.valueChanged.connect(self.voltScaleChanged)
-        self.timeScaleSpinBox.valueChanged.connect(self.timeScaleChanged)    
+        
+        self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
+        self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
+        self.digitizeButton.clicked.connect(lambda: self.editorWidget.digitizeButtonClicked.emit())
 
     def connectUI(self):
 
@@ -105,10 +117,10 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.rotationSlider.sliderMoved.connect(self.editorWidget.adjustRotation)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
 
-    def voltScaleChanged(self):
-        self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value())
+    def clearVoltSpinBox(self):
+        self.voltScaleSpinBox.setValue(0.0)
 
-    def timeScaleChanged(self):
-        self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value())
+    def clearTimeSpinBox(self):
+        self.timeScaleSpinBox.setValue(0.0)
 
         
