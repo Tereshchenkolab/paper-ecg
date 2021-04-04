@@ -46,6 +46,8 @@ class MainController:
         self.window.editor.imageViewer.itemSelected.connect(self.switchEditorPane)
         self.window.editor.imageViewer.itemMoved.connect(self.updateEcgLead)
         self.window.editor.leadStartTimeChanged.connect(self.updateLeadStartTime)
+        self.window.editor.gridTimeScaleChanged.connect(self.updateEcgTimeScale)
+        self.window.editor.gridVoltScaleChanged.connect(self.updateEcgVoltScale)
 
 
     def openImageFile(self):
@@ -105,12 +107,14 @@ class MainController:
         self.ecgModel.leads[index].roiData.pixelData.save("modelTest.png")
 
     def updateEcgTimeScale(self, timeScale):
-        print("update ecg time scale")
+        print("update ecg time scale: " + str(timeScale))
+        self.ecgModel.gridTimeScale = timeScale
     
     def updateEcgVoltScale(self, voltScale):
-        print("update ecg volt scale")
+        print("update ecg volt scale" + str(voltScale))
+        self.ecgModel.gridVoltageScale = voltScale
 
     def updateLeadStartTime(self, leadId, value):
         print("update lead " + leadId.name + " start time to: " + str(value))
         self.ecgModel.leads[leadId.value].leadStartTime = value
-        print("new lead start time: " + str(self.ecgModel.leads[leadId.value].leadStartTime))
+

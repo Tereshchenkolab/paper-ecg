@@ -295,7 +295,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         relativeRect = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
         
-        
         # If item is being moved out of bounds, override the appropriate x,y values to keep item within scene
         if not relativeRect.contains(x, y):
             if x < 1:
@@ -353,3 +352,5 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
     def getLeadId(self):
         return self.leadId
+
+        

@@ -87,7 +87,8 @@ class EditPanelGlobalView(QtWidgets.QWidget):
 
         self.mainLayout.addLayout(self.controlsLayout)
         self.setLayout(self.mainLayout)
-    
+        self.voltScaleSpinBox.valueChanged.connect(self.voltScaleChanged)
+        self.timeScaleSpinBox.valueChanged.connect(self.timeScaleChanged)    
 
     def connectUI(self):
 
@@ -104,3 +105,10 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.rotationSlider.sliderMoved.connect(self.editorWidget.adjustRotation)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
 
+    def voltScaleChanged(self):
+        self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value())
+
+    def timeScaleChanged(self):
+        self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value())
+
+        

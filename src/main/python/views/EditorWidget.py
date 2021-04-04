@@ -21,6 +21,9 @@ from views.EditPanelGlobalView import *
 class Editor(QtWidgets.QWidget):
 
     leadStartTimeChanged = QtCore.pyqtSignal(object, float)
+    gridVoltScaleChanged = QtCore.pyqtSignal(float)
+    gridTimeScaleChanged = QtCore.pyqtSignal(float)
+
     image = None # The openCV image
 
     def __init__(self):
@@ -142,5 +145,4 @@ class Editor(QtWidgets.QWidget):
 
     def displayImage(self, pixmap):
         self.imageViewer.setImage(pixmap)
-
 
