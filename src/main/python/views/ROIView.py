@@ -273,7 +273,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
                 return self.restrictMovement(value)
         
         if change == QtWidgets.QGraphicsRectItem.ItemSelectedChange:
-            self.parentViews[0].itemSelected.emit(self, value)
+            self.parentViews[0].itemSelected.emit(self.leadId, value)
             if value == True:
                 self.setZValue(1)
             else:

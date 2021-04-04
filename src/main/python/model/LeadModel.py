@@ -15,7 +15,7 @@ class LeadIdEnum(Enum):
     V6 = 11
 
 class Lead:
-    def __init__(self, leadId, roiData, leadStartTime=None):
+    def __init__(self, leadId, roiData, leadStartTime=0.0):
         super().__init__()
         self.leadId = leadId
         self.roiData = roiData

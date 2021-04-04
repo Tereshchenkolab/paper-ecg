@@ -45,6 +45,7 @@ class MainController:
 
         self.window.editor.imageViewer.itemSelected.connect(self.switchEditorPane)
         self.window.editor.imageViewer.itemMoved.connect(self.updateEcgLead)
+        self.window.editor.leadStartTimeChanged.connect(self.updateLeadStartTime)
 
 
     def openImageFile(self):
@@ -94,8 +95,9 @@ class MainController:
             self.ecgModel.leads[leadId.value] = lead
 
 
-    def switchEditorPane(self, roiItem, selected):
-        self.window.editor.setEditPanel(roiItem, selected)
+    def switchEditorPane(self, leadId, selected):
+        lead = self.ecgModel.leads[leadId.value]
+        self.window.editor.setEditPanel(lead, selected)
 
     def updateEcgLead(self, lead):
         print("update ecg lead: ", lead.leadId.value)
@@ -107,3 +109,8 @@ class MainController:
     
     def updateEcgVoltScale(self, voltScale):
         print("update ecg volt scale")
+
+    def updateLeadStartTime(self, leadId, value):
+        print("update lead " + leadId.name + " start time to: " + str(value))
+        self.ecgModel.leads[leadId.value].leadStartTime = value
+        print("new lead start time: " + str(self.ecgModel.leads[leadId.value].leadStartTime))

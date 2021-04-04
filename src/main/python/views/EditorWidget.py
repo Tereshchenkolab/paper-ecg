@@ -20,6 +20,7 @@ from views.EditPanelGlobalView import *
 
 class Editor(QtWidgets.QWidget):
 
+    leadStartTimeChanged = QtCore.pyqtSignal(object, float)
     image = None # The openCV image
 
     def __init__(self):
@@ -62,7 +63,7 @@ class Editor(QtWidgets.QWidget):
                                     Custom(
                                         owner=self,
                                         name="EditPanelLeadView",
-                                        widget=EditPanelLeadView()
+                                        widget=EditPanelLeadView(self)
                                     )
                                 ]
                             )
@@ -73,9 +74,10 @@ class Editor(QtWidgets.QWidget):
         )
         self.setEditPanel()
 
-    def setEditPanel(self, roi=None, detailView=False):
+    def setEditPanel(self, lead=None, detailView=False):
         if detailView == True:
-            self.EditPanelLeadView.setTitle(roi.leadId)
+            self.EditPanelLeadView.setTitle(lead.leadId)
+            self.EditPanelLeadView.leadStartTimeSpinBox.setValue(lead.leadStartTime)
             self.editPanel.setCurrentIndex(1)
         else:
             self.editPanel.setCurrentIndex(0)

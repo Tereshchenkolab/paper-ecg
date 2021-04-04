@@ -3,9 +3,13 @@ from QtWrapper import *
 import os, sys
 
 class EditPanelLeadView(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
         
+        self.parent = parent # the editor widget
+        
+        self.leadId = None
+
         self.sizePolicy().setHorizontalPolicy(QtWidgets.QSizePolicy.Expanding)
         self.sizePolicy().setVerticalPolicy(QtWidgets.QSizePolicy.Fixed)
         
@@ -42,8 +46,13 @@ class EditPanelLeadView(QtWidgets.QWidget):
 
         self.mainlayout.addLayout(self.controlsLayout)
         self.setLayout(self.mainlayout)
+        self.leadStartTimeSpinBox.valueChanged.connect(self.startTimeChanged)
 
 
     def setTitle(self, leadId):
+        self.leadId = leadId
         self.title.setText("Lead " + leadId.name)
 
+    def startTimeChanged(self):
+        print("start time changed: " + str(self.leadStartTimeSpinBox.value()))
+        self.parent.leadStartTimeChanged.emit(self.leadId, self.leadStartTimeSpinBox.value())
