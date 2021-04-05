@@ -12,7 +12,7 @@ from .Vision import *
 from .Visualization import Color, displayImages
 
 
-def extractGridUsingKernels(colorImage):
+def kernelApproach(colorImage):
     binaryImage = binarize(greyscale(colorImage), 240)
 
     opened = openImage(binaryImage)

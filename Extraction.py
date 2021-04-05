@@ -28,7 +28,7 @@ path = "leadPictures/slighty-noisey-aVL.png"
 
 testImage = loadImage(path)
 
-gridBinary = GridDetection.extractGridUsingKernels(testImage)
+gridBinary = GridDetection.kernelApproach(testImage)
 lines = Vision.houghLines(gridBinary, threshold=80)
 
 overlayImage = Visualization.overlayLines(lines, testImage)
@@ -37,13 +37,13 @@ overlayImage = Visualization.overlayLines(lines, testImage)
 verticalLines = sorted(Vision.getLinesInDirection(lines, 90))
 horizontalLines = sorted(Vision.getLinesInDirection(lines, 0))
 
-# distances = Common.calculateDistancesBetweenValues(horizontalLines)
-# gridSpacing = Common.mode(distances) # Could use median or mode...
-# print(gridSpacing)
+distances = Common.calculateDistancesBetweenValues(horizontalLines)
+gridSpacing = Common.mode(distances) # Could use median or mode...
+print(gridSpacing)
 
-# distances = Common.calculateDistancesBetweenValues(verticalLines)
-# gridSpacing = Common.mode(distances) # Could use median or mode...
-# print(gridSpacing)
+distances = Common.calculateDistancesBetweenValues(verticalLines)
+gridSpacing = Common.mode(distances) # Could use median or mode...
+print(gridSpacing)
 
 signalBinary = SignalDetection.mallawaarachchi(testImage, useBlur=True)
 plt.figure(figsize=(14,6))
