@@ -1,6 +1,6 @@
 from enum import Enum
 
-class LeadIdEnum(Enum):
+class LeadId(Enum):
     I = 0
     II = 1
     III = 2

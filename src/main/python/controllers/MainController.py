@@ -30,18 +30,18 @@ class MainController:
         """
         self.window.fileMenuOpen.triggered.connect(self.openImageFile)
 
-        self.window.addLead1.triggered.connect(lambda: self.addLead(LeadIdEnum.I, self.window.addLead1))
-        self.window.addLead2.triggered.connect(lambda: self.addLead(LeadIdEnum.II, self.window.addLead2))
-        self.window.addLead3.triggered.connect(lambda: self.addLead(LeadIdEnum.III, self.window.addLead3))
-        self.window.addLeadaVR.triggered.connect(lambda: self.addLead(LeadIdEnum.aVR, self.window.addLeadaVR))
-        self.window.addLeadaVL.triggered.connect(lambda: self.addLead(LeadIdEnum.aVL, self.window.addLeadaVL))
-        self.window.addLeadaVF.triggered.connect(lambda: self.addLead(LeadIdEnum.aVF, self.window.addLeadaVF))
-        self.window.addLeadV1.triggered.connect(lambda: self.addLead(LeadIdEnum.V1, self.window.addLeadV1))
-        self.window.addLeadV2.triggered.connect(lambda: self.addLead(LeadIdEnum.V2, self.window.addLeadV2))
-        self.window.addLeadV3.triggered.connect(lambda: self.addLead(LeadIdEnum.V3, self.window.addLeadV3))
-        self.window.addLeadV4.triggered.connect(lambda: self.addLead(LeadIdEnum.V4, self.window.addLeadV4))
-        self.window.addLeadV5.triggered.connect(lambda: self.addLead(LeadIdEnum.V5, self.window.addLeadV5))
-        self.window.addLeadV6.triggered.connect(lambda: self.addLead(LeadIdEnum.V6, self.window.addLeadV6))
+        self.window.addLead1.triggered.connect(lambda: self.addLead(LeadId.I, self.window.addLead1))
+        self.window.addLead2.triggered.connect(lambda: self.addLead(LeadId.II, self.window.addLead2))
+        self.window.addLead3.triggered.connect(lambda: self.addLead(LeadId.III, self.window.addLead3))
+        self.window.addLeadaVR.triggered.connect(lambda: self.addLead(LeadId.aVR, self.window.addLeadaVR))
+        self.window.addLeadaVL.triggered.connect(lambda: self.addLead(LeadId.aVL, self.window.addLeadaVL))
+        self.window.addLeadaVF.triggered.connect(lambda: self.addLead(LeadId.aVF, self.window.addLeadaVF))
+        self.window.addLeadV1.triggered.connect(lambda: self.addLead(LeadId.V1, self.window.addLeadV1))
+        self.window.addLeadV2.triggered.connect(lambda: self.addLead(LeadId.V2, self.window.addLeadV2))
+        self.window.addLeadV3.triggered.connect(lambda: self.addLead(LeadId.V3, self.window.addLeadV3))
+        self.window.addLeadV4.triggered.connect(lambda: self.addLead(LeadId.V4, self.window.addLeadV4))
+        self.window.addLeadV5.triggered.connect(lambda: self.addLead(LeadId.V5, self.window.addLeadV5))
+        self.window.addLeadV6.triggered.connect(lambda: self.addLead(LeadId.V6, self.window.addLeadV6))
 
         self.window.editor.imageViewer.itemSelected.connect(self.setEditorPane)
         self.window.editor.imageViewer.itemMoved.connect(self.updateEcgLead)
@@ -106,20 +106,20 @@ class MainController:
             self.window.editor.showGlobalView(self.ecgModel.gridVoltageScale, self.ecgModel.gridTimeScale)
 
     def updateEcgLead(self, lead):
-        print("update ecg lead: ", lead.leadId.value)
+        # print("update ecg lead: ", lead.leadId.value)
         index = lead.leadId.value
         self.ecgModel.leads[index].roiData.pixelData.save("modelTest.png")
 
     def updateEcgTimeScale(self, timeScale):
-        print("update ecg time scale: " + str(timeScale))
+        # print("update ecg time scale: " + str(timeScale))
         self.ecgModel.gridTimeScale = timeScale
     
     def updateEcgVoltScale(self, voltScale):
-        print("update ecg volt scale" + str(voltScale))
+        # print("update ecg volt scale" + str(voltScale))
         self.ecgModel.gridVoltageScale = voltScale
 
     def updateLeadStartTime(self, leadId, value):
-        print("update lead " + leadId.name + " start time to: " + str(value))
+        # print("update lead " + leadId.name + " start time to: " + str(value))
         self.ecgModel.leads[leadId.value].leadStartTime = value
 
     def digitize(self):

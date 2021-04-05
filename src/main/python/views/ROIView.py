@@ -1,5 +1,5 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
-from model.LeadModel import LeadIdEnum
+from model.LeadModel import LeadId
 
 # From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
 class ROIItem(QtWidgets.QGraphicsRectItem):
