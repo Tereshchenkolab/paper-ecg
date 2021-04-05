@@ -623,3 +623,36 @@ None.
 #### Blockers
 
 None.
+
+## April 5
+
+### Natalie
+
+#### Since last meeting
+
+- Created ECG and lead model model classes
+- Added Digitize button 
+
+#### Until next meeting
+
+- Create interface to save output file
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Started writing code to turn stuff into signal
+
+#### Until next meeting
+
+- Finish the function and incorporate ECG model
+
+#### Blockers
+
+None.
+
