@@ -26,12 +26,12 @@ def kernelApproach(colorImage):
         cv2.getStructuringElement(cv2.MORPH_CROSS, (2,2))
     )
 
-    displayImages([
-        (binaryImage, Color.greyscale, "Binary"),
-        (opened, Color.greyscale, "Opened"),
-        (subtracted, Color.greyscale, "Subtracted"),
-        (final, Color.greyscale, "Final")
-    ])
+    # displayImages([
+    #     (binaryImage, Color.greyscale, "Binary"),
+    #     (opened, Color.greyscale, "Opened"),
+    #     (subtracted, Color.greyscale, "Subtracted"),
+    #     (final, Color.greyscale, "Final")
+    # ])
 
     return final
 

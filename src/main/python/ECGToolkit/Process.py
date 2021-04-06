@@ -7,18 +7,22 @@ def emptyOrNone(elements):
     return len(elements) == 0 or elements is None
 
 
-def extractSignalFromImage(image, extractionMethod, detectionMethod):
-    signalBinary = extractionMethod(image)
-    signal = detectionMethod(signalBinary)
+def extractSignalFromImage(image, detectionMethod, extractionMethod):
+    signalBinary = detectionMethod(image)
+    signal = extractionMethod(signalBinary)
 
     return signal
 
 
 def extractGridFromImage(image, detectionMethod, spacingReductionMethod=Common.mode):
-    """
-    Takes a cropped image of a single lead and returns the grid scaling in pixels
-    """
+    """Takes a cropped image of a single lead and returns the grid scaling in pixels
 
+    Args:
+        image (??): 2d color image of the lead
+        detectionMethod (??): Function that converts a 2d color image into a binary image where the grid is highlighted.
+        spacingReductionMethod (??, optional):Takes a list of distances between detected grid lines and estimates
+                the grid size (note that some lines may be missing). Defaults to Common.mode.
+    """
     def getSpacingInDirection(lines, direction: int):
         """Takes all of the lines in an image, filters to those oriented in the specified direction, and estimates
         the most likely underlying spacing (some or many lines may be missing so mean is not necessarily suitable)"""
@@ -31,15 +35,14 @@ def extractGridFromImage(image, detectionMethod, spacingReductionMethod=Common.m
         distances = Common.calculateDistancesBetweenValues(sorted(orientedLines))
         if emptyOrNone(distances): return None
 
-        # TODO: Implement an autocorrelation approach or something else to do a better job of this...
-        # Could use median or mode...
+        # TODO: Implement an autocorrelation approach or something else to do a better job of this (median?)...
         gridSpacing = spacingReductionMethod(distances)
 
         return gridSpacing
 
     gridBinary = detectionMethod(image)
 
-    # The line process is fixed at this time.
+    # TODO: Modularize the line extraction process.
     lines = Vision.houghLines(gridBinary, threshold=80)
 
     horizontalGridSpacing = getSpacingInDirection(lines, 0)
@@ -48,24 +51,31 @@ def extractGridFromImage(image, detectionMethod, spacingReductionMethod=Common.m
     return (horizontalGridSpacing, verticalGridSpacing)
 
 
-def extractECGLeadFromImage(image, signalDetectionMethod, signalExtractionMethod, gridDetectionMethod, gridSpacingMethod=Common.mode):
-    """[summary]
+def scaleECGSignal(signal, gridSizeInPixels: float, millimetersPerMilliVolt: float = 10.0, gridSizeInMillimeters: float = 1.0):
+    """Scales an extract signal vertically.
 
     Args:
-        image (??): Cropped image of lead
-        signalExtractionMethod (??):
-            Function that accepts a color image and produces a binary image highlighting the signal. (SignalExtraction.___)
-        signalDetectionMethod (??):
-            Function that accepts a binary image and produces an array of signal values at each horizontal pixel column. (SignalDetection.___)
-        gridDetectionMethod (??): Function that accepts a color image and produces a binary image highlighting the grid. (GridExtraction.___)
-        gridSpacingMethod (Func[Iterable[int] -> int], optional): Defaults to Common.mode.
+        signal (np.ndarray): Extracted ECG signal.
+        gridSizeInPixels (float): The vertical distance between grid lines in pixels.
+        millimetersPerMilliVolt (float, optional): The mm/mV factor. Defaults to 10.0.
+        gridSize (float, optional): The size of the grid in mm (typically 1mm or 5mm). Defaults to 1.0.
 
     Returns:
-        Optional[??]: [description]
+        np.ndarray: Scaled signal.
     """
-    signal = extractSignalFromImage(image, signalDetectionMethod, signalExtractionMethod)
+    gridsPerPixel = 1 / gridSizeInPixels
+    millimetersPerGrid = gridSizeInMillimeters
+    milliVoltsPerMillimeter = 1 / millimetersPerMilliVolt
+    milliVoltsPerPixel = gridsPerPixel * millimetersPerGrid * milliVoltsPerMillimeter
 
-    horSpace, vertSpace = extractGridFromImage(image, gridDetectionMethod, gridSpacingMethod)
+    return signal * milliVoltsPerPixel
 
-    if horSpace is None or vertSpace is None:
-        return None
+
+def zeroECGSignal(signal, zeroingMethod=Common.mode):
+    zeroPoint = zeroingMethod(signal)
+
+    return signal - zeroPoint
+
+
+def collateECGSignals():
+    pass

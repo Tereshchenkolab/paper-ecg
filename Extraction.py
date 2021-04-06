@@ -1,10 +1,9 @@
 import cv2
 import matplotlib.pyplot as plt
 from cv2 import imread as loadImage
-from cv2 import imwrite as writeImage
-import numpy as np
+from functools import partial
 
-from src.main.python.ECGToolkit import Common, GridDetection, SignalDetection, SignalExtraction, Vision, Visualization
+from src.main.python.ECGToolkit import Common, GridDetection, Process, SignalDetection, SignalExtraction, Vision, Visualization
 
 
 def showGreyscaleImage(image):
@@ -28,31 +27,14 @@ path = "leadPictures/slighty-noisey-aVL.png"
 
 testImage = loadImage(path)
 
-gridBinary = GridDetection.kernelApproach(testImage)
-lines = Vision.houghLines(gridBinary, threshold=80)
+hSpace, vSpace = Process.extractGridFromImage(testImage, GridDetection.kernelApproach)
 
-overlayImage = Visualization.overlayLines(lines, testImage)
-
-
-verticalLines = sorted(Vision.getLinesInDirection(lines, 90))
-horizontalLines = sorted(Vision.getLinesInDirection(lines, 0))
-
-distances = Common.calculateDistancesBetweenValues(horizontalLines)
-gridSpacing = Common.mode(distances) # Could use median or mode...
-print(gridSpacing)
-
-distances = Common.calculateDistancesBetweenValues(verticalLines)
-gridSpacing = Common.mode(distances) # Could use median or mode...
-print(gridSpacing)
-
-signalBinary = SignalDetection.mallawaarachchi(testImage, useBlur=True)
-plt.figure(figsize=(14,6))
-showGreyscaleImage(signalBinary)
-plt.show()
-
-signal = SignalExtraction.naïveHorizontalScan(signalBinary)
+rawSignal = Process.extractSignalFromImage(testImage, partial(SignalDetection.mallawaarachchi, useBlur=True), SignalExtraction.naïveHorizontalScan)
 
 plt.figure(figsize=(14,6))
-showColorImage(overlayImage)
-plt.plot(signal, c="limegreen")
+showColorImage(testImage)
+plt.plot(rawSignal, c="limegreen")
 plt.show()
+
+signal = Process.zeroECGSignal(rawSignal)
+print("max:", max(signal), "min:", min(signal), "mean:", Common.mean(signal))
