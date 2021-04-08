@@ -51,7 +51,7 @@ def extractGridFromImage(image, detectionMethod, spacingReductionMethod=Common.m
     return (horizontalGridSpacing, verticalGridSpacing)
 
 
-def scaleECGSignal(signal, gridSizeInPixels: float, millimetersPerMilliVolt: float = 10.0, gridSizeInMillimeters: float = 1.0):
+def verticallyScaleECGSignal(signal, gridSizeInPixels: float, millimetersPerMilliVolt: float = 10.0, gridSizeInMillimeters: float = 1.0):
     """Scales an extract signal vertically.
 
     Args:
@@ -71,6 +71,15 @@ def scaleECGSignal(signal, gridSizeInPixels: float, millimetersPerMilliVolt: flo
     return signal * milliVoltsPerPixel
 
 
+def ecgSignalSamplingPeriod(gridSizeInPixels: float, millimetersPerSecond: float = 10.0, gridSizeInMillimeters: float = 1.0):
+    gridsPerPixel = 1 / gridSizeInPixels
+    millimetersPerGrid = gridSizeInMillimeters
+    secondsPerMillimeter = 1 / millimetersPerSecond
+    secondsPerPixel = gridsPerPixel * millimetersPerGrid * secondsPerMillimeter
+
+    return secondsPerPixel
+
+
 def zeroECGSignal(signal, zeroingMethod=Common.mode):
     zeroPoint = zeroingMethod(signal)
 
@@ -79,3 +88,5 @@ def zeroECGSignal(signal, zeroingMethod=Common.mode):
 
 def collateECGSignals():
     pass
+
+    
