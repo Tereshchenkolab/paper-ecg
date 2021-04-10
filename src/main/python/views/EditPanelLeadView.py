@@ -51,7 +51,7 @@ class EditPanelLeadView(QtWidgets.QWidget):
 
     def setTitle(self, leadId):
         self.leadId = leadId
-        self.title.setText("Lead " + leadId.name)
+        self.title.setText("Lead " + leadId)
 
     def startTimeChanged(self):
         print("start time changed: " + str(self.leadStartTimeSpinBox.value()))

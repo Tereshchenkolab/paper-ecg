@@ -103,7 +103,6 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.digitizeButton.clicked.connect(lambda: self.editorWidget.digitizeButtonClicked.emit())
 
     def connectUI(self):
-
         # Image editing controls
         self.brightnessSlider.sliderReleased.connect(self.editorWidget.adjustBrightness)
         self.brightnessSlider.sliderMoved.connect(self.editorWidget.adjustBrightness)

@@ -16,6 +16,7 @@ from views.ImageView import *
 from views.ROIView import *
 from views.EditPanelLeadView import *
 from views.EditPanelGlobalView import *
+from views.ExportFileDialog import *
 
 
 class Editor(QtWidgets.QWidget):
@@ -24,11 +25,13 @@ class Editor(QtWidgets.QWidget):
     gridVoltScaleChanged = QtCore.pyqtSignal(float)
     gridTimeScaleChanged = QtCore.pyqtSignal(float)
     digitizeButtonClicked = QtCore.pyqtSignal()
+    exportPathChosen = QtCore.pyqtSignal(str, str)
 
     image = None # The openCV image
 
     def __init__(self):
         super().__init__()
+        self.exportFileDialog = None
         self.initUI()
         # self.connectUI()
 
@@ -149,3 +152,6 @@ class Editor(QtWidgets.QWidget):
     def displayImage(self, pixmap):
         self.imageViewer.setImage(pixmap)
 
+    def openExportFileDialog(self):
+        self.exportFileDialog = ExportFileDialog(self)
+        self.exportFileDialog.exec_()

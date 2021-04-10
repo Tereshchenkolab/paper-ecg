@@ -1,5 +1,5 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
-from model.LeadModel import LeadId
+# from model.LeadModel import LeadId
 
 # From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
 class ROIItem(QtWidgets.QGraphicsRectItem):
@@ -121,7 +121,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
         box = self.mapToScene(self.rect()).boundingRect()
         self.pixelData = self.parentViews[0]._image.pixmap().copy(box.toRect())
-        self.pixelData.save(self.leadId.name + ".png")
+        self.pixelData.save(self.leadId + ".png")
         self.parentViews[0].itemMoved.emit(self)
 
 
@@ -344,7 +344,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             # Set color (grey) and draw box (unselected) 
             painter.setPen(QtGui.QPen(QtGui.QColor(128, 128, 128), 2.0, QtCore.Qt.SolidLine))
             painter.setBrush(QtGui.QBrush(QtGui.QColor(128, 128, 128, 64)))
-            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId.name)
+            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId)
             painter.drawRect(self.rect())
 
     def setLeadId(self, lead):
