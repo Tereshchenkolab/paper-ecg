@@ -6,7 +6,7 @@ Wrapper to simplify interacting with Qt
 """
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget, QStackedWidget, QSpinBox, QDoubleSpinBox
+from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget, QStackedWidget, QSpinBox, QDoubleSpinBox, QLineEdit
 
 from typing import cast, List, Optional, Tuple, Union
 
@@ -442,3 +442,16 @@ def Widget(
         widget.setLayout(layout)
 
     return widget
+
+
+@bindsToClass
+def LineEdit(
+    owner: QWidget = None,
+    name: str = None,
+    contents: str = ""
+) -> QLineEdit:
+
+    lineEdit = QLineEdit()
+    lineEdit.setText(contents)
+    return lineEdit
+    

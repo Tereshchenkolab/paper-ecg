@@ -12,6 +12,7 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 from views.MainWindow import MainWindow
 from views.ImageView import *
 from views.ROIView import *
+from views.ExportFileDialog import *
 from model.EcgModel import *
 from model.LeadModel import *
 from QtWrapper import *
@@ -48,7 +49,8 @@ class MainController:
         self.window.editor.leadStartTimeChanged.connect(self.updateLeadStartTime)
         self.window.editor.gridTimeScaleChanged.connect(self.updateEcgTimeScale)
         self.window.editor.gridVoltScaleChanged.connect(self.updateEcgVoltScale)
-        self.window.editor.digitizeButtonClicked.connect(self.digitize)
+        self.window.editor.digitizeButtonClicked.connect(self.confirmDigitization)
+        self.window.editor.exportPathChosen.connect(self.digitize)
 
 
     def openImageFile(self):
@@ -122,8 +124,17 @@ class MainController:
         # print("update lead " + leadId.name + " start time to: " + str(value))
         self.ecgModel.leads[leadId.value].leadStartTime = value
 
-    def digitize(self):
-        print("digitize button clicked")
-        print("current data ECG data:\ngrid volt scale: " + str(self.ecgModel.gridVoltageScale) + 
-                "\ngrid time scale: " + str(self.ecgModel.gridTimeScale))
-        self.ecgModel.printLeadInfo()
+    # confirm all ECG model data is present and get export location
+    def confirmDigitization(self):
+        print("confirm digitization\n*do model confirmation here*")
+        self.window.editor.openExportFileDialog()
+    
+    # we have all ECG data and export location - ready to pass off to backend to digitize
+    def digitize(self, exportPath, fileType):
+        print("ready to digitize")
+        print("export path: " + exportPath + "\nfile type: " + fileType)
+        # print("current data ECG data:\ngrid volt scale: " + str(self.ecgModel.gridVoltageScale) + 
+        #         "\ngrid time scale: " + str(self.ecgModel.gridTimeScale))
+        # self.ecgModel.printLeadInfo()
+        # self.exportFileDialog = ExportFileDialog()
+        # self.exportFileDialog.exec_()
