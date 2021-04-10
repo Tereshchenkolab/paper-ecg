@@ -31,18 +31,18 @@ class MainController:
         """
         self.window.fileMenuOpen.triggered.connect(self.openImageFile)
 
-        self.window.addLead1.triggered.connect(lambda: self.addLead(LeadId.I, self.window.addLead1))
-        self.window.addLead2.triggered.connect(lambda: self.addLead(LeadId.II, self.window.addLead2))
-        self.window.addLead3.triggered.connect(lambda: self.addLead(LeadId.III, self.window.addLead3))
-        self.window.addLeadaVR.triggered.connect(lambda: self.addLead(LeadId.aVR, self.window.addLeadaVR))
-        self.window.addLeadaVL.triggered.connect(lambda: self.addLead(LeadId.aVL, self.window.addLeadaVL))
-        self.window.addLeadaVF.triggered.connect(lambda: self.addLead(LeadId.aVF, self.window.addLeadaVF))
-        self.window.addLeadV1.triggered.connect(lambda: self.addLead(LeadId.V1, self.window.addLeadV1))
-        self.window.addLeadV2.triggered.connect(lambda: self.addLead(LeadId.V2, self.window.addLeadV2))
-        self.window.addLeadV3.triggered.connect(lambda: self.addLead(LeadId.V3, self.window.addLeadV3))
-        self.window.addLeadV4.triggered.connect(lambda: self.addLead(LeadId.V4, self.window.addLeadV4))
-        self.window.addLeadV5.triggered.connect(lambda: self.addLead(LeadId.V5, self.window.addLeadV5))
-        self.window.addLeadV6.triggered.connect(lambda: self.addLead(LeadId.V6, self.window.addLeadV6))
+        self.window.addLead1.triggered.connect(lambda: self.addLead("I", self.window.addLead1))
+        self.window.addLead2.triggered.connect(lambda: self.addLead("II", self.window.addLead2))
+        self.window.addLead3.triggered.connect(lambda: self.addLead("III", self.window.addLead3))
+        self.window.addLeadaVR.triggered.connect(lambda: self.addLead("aVR", self.window.addLeadaVR))
+        self.window.addLeadaVL.triggered.connect(lambda: self.addLead("aVL", self.window.addLeadaVL))
+        self.window.addLeadaVF.triggered.connect(lambda: self.addLead("aVF", self.window.addLeadaVF))
+        self.window.addLeadV1.triggered.connect(lambda: self.addLead("V1", self.window.addLeadV1))
+        self.window.addLeadV2.triggered.connect(lambda: self.addLead("V2", self.window.addLeadV2))
+        self.window.addLeadV3.triggered.connect(lambda: self.addLead("V3", self.window.addLeadV3))
+        self.window.addLeadV4.triggered.connect(lambda: self.addLead("V4", self.window.addLeadV4))
+        self.window.addLeadV5.triggered.connect(lambda: self.addLead("V5", self.window.addLeadV5))
+        self.window.addLeadV6.triggered.connect(lambda: self.addLead("V6", self.window.addLeadV6))
 
         self.window.editor.imageViewer.itemSelected.connect(self.setEditorPane)
         self.window.editor.imageViewer.itemMoved.connect(self.updateEcgLead)
@@ -97,44 +97,45 @@ class MainController:
 
             # Create new lead instance and add to ECG model
             lead = Lead(leadId, roiBox)
-            self.ecgModel.leads[leadId.value] = lead
+            self.ecgModel.leads[leadId] = lead
 
 
     def setEditorPane(self, leadId, leadSelected):
         if leadSelected == True and leadId is not None:
-            lead = self.ecgModel.leads[leadId.value]
+            lead = self.ecgModel.leads[leadId]
             self.window.editor.showLeadDetailView(lead)
         else:
             self.window.editor.showGlobalView(self.ecgModel.gridVoltageScale, self.ecgModel.gridTimeScale)
 
     def updateEcgLead(self, lead):
-        # print("update ecg lead: ", lead.leadId.value)
-        index = lead.leadId.value
+        print("update ecg lead: ", lead.leadId)
+        index = lead.leadId
         self.ecgModel.leads[index].roiData.pixelData.save("modelTest.png")
 
     def updateEcgTimeScale(self, timeScale):
-        # print("update ecg time scale: " + str(timeScale))
+        print("update ecg time scale: " + str(timeScale))
         self.ecgModel.gridTimeScale = timeScale
     
     def updateEcgVoltScale(self, voltScale):
-        # print("update ecg volt scale" + str(voltScale))
+        print("update ecg volt scale" + str(voltScale))
         self.ecgModel.gridVoltageScale = voltScale
 
     def updateLeadStartTime(self, leadId, value):
-        # print("update lead " + leadId.name + " start time to: " + str(value))
-        self.ecgModel.leads[leadId.value].leadStartTime = value
+        print("update lead " + leadId + " start time to: " + str(value))
+        self.ecgModel.leads[leadId].leadStartTime = value
 
     # confirm all ECG model data is present and get export location
     def confirmDigitization(self):
-        print("confirm digitization\n*do model confirmation here*")
-        self.window.editor.openExportFileDialog()
+        print("confirm digitization")
+        if len(self.ecgModel.leads) == 12:
+            self.window.editor.openExportFileDialog()
+        else:
+            print("missing lead data")
     
     # we have all ECG data and export location - ready to pass off to backend to digitize
     def digitize(self, exportPath, fileType):
         print("ready to digitize")
         print("export path: " + exportPath + "\nfile type: " + fileType)
-        # print("current data ECG data:\ngrid volt scale: " + str(self.ecgModel.gridVoltageScale) + 
-        #         "\ngrid time scale: " + str(self.ecgModel.gridTimeScale))
-        # self.ecgModel.printLeadInfo()
-        # self.exportFileDialog = ExportFileDialog()
-        # self.exportFileDialog.exec_()
+        print("grid volt scale: " + str(self.ecgModel.gridVoltageScale) + 
+                "\ngrid time scale: " + str(self.ecgModel.gridTimeScale))
+        self.ecgModel.printLeadInfo()

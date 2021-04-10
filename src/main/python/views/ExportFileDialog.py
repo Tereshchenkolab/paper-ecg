@@ -65,7 +65,6 @@ class ExportFileDialog(QtWidgets.QDialog):
             ]
         )
         self.confirmCancelButtonLayout.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)
-        self.errorMessageLabel.
         self.mainLayout.addLayout(self.confirmCancelButtonLayout)
 
         self.setLayout(self.mainLayout)
@@ -92,6 +91,7 @@ class ExportFileDialog(QtWidgets.QDialog):
     def confirmExportPath(self):
         if self.fileExportPath is not None and self.fileType is not None:
             self.editorWidget.exportPathChosen.emit(self.fileExportPath, self.fileType)
+            self.close()
         else:
             print("no export path selected")
             self.errorMessageLabel.setText("Please select a valid export path")
