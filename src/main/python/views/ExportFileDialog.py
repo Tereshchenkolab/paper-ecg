@@ -7,7 +7,6 @@ fileTypesDictionary = {
 }
 
 class ExportFileDialog(QtWidgets.QDialog):
-    # confirmExport = QtCore.pyqtSignal(str, str)
 
     def __init__(self, parent):
         super().__init__()
@@ -48,6 +47,11 @@ class ExportFileDialog(QtWidgets.QDialog):
         self.mainLayout.addLayout(self.chooseFileLayout)
         
         HorizontalBoxLayout(owner=self, name="confirmCancelButtonLayout", contents=[
+                Label(
+                    owner=self,
+                    name="errorMessageLabel",
+                    text=""
+                ),
                 PushButton(
                     owner=self,
                     name="confirmButton",
@@ -61,7 +65,7 @@ class ExportFileDialog(QtWidgets.QDialog):
             ]
         )
         self.confirmCancelButtonLayout.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)
-        
+        self.errorMessageLabel.
         self.mainLayout.addLayout(self.confirmCancelButtonLayout)
 
         self.setLayout(self.mainLayout)
@@ -80,14 +84,14 @@ class ExportFileDialog(QtWidgets.QDialog):
                 filter="Text File (*.txt);;CSV (*.csv)"
         )
         if path is not "" and selectedFilter in fileTypesDictionary:
+            self.errorMessageLabel.setText("")
             self.chooseFileTextBox.setText(path)
             self.fileExportPath = path
             self.fileType = fileTypesDictionary[selectedFilter]
 
     def confirmExportPath(self):
         if self.fileExportPath is not None and self.fileType is not None:
-            # print("path: " + self.fileExportPath + "\ntype: " + self.fileType)
-            # self.confirmExport.emit(self.fileExportPath, self.fileType)
             self.editorWidget.exportPathChosen.emit(self.fileExportPath, self.fileType)
         else:
-            print("no path export path selected")
+            print("no export path selected")
+            self.errorMessageLabel.setText("Please select a valid export path")
