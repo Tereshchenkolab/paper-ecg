@@ -33,12 +33,15 @@ def findFirstLastNonZeroPixels(oneDimImage: np.ndarray) -> Tuple[int, int]:
 
 def naïveHorizontalScan(image: np.ndarray):
     columns = np.swapaxes(image, 0, 1)
+    output  = np.zeros(len(columns))
 
-    return np.array(
-        [np.mean(
-            list(findFirstLastNonZeroPixels(column))
-         ) for column in columns]
-    )
+    for index, column in enumerate(columns):
+        top, bottom = findFirstLastNonZeroPixels(column)
+
+        if top is not None and bottom is not None:
+            output[index] = (top + bottom) / 2
+
+    return output
 
 
 def findContiguousRegions(oneDimImage: np.ndarray) -> Iterable[Tuple[int, int]]:

@@ -4,6 +4,9 @@ from cv2 import imread as loadImage
 from functools import partial
 
 from src.main.python.ECGToolkit import Common, GridDetection, Process, SignalDetection, SignalExtraction, Vision, Visualization
+from src.main.python.model.LeadModel import Lead
+from src.main.python.model.EcgModel import *
+from src.main.python.Processing import *
 
 
 def showGreyscaleImage(image):
@@ -15,26 +18,19 @@ def showColorImage(image):
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     # plt.show()
 
+ecgData = EcgModel()
+ecgData.leads['aVL'] = Lead('aVL', loadImage("leadPictures/slighty-noisey-aVL.png"))
+ecgData.leads['II'] = Lead('II', loadImage("leadPictures/II.png"))
+ecgData.gridTimeScale = 25
+ecgData.gridVoltageScale = 10
 
-# path = "leadPictures/slighty-noisey-aVL-small.png"
-path = "leadPictures/slighty-noisey-aVL.png"
-# path = "leadPictures/fullscan-I.png"
-# path = "data/1480/1480_Page1.jpg"
+leadSignals = convertECGLeads(ecgData)
 
-# path = "../Test Images/Mocks/test2.png"
-# path = "../Test Images/Larisa/ZEL297(9).jpg"
-# path = "data/700px-AMI_inferior_2.jpg"
+# signal = leadSignals['aVL']
+# plt.figure(figsize=(14,6))
+# showColorImage(loadImage("leadPictures/slighty-noisey-aVL.png"))
+# plt.plot(signal, c="limegreen")
+# plt.show()
+# print("max:", max(signal), "min:", min(signal), "mean:", Common.mean(signal))
 
-testImage = loadImage(path)
-
-hSpace, vSpace = Process.extractGridFromImage(testImage, GridDetection.kernelApproach)
-
-rawSignal = Process.extractSignalFromImage(testImage, partial(SignalDetection.mallawaarachchi, useBlur=True), SignalExtraction.naïveHorizontalScan)
-
-plt.figure(figsize=(14,6))
-showColorImage(testImage)
-plt.plot(rawSignal, c="limegreen")
-plt.show()
-
-signal = Process.zeroECGSignal(rawSignal)
-print("max:", max(signal), "min:", min(signal), "mean:", Common.mean(signal))
+exportSignals(leadSignals, Path("./test.txt"))

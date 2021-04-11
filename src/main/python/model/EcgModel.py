@@ -1,4 +1,3 @@
-from views.ImageView import *
 
 class EcgModel:
     def __init__(self):

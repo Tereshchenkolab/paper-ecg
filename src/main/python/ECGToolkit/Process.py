@@ -71,7 +71,7 @@ def verticallyScaleECGSignal(signal, gridSizeInPixels: float, millimetersPerMill
     return signal * milliVoltsPerPixel
 
 
-def ecgSignalSamplingPeriod(gridSizeInPixels: float, millimetersPerSecond: float = 10.0, gridSizeInMillimeters: float = 1.0):
+def ecgSignalSamplingPeriod(gridSizeInPixels: float, millimetersPerSecond: float = 25.0, gridSizeInMillimeters: float = 1.0):
     gridsPerPixel = 1 / gridSizeInPixels
     millimetersPerGrid = gridSizeInMillimeters
     secondsPerMillimeter = 1 / millimetersPerSecond
@@ -84,9 +84,3 @@ def zeroECGSignal(signal, zeroingMethod=Common.mode):
     zeroPoint = zeroingMethod(signal)
 
     return signal - zeroPoint
-
-
-def collateECGSignals():
-    pass
-
-    

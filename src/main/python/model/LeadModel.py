@@ -5,5 +5,3 @@ class Lead:
         self.leadId = leadId
         self.roiData = roiData
         self.leadStartTime = leadStartTime
-
-        

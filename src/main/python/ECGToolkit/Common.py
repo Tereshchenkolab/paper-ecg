@@ -7,7 +7,7 @@ Holds helper functions and types used by all modules.
 
 from collections import Counter
 import functools
-from typing import Callable, Iterable, Optional, Tuple, TypeVar, Union
+from typing import Any, Callable, Iterable, Optional, Tuple, TypeVar, Union
 
 import numpy as np
 from numpy.lib.function_base import median
@@ -66,3 +66,19 @@ def calculateDistancesBetweenValues(sortedList):
 def mode(data) -> Numeric:
     value, _ = Counter(data).most_common(1)[0]  # returns a list of n most common (i.e., `[(value, count), ...]`)
     return value
+
+def zipDict(dictionary) -> Iterable[Tuple[Any, Any]]:
+    """Zips the (key, value)s of a dict into a list. Can be reversed with the `dict` constructor."""
+    return [(key, value) for key,value in dictionary.items()]
+
+def padLeft(elements, count, fillValue=0):
+    if type(elements) is np.ndarray:
+        return np.pad(elements, (count, 0), constant_values=fillValue)
+    else:
+        return ([fillValue] * count) + elements
+
+def padRight(elements, count, fillValue=0):
+    if type(elements) is np.ndarray:
+        return np.pad(elements, (0, count), constant_values=fillValue)
+    else:
+        return elements + ([fillValue] * count)
