@@ -670,6 +670,7 @@ None.
 #### Until next meeting
 
 - Rename `ECGModel` -> `ECG`
+- Add warning/error if not all lead bounding boxes are present
 
 #### Blockers
 
