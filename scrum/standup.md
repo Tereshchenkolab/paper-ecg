@@ -624,6 +624,7 @@ None.
 
 None.
 
+
 ## April 5
 
 ### Natalie
@@ -651,6 +652,40 @@ None.
 #### Until next meeting
 
 - Finish the function and incorporate ECG model
+
+#### Blockers
+
+None.
+
+
+## April 12
+
+### Natalie
+
+#### Since last meeting
+
+- Made ECG signal export interface to select file
+- Refactored ECGModel
+
+#### Until next meeting
+
+- Rename `ECGModel` -> `ECG`
+
+#### Blockers
+
+Busy with other classes this week!
+
+
+### Julian
+
+#### Since last meeting
+
+- Implemented functions to convert ecg cropped images to signals and output to file.
+
+#### Until next meeting
+
+- Make ticket to handle output file path corner cases.
+- Connect the interface to the implementations (above).
 
 #### Blockers
 
