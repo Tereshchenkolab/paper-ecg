@@ -21,9 +21,8 @@ class MainController:
 
     def __init__(self):
         self.window = MainWindow()
-        self.ecgModel = EcgModel()
+        self.ecg = Ecg()
         self.connectUI()
-
 
     def connectUI(self):
         """
@@ -52,7 +51,6 @@ class MainController:
         self.window.editor.digitizeButtonClicked.connect(self.confirmDigitization)
         self.window.editor.exportPathChosen.connect(self.digitize)
 
-
     def openImageFile(self):
         path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg)"))
 
@@ -60,7 +58,6 @@ class MainController:
             self.window.editor.loadImageFromPath(path)
         else:
             print("[Warning] No image selected")
-
 
     def openFileBrowser(self, caption: str, fileType: str, initialPath: str ="") -> str:
         """Launches a file browser for the user to select a file to open.
@@ -82,7 +79,6 @@ class MainController:
 
         return absolutePath
 
-
     def addLead(self, leadId, action):
         if self.window.editor.imageViewer.hasImage():
             # Disable menu action so user can't add more than one bounding box for an individual lead
@@ -97,45 +93,43 @@ class MainController:
 
             # Create new lead instance and add to ECG model
             lead = Lead(leadId, roiBox)
-            self.ecgModel.leads[leadId] = lead
-
+            self.ecg.leads[leadId] = lead
 
     def setEditorPane(self, leadId, leadSelected):
         if leadSelected == True and leadId is not None:
-            lead = self.ecgModel.leads[leadId]
+            lead = self.ecg.leads[leadId]
             self.window.editor.showLeadDetailView(lead)
         else:
-            self.window.editor.showGlobalView(self.ecgModel.gridVoltageScale, self.ecgModel.gridTimeScale)
+            self.window.editor.showGlobalView(self.ecg.gridVoltageScale, self.ecg.gridTimeScale)
 
     def updateEcgLead(self, lead):
         print("update ecg lead: ", lead.leadId)
         index = lead.leadId
-        self.ecgModel.leads[index].roiData.pixelData.save("modelTest.png")
 
     def updateEcgTimeScale(self, timeScale):
         print("update ecg time scale: " + str(timeScale))
-        self.ecgModel.gridTimeScale = timeScale
+        self.ecg.gridTimeScale = timeScale
     
     def updateEcgVoltScale(self, voltScale):
         print("update ecg volt scale" + str(voltScale))
-        self.ecgModel.gridVoltageScale = voltScale
+        self.ecg.gridVoltageScale = voltScale
 
     def updateLeadStartTime(self, leadId, value):
         print("update lead " + leadId + " start time to: " + str(value))
-        self.ecgModel.leads[leadId].leadStartTime = value
+        self.ecg.leads[leadId].leadStartTime = value
 
     # confirm all ECG model data is present and get export location
     def confirmDigitization(self):
-        print("confirm digitization")
-        if len(self.ecgModel.leads) == 12:
-            self.window.editor.openExportFileDialog()
-        else:
-            print("missing lead data")
+        # print("confirm digitization")
+        # if len(self.ecg.leads) == 12:
+        self.window.editor.openExportFileDialog()
+        # else:
+            # print("missing lead data")
     
     # we have all ECG data and export location - ready to pass off to backend to digitize
     def digitize(self, exportPath, fileType):
         print("ready to digitize")
         print("export path: " + exportPath + "\nfile type: " + fileType)
-        print("grid volt scale: " + str(self.ecgModel.gridVoltageScale) + 
-                "\ngrid time scale: " + str(self.ecgModel.gridTimeScale))
-        self.ecgModel.printLeadInfo()
+        print("grid volt scale: " + str(self.ecg.gridVoltageScale) + 
+                "\ngrid time scale: " + str(self.ecg.gridTimeScale))
+        self.ecg.printLeadInfo()

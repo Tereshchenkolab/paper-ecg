@@ -1,5 +1,5 @@
 
-class EcgModel:
+class Ecg:
     def __init__(self):
         self.leads = {}
         self.gridVoltageScale = 0.0

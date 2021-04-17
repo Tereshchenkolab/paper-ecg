@@ -44,10 +44,14 @@ Finish the core functionality and connect UI to signal extraction process.
 ### What We Did
 
 #### Natalie
-
+- Created ECG and Lead model classes
+- Created export UI
+- store ROI pixel data as 2d numpy array rather than pixmap
+- update ROI image when whole image is updated
 
 #### Julian
-
+- Create functions to output signal data to the appropriate formats
+- Create function that takes ECG Model → outputs into signal output
 
 ## Retrospective
 
@@ -58,9 +62,10 @@ Finish the core functionality and connect UI to signal extraction process.
 🐝  - Natalie
 
 ### 💨 Wind (What went well)
-
+- We really nailed our sprint goals
 
 ### ⚓️ Anchors (What didn't go well)
-
+- Signal output specifications were unclear
 
 ### 🧊 Icebergs (Potential risks/future problems)
+- N/A

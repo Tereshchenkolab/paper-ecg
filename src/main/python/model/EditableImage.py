@@ -61,7 +61,7 @@ class EditableImage:
         brightenedImage = ImageUtilities.applyBrightness(image, self.edits.brightness)
         coloredImage = ImageUtilities.applyContrast(brightenedImage, self.edits.contrast)
 
-        return ImageUtilities.opencvImageToPixmap(coloredImage)
+        return coloredImage
 
     def applyRotation(self):
         rotatedImage = ImageUtilities.applyRotation(self.image, self.edits.rotation, border=self.mode)
@@ -73,4 +73,4 @@ class EditableImage:
         brightenedImage = ImageUtilities.applyBrightness(rotatedImage, self.edits.brightness)
         coloredImage = ImageUtilities.applyContrast(brightenedImage, self.edits.contrast)
 
-        return ImageUtilities.opencvImageToPixmap(coloredImage)
+        return coloredImage
