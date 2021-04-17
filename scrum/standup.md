@@ -692,3 +692,36 @@ Busy with other classes this week!
 
 None.
 
+
+## April 17
+
+### Natalie
+
+#### Since last meeting
+
+- Revamped the ROI pixel data and configured to work with OpenCV
+
+#### Until next meeting
+
+- Create a close button to hide an image and reset the editor.
+
+#### Blockers
+
+None.
+
+
+### Julian
+
+#### Since last meeting
+
+- Connect the interface to the implementations (above).
+
+#### Until next meeting
+
+- Finish connecting conversion process to interface.
+- Work on snakes implementation
+
+#### Blockers
+
+Was blocked by the ROI data format, but that is now cleared.
+
