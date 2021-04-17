@@ -82,3 +82,6 @@ def padRight(elements, count, fillValue=0):
         return np.pad(elements, (0, count), constant_values=fillValue)
     else:
         return elements + ([fillValue] * count)
+
+def emptyOrNone(elements):
+    return len(elements) == 0 or elements is None

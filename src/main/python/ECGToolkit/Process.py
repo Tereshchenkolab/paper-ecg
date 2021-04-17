@@ -36,13 +36,13 @@ def extractGridFromImage(image, detectionMethod, spacingReductionMethod=Common.m
         """Takes all of the lines in an image, filters to those oriented in the specified direction, and estimates
         the most likely underlying spacing (some or many lines may be missing so mean is not necessarily suitable)"""
 
-        if emptyOrNone(lines): return None
+        if Common.emptyOrNone(lines): return None
 
         orientedLines = Vision.getLinesInDirection(lines, direction)
-        if emptyOrNone(orientedLines): return None
+        if Common.emptyOrNone(orientedLines): return None
 
         distances = Common.calculateDistancesBetweenValues(sorted(orientedLines))
-        if emptyOrNone(distances): return None
+        if Common.emptyOrNone(distances): return None
 
         # TODO: Implement an autocorrelation approach or something else to do a better job of this (median?)...
         gridSpacing = spacingReductionMethod(distances)
