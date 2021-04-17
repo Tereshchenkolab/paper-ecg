@@ -26,6 +26,11 @@ def getLinesInDirection(lines, directionInDegrees):
     return [(rho, theta) for rho, theta in lines if math.isclose(theta * 180/math.pi, directionInDegrees, abs_tol=2)]
 
 
+def houghLineToAngle(line):
+    rho, theta = line
+    return theta * 180/math.pi
+
+
 # This could help with extracting the signal from the grid
 def openImage(binaryImage):
     # Open the image

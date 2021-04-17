@@ -8,6 +8,7 @@ Created November 7, 2020
 from pathlib import Path
 
 from model.EditableImage import EditableImage
+from ECGToolkit.Process import estimateRotationAngle
 from PyQt5 import QtCore, QtGui, QtWidgets
 from QtWrapper import *
 from Utility import *
@@ -124,6 +125,25 @@ class Editor(QtWidgets.QWidget):
 
         if self.image is not None:
             self.displayImage(self.image.withRotation(value))
+
+    def autoRotate(self):
+        if self.image is None: return
+
+        angle = estimateRotationAngle(self.image.image)
+
+        if angle is None:
+            errorModal = QtWidgets.QMessageBox()
+            errorModal.setWindowTitle("Error")
+            errorModal.setText("Unable to detect the angle automatically!")
+            errorModal.setInformativeText("Use the slider to adjust the rotation manually")
+            errorModal.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+            errorModal.exec_()
+
+            return
+
+        # Notice: The slider is scaled up by a factor of 10    \/
+        self.EditPanelGlobalView.rotationSlider.setValue(angle*10)
+        self.adjustRotation()
 
     def resetImageEditControls(self):
         # TODO: Implement this (and call when a new image is loaded ... ?)

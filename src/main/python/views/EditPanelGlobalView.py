@@ -5,7 +5,7 @@ import os, sys
 class EditPanelGlobalView(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__()
-        
+
         self.editorWidget = parent
 
         self.sizePolicy().setHorizontalPolicy(QtWidgets.QSizePolicy.Expanding)
@@ -35,7 +35,8 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                     Label("Contrast"),
                     HorizontalSlider(self, "contrastSlider"),
                     Label("Rotation"),
-                    HorizontalSlider(self, "rotationSlider")
+                    HorizontalSlider(self, "rotationSlider"),
+                    PushButton(self, "autoRotateButton", text="Auto Rotate")
                 ])
             )
         )
@@ -86,7 +87,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         )
 
         self.mainLayout.addLayout(self.controlsLayout)
-        
+
         self.mainLayout.addWidget(
             PushButton(
                 owner=self,
@@ -97,7 +98,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         )
 
         self.setLayout(self.mainLayout)
-        
+
         self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
         self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
         self.digitizeButton.clicked.connect(lambda: self.editorWidget.digitizeButtonClicked.emit())
@@ -116,10 +117,11 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.rotationSlider.sliderMoved.connect(self.editorWidget.adjustRotation)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
 
+        self.autoRotateButton.clicked.connect(self.editorWidget.autoRotate)
+
     def clearVoltSpinBox(self):
         self.voltScaleSpinBox.setValue(0.0)
 
     def clearTimeSpinBox(self):
         self.timeScaleSpinBox.setValue(0.0)
 
-        

@@ -3,8 +3,17 @@ from . import GridDetection
 from . import Vision
 
 
-def emptyOrNone(elements):
-    return len(elements) == 0 or elements is None
+def estimateRotationAngle(image, houghThreshold=80):
+    binaryImage = GridDetection.kernelApproach(image)
+    lines = Vision.houghLines(binaryImage, houghThreshold)
+    angles = Common.mapList(lines, Vision.houghLineToAngle)
+    offsets = Common.mapList(angles, lambda angle: angle % 90)
+    candidates = Common.filterList(offsets, lambda offset: abs(offset) < 30)
+
+    if len(candidates) > 1:
+        return Common.mean(candidates)
+    else:
+        return None
 
 
 def extractSignalFromImage(image, detectionMethod, extractionMethod):
