@@ -33,13 +33,6 @@ class Editor(QtWidgets.QWidget):
         super().__init__()
         self.exportFileDialog = None
         self.initUI()
-        # self.connectUI()
-
-        # Initialize a single ROI as a demo
-        # self.initROI()
-
-        # Hide panel until an image is loaded
-        # self.editPanel.hide()
 
     def initUI(self):
         self.setLayout(
@@ -139,7 +132,7 @@ class Editor(QtWidgets.QWidget):
 
     def loadImageFromPath(self, path: Path):
         self.image = EditableImage(path)
-        self.displayImage(self.image.getPixmap())
+        self.displayImage(self.image.image)
         self.onImageAppear()
 
     def onImageAppear(self):
@@ -149,8 +142,8 @@ class Editor(QtWidgets.QWidget):
         # Adjust zoom to fit image in view
         self.imageViewer.fitInView(QtCore.QRectF(self.image.getPixmap().rect()), QtCore.Qt.KeepAspectRatio)
 
-    def displayImage(self, pixmap):
-        self.imageViewer.setImage(pixmap)
+    def displayImage(self, image):
+        self.imageViewer.setImage(image)
 
     def openExportFileDialog(self):
         self.exportFileDialog = ExportFileDialog(self)

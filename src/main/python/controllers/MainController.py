@@ -24,7 +24,6 @@ class MainController:
         self.ecg = Ecg()
         self.connectUI()
 
-
     def connectUI(self):
         """
         Hook UI up to handlers in the controller
@@ -52,7 +51,6 @@ class MainController:
         self.window.editor.digitizeButtonClicked.connect(self.confirmDigitization)
         self.window.editor.exportPathChosen.connect(self.digitize)
 
-
     def openImageFile(self):
         path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg)"))
 
@@ -60,7 +58,6 @@ class MainController:
             self.window.editor.loadImageFromPath(path)
         else:
             print("[Warning] No image selected")
-
 
     def openFileBrowser(self, caption: str, fileType: str, initialPath: str ="") -> str:
         """Launches a file browser for the user to select a file to open.
@@ -82,7 +79,6 @@ class MainController:
 
         return absolutePath
 
-
     def addLead(self, leadId, action):
         if self.window.editor.imageViewer.hasImage():
             # Disable menu action so user can't add more than one bounding box for an individual lead
@@ -99,7 +95,6 @@ class MainController:
             lead = Lead(leadId, roiBox)
             self.ecg.leads[leadId] = lead
 
-
     def setEditorPane(self, leadId, leadSelected):
         if leadSelected == True and leadId is not None:
             lead = self.ecg.leads[leadId]
@@ -110,7 +105,6 @@ class MainController:
     def updateEcgLead(self, lead):
         print("update ecg lead: ", lead.leadId)
         index = lead.leadId
-        self.ecg.leads[index].roiData.pixelData.save("modelTest.png")
 
     def updateEcgTimeScale(self, timeScale):
         print("update ecg time scale: " + str(timeScale))

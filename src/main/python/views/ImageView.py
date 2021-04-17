@@ -6,6 +6,8 @@ Created November 1, 2020
 """
 
 from PyQt5 import QtGui, QtCore, QtWidgets
+from model.EditableImage import EditableImage
+import ImageUtilities
 import os, sys
 
 
@@ -21,8 +23,9 @@ class ImageView(QtWidgets.QGraphicsView):
         self.setMinimumSize(600, 400)
 
         self._scene = QtWidgets.QGraphicsScene(self)
-        self._image = QtWidgets.QGraphicsPixmapItem()
-        self._scene.addItem(self._image)
+        self._image = None                                  # OpenCV form of the image data - used for processing
+        self._pixmapItem = QtWidgets.QGraphicsPixmapItem()  # The pixmap form of the image data - used for displaying
+        self._scene.addItem(self._pixmapItem)
         self._zoom = 0
         self._scaleFactor = 1.5
         self._empty = True
@@ -49,18 +52,23 @@ class ImageView(QtWidgets.QGraphicsView):
 
     def resizeEvent(self, event):
         if self.hasImage() and not self.verticalScrollBar().isVisible() and not self.horizontalScrollBar().isVisible(): 
-           self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+           self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         QtWidgets.QGraphicsView.resizeEvent(self, event)
 
     def hasImage(self):
         return not self._empty
 
-    def setImage(self, pixmap=None):
-        self._image.setPixmap(pixmap)
+    def setImage(self, image=None):
+        self._image = image
+        self._pixmapItem.setPixmap(ImageUtilities.opencvImageToPixmap(image))
         self._empty = False
-        self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+        self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
-        self._scene.setSceneRect(QtCore.QRectF(self._image.pixmap().rect()))
+        self._scene.setSceneRect(QtCore.QRectF(self._pixmapItem.pixmap().rect()))
+
+        for item in self._scene.items():
+            if item.type == QtWidgets.QGraphicsRectItem.UserType:
+                item.updatePixelData()
 
     def event(self, event):
         # Detects pinching gesture on macOS
@@ -103,26 +111,9 @@ class ImageView(QtWidgets.QGraphicsView):
                     self.setTransform(transform)
                     self._zoom -= 1
                 elif self._zoom == 1:
-                    self.fitInView(QtCore.QRectF(self._image.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+                    self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
                     self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
                     self._zoom = 0
             else:
                 print("scale not invertible")
     
-
-if __name__ == '__main__':
-    app = QtWidgets.QApplication([])
-
-    image = "./fullScan.png"
-    pixmap = QtGui.QPixmap(image)
-
-    viewer = ImageView(None)
-    viewer.setImage(pixmap)
-
-    roi = ROIItem(viewer._scene)
-    #roi.setRect(300, 100, 400, 200)
-    #print(roi.isSelected())
-    viewer._scene.addItem(roi)
-    viewer.show()
-
-    app.exec_()

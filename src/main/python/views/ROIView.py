@@ -1,5 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
-# from model.LeadModel import LeadId
+from model.EditableImage import EditableImage
+import ImageUtilities
+import numpy as np
 
 # From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
 class ROIItem(QtWidgets.QGraphicsRectItem):
@@ -36,7 +38,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         self.leadId = leadId
 
-        # Pixel data within the bounding box region
+        # Pixel data within the bounding box region (OpenCV form)
         self.pixelData = None
 
         # Minimum width and height of box (in pixels)
@@ -59,6 +61,17 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges, True)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, True)
         self.updateHandlesPos()
+
+        self.x = self.mapToScene(self.rect()).boundingRect().toRect().x()
+        self.y = self.mapToScene(self.rect()).boundingRect().toRect().y()
+        self.w = self.mapToScene(self.rect()).boundingRect().toRect().width()
+        self.h = self.mapToScene(self.rect()).boundingRect().toRect().height()
+
+        # Set item type to identify ROI items in scene - according to custom items should
+        # have type >= UserType (65536)
+        self.type = QtWidgets.QGraphicsRectItem.UserType
+
+        self.updatePixelData()
 
     def handleAt(self, point):
         """
@@ -117,11 +130,10 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.handleSelected = None
         self.mousePressPos = None
         self.mousePressRect = None
-        self.update()
-        mappedBox = self.mapToScene(self.boundingRect()).boundingRect()
-        box = self.mapToScene(self.rect()).boundingRect()
-        self.pixelData = self.parentViews[0]._image.pixmap().copy(box.toRect())
-        self.pixelData.save(self.leadId + ".png")
+
+        self.updatePixelData()
+
+        self.update()   
         self.parentViews[0].itemMoved.emit(self)
 
 
@@ -353,4 +365,15 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
     def getLeadId(self):
         return self.leadId
 
+    def updatePixelData(self):
+        box = self.mapToScene(self.rect()).boundingRect() 
+
+        x = box.toRect().x()
+        y = box.toRect().y()
+        w = box.toRect().width()
+        h = box.toRect().height()
+
+        self.pixelData = np.copy(self.parentViews[0]._image[y:y+h, x:x+w])
+        croppedImage = ImageUtilities.opencvImageToPixmap(self.pixelData)
+        croppedImage.save(self.leadId + ".png")
         
