@@ -66,6 +66,7 @@ class ImageView(QtWidgets.QGraphicsView):
         self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
         self._scene.setSceneRect(QtCore.QRectF(self._pixmapItem.pixmap().rect()))
 
+        # update pixel data for each roi present in the scene
         for item in self._scene.items():
             if item.type == QtWidgets.QGraphicsRectItem.UserType:
                 item.updatePixelData()
