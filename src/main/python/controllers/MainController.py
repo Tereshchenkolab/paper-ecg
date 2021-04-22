@@ -85,11 +85,18 @@ class MainController:
         return absolutePath
 
     def closeImageFile(self):
+        """Closes out current image file and resets editor controls.
+        """
         self.window.editor.removeImage()
         self.removeAllLeads() 
         self.window.editor.resetImageEditControls()       
 
     def addLead(self, leadId):
+        """Adds a Lead ROI box to the image view and corresponding lead object to the ECG model. 
+
+        Args:
+            leadId (str): the ID of the lead to be added
+        """
         if self.window.editor.imageViewer.hasImage():
             # Disable menu action so user can't add more than one bounding box for an individual lead
             # action.setEnabled(False)
@@ -106,21 +113,46 @@ class MainController:
             lead = Lead(leadId, roiBox)
             self.ecg.leads[leadId] = lead
 
-    def removeLead(self, lead):
-        # Re-enable menu action so lead can be added in the future
-        self.window.editor.imageViewer.removeRoiBox(lead)       # remove lead roi box from image view
-        self.window.leadButtons[lead.leadId].setEnabled(True)   # re-enable add lead menu button
-        self.setEditorPane()                                    # set editor pane back to global view
-        del self.ecg.leads[lead.leadId]                         # delete lead data from ecg model
+    def removeLead(self, leadROI):
+        """Removes a single ROI box from the image view and its corresponding lead from the ECG model.
+        This function is connected to the "Delete Lead" button in the lead detail view panel through
+        the 'removeLead' signal.
+
+        Args:
+            leadROI (ROIItem): the ROI box of the lead being deleted
+        """
+        # Remove lead roi box from image view
+        self.window.editor.imageViewer.removeRoiBox(leadROI)
+        # Re-enable add lead menu button
+        self.window.leadButtons[leadROI.leadId].setEnabled(True)
+        # Set editor pane back to global view
+        self.setEditorPane()                                      
+        # Delete lead data from ecg model
+        del self.ecg.leads[lead.leadId]                            
 
     def removeAllLeads(self):
-        self.window.editor.imageViewer.removeAllRoiBoxes()      # remove all lead roi boxes from image view
-        for lead, button in self.window.leadButtons.items():    # re-enable all add lead menu buttons
+        """Removes all of the ROI boxes present and their corresponding leads from the ECG model.
+        """
+        # Remove all lead roi boxes from image view
+        self.window.editor.imageViewer.removeAllRoiBoxes() 
+        # Re-enable all add lead menu buttons
+        for lead, button in self.window.leadButtons.items():   
             button.setEnabled(True)             
-        self.setEditorPane()                                    # set editor pane back to global view
-        self.ecg.leads.clear()                                  # clear all lead data from model
+        # Set editor pane back to global view
+        self.setEditorPane()                                    
+        # Clear all lead data from model
+        self.ecg.leads.clear()                                  
 
     def setEditorPane(self, leadId=None, leadSelected=False):
+        """Switch the Editor pane between Global and Lead-Detail view. Lead-Detail view
+        is shown when a ROI box is selected, Global view is displayed otherwise. This is
+        connected to the roiItemSelected signal which is emitted when an ROIItem is selected
+        or deselected.
+
+        Args:
+            leadId ([str], optional): The leadId of the selected ROI. Defaults to None.
+            leadSelected (bool, optional): Indicates if a lead ROI was selected. Defaults to False.
+        """
         if leadSelected == True and leadId is not None:
             lead = self.ecg.leads[leadId]
             self.window.editor.showLeadDetailView(lead)
@@ -128,15 +160,34 @@ class MainController:
             self.window.editor.showGlobalView(self.ecg.gridVoltageScale, self.ecg.gridTimeScale)
 
     def updateEcgTimeScale(self, timeScale):
-        print("update ecg time scale: " + str(timeScale))
+        """Updates the grid time scale in the ECG model. This is connected to the
+        time scale spinbox in the global editor pane. It is called whenever the
+        spinbox is updated and the gridTimeScaleChanged signal is emitted.
+
+        Args:
+            timeScale ([double]): the value of the time scale spinbox
+        """
         self.ecg.gridTimeScale = timeScale
     
     def updateEcgVoltScale(self, voltScale):
-        print("update ecg volt scale" + str(voltScale))
+        """Updates the grid volt scale in the ECG model. This is connected to the
+        volt scale spinbox in the global editor pane. It is called whenever the
+        spinbox is updated and the gridVoltScaleChanged signal is emitted.
+
+        Args:
+            voltScale ([double]): the value of the volt scale spinbox
+        """
         self.ecg.gridVoltageScale = voltScale
 
     def updateLeadStartTime(self, leadId, value):
-        print("update lead " + leadId + " start time to: " + str(value))
+        """Updates the start time of a lead in the ECG model. This is connected to the
+        start time spinbox in the lead-detail editor pane. It is called whenever the 
+        spinbox is updated and the leadStartTimeChanged signal is emitted.
+
+        Args:
+            leadId ([type]): [description]
+            value ([type]): [description]
+        """
         self.ecg.leads[leadId].leadStartTime = value
 
     def confirmDigitization(self):
