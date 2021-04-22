@@ -27,6 +27,7 @@ class Editor(QtWidgets.QWidget):
     gridTimeScaleChanged = QtCore.pyqtSignal(float)
     digitizeButtonClicked = QtCore.pyqtSignal()
     exportPathChosen = QtCore.pyqtSignal(str, str)
+    removeLead = QtCore.pyqtSignal(object)
 
     image = None # The openCV image
 
@@ -75,15 +76,13 @@ class Editor(QtWidgets.QWidget):
         )
         self.editPanel.setCurrentIndex(0)
 
-    def showGlobalView(self, voltScale, timeScale):
-            self.EditPanelGlobalView.voltScaleSpinBox.setValue(voltScale)
-            self.EditPanelGlobalView.timeScaleSpinBox.setValue(timeScale)
-            self.editPanel.setCurrentIndex(0)
+    def showGlobalView(self, voltScale=0.0, timeScale=0.0):
+        self.EditPanelGlobalView.setValues(voltScale, timeScale)
+        self.editPanel.setCurrentIndex(0)
 
     def showLeadDetailView(self, lead):
-            self.EditPanelLeadView.setTitle(lead.leadId)
-            self.EditPanelLeadView.leadStartTimeSpinBox.setValue(lead.leadStartTime)
-            self.editPanel.setCurrentIndex(1)
+        self.EditPanelLeadView.setValues(lead)
+        self.editPanel.setCurrentIndex(1)
 
     def numpyToPixMap(self, image):
         # SOURCE: https://stackoverflow.com/a/50800745/7737644 (Creative Commons - Credit, share-alike)
@@ -148,7 +147,13 @@ class Editor(QtWidgets.QWidget):
     def resetImageEditControls(self):
         # TODO: Implement this (and call when a new image is loaded ... ?)
         # IDEA: Only show the image editing controls when there is a image loaded?
-        pass
+
+        self.EditPanelGlobalView.brightnessSlider.setValue(0)
+        self.EditPanelGlobalView.contrastSlider.setValue(0)
+        self.EditPanelGlobalView.rotationSlider.setValue(0)
+        self.EditPanelGlobalView.voltScaleSpinBox.setValue(0)
+        self.EditPanelGlobalView.timeScaleSpinBox.setValue(0)
+        self.showGlobalView()
 
     def loadImageFromPath(self, path: Path):
         self.image = EditableImage(path)
@@ -168,3 +173,7 @@ class Editor(QtWidgets.QWidget):
     def openExportFileDialog(self):
         self.exportFileDialog = ExportFileDialog(self)
         self.exportFileDialog.exec_()
+
+    def removeImage(self):
+        self.image = None
+        self.imageViewer.removeImage()

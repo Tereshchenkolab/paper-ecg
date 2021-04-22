@@ -29,22 +29,23 @@ class MainController:
         Hook UI up to handlers in the controller
         """
         self.window.fileMenuOpen.triggered.connect(self.openImageFile)
+        self.window.fileMenuClose.triggered.connect(self.closeImageFile)
 
-        self.window.addLead1.triggered.connect(lambda: self.addLead("I", self.window.addLead1))
-        self.window.addLead2.triggered.connect(lambda: self.addLead("II", self.window.addLead2))
-        self.window.addLead3.triggered.connect(lambda: self.addLead("III", self.window.addLead3))
-        self.window.addLeadaVR.triggered.connect(lambda: self.addLead("aVR", self.window.addLeadaVR))
-        self.window.addLeadaVL.triggered.connect(lambda: self.addLead("aVL", self.window.addLeadaVL))
-        self.window.addLeadaVF.triggered.connect(lambda: self.addLead("aVF", self.window.addLeadaVF))
-        self.window.addLeadV1.triggered.connect(lambda: self.addLead("V1", self.window.addLeadV1))
-        self.window.addLeadV2.triggered.connect(lambda: self.addLead("V2", self.window.addLeadV2))
-        self.window.addLeadV3.triggered.connect(lambda: self.addLead("V3", self.window.addLeadV3))
-        self.window.addLeadV4.triggered.connect(lambda: self.addLead("V4", self.window.addLeadV4))
-        self.window.addLeadV5.triggered.connect(lambda: self.addLead("V5", self.window.addLeadV5))
-        self.window.addLeadV6.triggered.connect(lambda: self.addLead("V6", self.window.addLeadV6))
+        self.window.addLead1.triggered.connect(lambda: self.addLead("I"))
+        self.window.addLead2.triggered.connect(lambda: self.addLead("II"))
+        self.window.addLead3.triggered.connect(lambda: self.addLead("III"))
+        self.window.addLeadaVR.triggered.connect(lambda: self.addLead("aVR"))
+        self.window.addLeadaVL.triggered.connect(lambda: self.addLead("aVL"))
+        self.window.addLeadaVF.triggered.connect(lambda: self.addLead("aVF"))
+        self.window.addLeadV1.triggered.connect(lambda: self.addLead("V1"))
+        self.window.addLeadV2.triggered.connect(lambda: self.addLead("V2"))
+        self.window.addLeadV3.triggered.connect(lambda: self.addLead("V3"))
+        self.window.addLeadV4.triggered.connect(lambda: self.addLead("V4"))
+        self.window.addLeadV5.triggered.connect(lambda: self.addLead("V5"))
+        self.window.addLeadV6.triggered.connect(lambda: self.addLead("V6"))
 
-        self.window.editor.imageViewer.itemSelected.connect(self.setEditorPane)
-        self.window.editor.imageViewer.itemMoved.connect(self.updateEcgLead)
+        self.window.editor.imageViewer.roiItemSelected.connect(self.setEditorPane)
+        self.window.editor.removeLead.connect(self.removeLead)
         self.window.editor.leadStartTimeChanged.connect(self.updateLeadStartTime)
         self.window.editor.gridTimeScaleChanged.connect(self.updateEcgTimeScale)
         self.window.editor.gridVoltScaleChanged.connect(self.updateEcgVoltScale)
@@ -52,10 +53,14 @@ class MainController:
         self.window.editor.exportPathChosen.connect(self.digitize)
 
     def openImageFile(self):
+
+        # Per pathlib documentation, if no selection is made then Path('.') is returned
+        #  https://docs.python.org/3/library/pathlib.html
         path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg)"))
 
-        if path is not None:
+        if path != Path('.'):
             self.window.editor.loadImageFromPath(path)
+            self.window.editor.resetImageEditControls()
         else:
             print("[Warning] No image selected")
 
@@ -79,10 +84,16 @@ class MainController:
 
         return absolutePath
 
-    def addLead(self, leadId, action):
+    def closeImageFile(self):
+        self.window.editor.removeImage()
+        self.removeAllLeads() 
+        self.window.editor.resetImageEditControls()       
+
+    def addLead(self, leadId):
         if self.window.editor.imageViewer.hasImage():
             # Disable menu action so user can't add more than one bounding box for an individual lead
-            action.setEnabled(False)
+            # action.setEnabled(False)
+            self.window.leadButtons[leadId].setEnabled(False)
 
             # Create instance of Region of Interest (ROI) bounding box and add to image viewer
             roiBox = ROIItem(self.window.editor.imageViewer._scene, leadId)
@@ -95,16 +106,26 @@ class MainController:
             lead = Lead(leadId, roiBox)
             self.ecg.leads[leadId] = lead
 
-    def setEditorPane(self, leadId, leadSelected):
+    def removeLead(self, lead):
+        # Re-enable menu action so lead can be added in the future
+        self.window.editor.imageViewer.removeRoiBox(lead)       # remove lead roi box from image view
+        self.window.leadButtons[lead.leadId].setEnabled(True)   # re-enable add lead menu button
+        self.setEditorPane()                                    # set editor pane back to global view
+        del self.ecg.leads[lead.leadId]                         # delete lead data from ecg model
+
+    def removeAllLeads(self):
+        self.window.editor.imageViewer.removeAllRoiBoxes()      # remove all lead roi boxes from image view
+        for lead, button in self.window.leadButtons.items():    # re-enable all add lead menu buttons
+            button.setEnabled(True)             
+        self.setEditorPane()                                    # set editor pane back to global view
+        self.ecg.leads.clear()                                  # clear all lead data from model
+
+    def setEditorPane(self, leadId=None, leadSelected=False):
         if leadSelected == True and leadId is not None:
             lead = self.ecg.leads[leadId]
             self.window.editor.showLeadDetailView(lead)
         else:
             self.window.editor.showGlobalView(self.ecg.gridVoltageScale, self.ecg.gridTimeScale)
-
-    def updateEcgLead(self, lead):
-        print("update ecg lead: ", lead.leadId)
-        index = lead.leadId
 
     def updateEcgTimeScale(self, timeScale):
         print("update ecg time scale: " + str(timeScale))
@@ -118,13 +139,8 @@ class MainController:
         print("update lead " + leadId + " start time to: " + str(value))
         self.ecg.leads[leadId].leadStartTime = value
 
-    # confirm all ECG model data is present and get export location
     def confirmDigitization(self):
-        # print("confirm digitization")
-        # if len(self.ecg.leads) == 12:
         self.window.editor.openExportFileDialog()
-        # else:
-            # print("missing lead data")
     
     # we have all ECG data and export location - ready to pass off to backend to digitize
     def digitize(self, exportPath, fileType):

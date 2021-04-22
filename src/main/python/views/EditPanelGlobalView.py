@@ -125,3 +125,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
     def clearTimeSpinBox(self):
         self.timeScaleSpinBox.setValue(0.0)
 
+    def setValues(self, voltScale, timeScale):
+        self.voltScaleSpinBox.setValue(voltScale)
+        self.timeScaleSpinBox.setValue(timeScale)
+
