@@ -21,8 +21,9 @@ class MainController:
 
     def __init__(self):
         self.window = MainWindow()
-        self.ecg = Ecg()
         self.connectUI()
+        # The ECG model that we will update and pass to the backend to process
+        self.ecg = Ecg() 
 
     def connectUI(self):
         """
@@ -85,8 +86,7 @@ class MainController:
         return absolutePath
 
     def closeImageFile(self):
-        """Closes out current image file and resets editor controls.
-        """
+        """Closes out current image file and resets editor controls."""
         self.window.editor.removeImage()
         self.removeAllLeads() 
         self.window.editor.resetImageEditControls()       
@@ -131,8 +131,7 @@ class MainController:
         del self.ecg.leads[lead.leadId]                            
 
     def removeAllLeads(self):
-        """Removes all of the ROI boxes present and their corresponding leads from the ECG model.
-        """
+        """Removes all of the ROI boxes present and their corresponding leads from the ECG model."""
         # Remove all lead roi boxes from image view
         self.window.editor.imageViewer.removeAllRoiBoxes() 
         # Re-enable all add lead menu buttons
