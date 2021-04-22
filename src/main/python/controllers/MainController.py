@@ -128,7 +128,7 @@ class MainController:
         # Set editor pane back to global view
         self.setEditorPane()                                      
         # Delete lead data from ecg model
-        del self.ecg.leads[lead.leadId]                            
+        del self.ecg.leads[leadROI.leadId]                            
 
     def removeAllLeads(self):
         """Removes all of the ROI boxes present and their corresponding leads from the ECG model."""

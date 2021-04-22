@@ -1,5 +1,5 @@
-    """This class models the full ECG, includeing its leads and grid scales
-    """
+"""This class models the full ECG, includeing its leads and grid scales
+"""
 class Ecg:
     def __init__(self):
         self.leads = {}
