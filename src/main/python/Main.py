@@ -5,13 +5,12 @@ Created November 1, 2020
 Entry point for the application
 """
 
-from fbs_runtime.application_context.PyQt5 import ApplicationContext
-from PyQt5 import QtWidgets, QtGui
+import sys
 
-from Utility import *
+from fbs_runtime.application_context.PyQt5 import ApplicationContext
+
 from controllers.MainController import MainController
 
-import os, sys
 
 if __name__ == '__main__':
     context = ApplicationContext()

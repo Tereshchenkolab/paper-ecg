@@ -1,18 +1,19 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets
+
 from QtWrapper import *
-import os, sys
+
 
 class EditPanelLeadView(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__()
-        
+
         self.parent = parent # the editor widget
-        
+
         self.leadId = None
 
         self.sizePolicy().setHorizontalPolicy(QtWidgets.QSizePolicy.Expanding)
         self.sizePolicy().setVerticalPolicy(QtWidgets.QSizePolicy.Fixed)
-        
+
         self.title = QtWidgets.QLabel()
         self.imagePreview = QtWidgets.QLabel()
 

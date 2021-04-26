@@ -4,20 +4,18 @@ Created November 7, 2020
 
 -
 """
-
 from pathlib import Path
 
-from model.EditableImage import EditableImage
-from ECGToolkit.Process import estimateRotationAngle
 from PyQt5 import QtCore, QtGui, QtWidgets
-from QtWrapper import *
-from Utility import *
 
+from ECGToolkit.Process import estimateRotationAngle
+from model.EditableImage import EditableImage
 from views.ImageView import *
 from views.ROIView import *
 from views.EditPanelLeadView import *
 from views.EditPanelGlobalView import *
 from views.ExportFileDialog import *
+from QtWrapper import *
 
 
 class Editor(QtWidgets.QWidget):

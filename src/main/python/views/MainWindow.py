@@ -4,13 +4,10 @@ Created November 7, 2020
 
 Primary window of the application
 """
-
-import sys
-import QtWrapper as Qt
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from views.EditorWidget import Editor
+import QtWrapper as Qt
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -100,7 +97,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             ]
         )
-    
+
 
     def buildLeadMenu(self):
         return Qt.Menu(
@@ -149,7 +146,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     displayName="Add Lead aVF",
                     shortcut=QtGui.QKeySequence('Ctrl+6'),
                     statusTip="Add Lead aVF"
-                ), 
+                ),
                 Qt.MenuAction(
                     owner=self,
                     name="addLeadV1",

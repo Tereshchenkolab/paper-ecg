@@ -4,11 +4,10 @@ Created November 7, 2020
 
 Wrapper to simplify interacting with Qt
 """
+from typing import cast, List, Optional, Tuple, Union
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget, QStackedWidget, QSpinBox, QDoubleSpinBox, QLineEdit
-
-from typing import cast, List, Optional, Tuple, Union
 
 
 class SplitterOrientation:
@@ -454,4 +453,3 @@ def LineEdit(
     lineEdit = QLineEdit()
     lineEdit.setText(contents)
     return lineEdit
-    
