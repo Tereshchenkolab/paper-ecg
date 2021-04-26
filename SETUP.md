@@ -10,7 +10,7 @@ The steps involved are:
 - Setting up an environment
 - Loading dependencies
 
-However, there are three different ways to accomplish this:
+There are two different ways to install Python `3.6.7`:
 
 1. Official Python Installer — This option is best for windows. ([jump](#1-official-python-installer))
 1. `pyenv` — This option is best for Linux/macOS.([jump](#2-pyenv-macoslinux-only))
@@ -45,7 +45,7 @@ If neither of those works you will need to specify the full path to the Python 3
 ### Create an environment
 
 Python comes bundled with an environment manager, `venv` (not to be confused with `virtualenv` or `pyenv`). 
-We will use this tool to package all of the dependencies for the project in a locally.
+We will use this tool to keep all of the dependencies for the project separate from any other Python packages you may have installed.
 Check out the [venv documentation](https://docs.python.org/3/library/venv.html)) for more information.
 
 > 💡 Environments isolate different Python projects to prevent dependency conflicts.
@@ -126,7 +126,8 @@ Then, follow the pre-requisites for your system in the [troubleshooting guide](h
 env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.6.7
 ```
 
-For PyInstaller to work correctly, you need a complete Python installation, so you need to specify `--enable-shared`. In general `pyenv install 3.6.7` is all you need to install a Python version via `pyenv`.
+For PyInstaller to work correctly, you need a complete Python installation, so you need to specify `--enable-shared`. 
+In general `pyenv install 3.6.7` is sufficient to install a Python version via `pyenv`.
 
 ### Configure an environment
 
