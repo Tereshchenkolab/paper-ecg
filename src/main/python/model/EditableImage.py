@@ -4,12 +4,14 @@ Created November 9, 2020
 
 -
 """
-import ImageUtilities
+from pathlib import Path
+
 import cv2
 import numpy as np
 import scipy.stats as stats
 
-from pathlib import Path
+import ImageUtilities
+
 
 class EditableImage:
 

@@ -1,3 +1,9 @@
+"""
+Process.py
+Created ???
+
+High-level API for applications to use.
+"""
 from . import Common
 from . import GridDetection
 from . import Vision
@@ -77,7 +83,7 @@ def verticallyScaleECGSignal(signal, gridSizeInPixels: float, millimetersPerMill
     milliVoltsPerMillimeter = 1 / millimetersPerMilliVolt
     milliVoltsPerPixel = gridsPerPixel * millimetersPerGrid * milliVoltsPerMillimeter
 
-    return signal * milliVoltsPerPixel
+    return signal * milliVoltsPerPixel * 1000
 
 
 def ecgSignalSamplingPeriod(gridSizeInPixels: float, millimetersPerSecond: float = 25.0, gridSizeInMillimeters: float = 1.0):

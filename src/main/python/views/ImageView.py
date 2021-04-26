@@ -4,11 +4,9 @@ Created November 1, 2020
 
 ...
 """
-
 from PyQt5 import QtGui, QtCore, QtWidgets
-from model.EditableImage import EditableImage
+
 import ImageUtilities
-import os, sys
 
 
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
@@ -49,7 +47,7 @@ class ImageView(QtWidgets.QGraphicsView):
         )
 
     def resizeEvent(self, event):
-        if self.hasImage() and not self.verticalScrollBar().isVisible() and not self.horizontalScrollBar().isVisible(): 
+        if self.hasImage() and not self.verticalScrollBar().isVisible() and not self.horizontalScrollBar().isVisible():
            self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         QtWidgets.QGraphicsView.resizeEvent(self, event)
 
@@ -134,4 +132,3 @@ class ImageView(QtWidgets.QGraphicsView):
                     self._zoom = 0
             else:
                 print("scale not invertible")
-    

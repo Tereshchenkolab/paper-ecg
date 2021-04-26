@@ -2,12 +2,13 @@ from pathlib import Path
 
 import numpy as np
 
-from .model.EcgModel import EcgModel
-from .ECGToolkit.Common import *
-from .ECGToolkit.Process import extractSignalFromImage, extractGridFromImage, ecgSignalSamplingPeriod, zeroECGSignal
-from .ECGToolkit import SignalDetection
-from .ECGToolkit import SignalExtraction
-from .ECGToolkit import GridDetection
+from model.EcgModel import Ecg
+from ECGToolkit.Common import *
+from ECGToolkit.Process import extractSignalFromImage, extractGridFromImage, ecgSignalSamplingPeriod, verticallyScaleECGSignal, zeroECGSignal
+from ECGToolkit import SignalDetection
+from ECGToolkit import SignalExtraction
+from ECGToolkit import GridDetection
+from ECGToolkit.Visualization import overlaySignalOnImage
 
 
 LEAD_ORDER = {
@@ -16,7 +17,7 @@ LEAD_ORDER = {
 }
 
 
-def convertECGLeads(ecgData: EcgModel):
+def convertECGLeads(ecgData: Ecg):
 
     # TODO: Make parameters
     signalDetectionMethod = partial(SignalDetection.mallawaarachchi, useBlur=True)
@@ -30,22 +31,31 @@ def convertECGLeads(ecgData: EcgModel):
     extractGrid   = partial(extractGridFromImage, detectionMethod=gridDetectionMethod)
 
     # Map all lead images to signal data
-    signals = mapList(leads, lambda pair: (pair[0], (zeroECGSignal(extractSignal(pair[1].roiData)))))
+    signals = mapList(leads, lambda pair: (pair[0], extractSignal(pair[1].roiData.pixelData)))
 
     # If all signals failed -> Failure
     if all([signalData is None for _, signalData in signals]):
         return None
 
+    images = mapList(
+        zip(leads, signals),
+        lambda leadSignalPair: (leadSignalPair[1][0], overlaySignalOnImage(leadSignalPair[1][1], leadSignalPair[0][1].roiData.pixelData))
+    )
+
     # Map leads to grid size estimates
-    gridSpacings = mapList(leads, lambda pair: (pair[0], (extractGrid(pair[1].roiData))))
+    gridSpacings = mapList(leads, lambda pair: (pair[0], (extractGrid(pair[1].roiData.pixelData))))
     horizontalSpacings = [hSpace for _, (hSpace, _) in gridSpacings if hSpace is not None]
     verticalSpacings   = [vSpace for _, (_, vSpace) in gridSpacings if vSpace is not None]
-    # NOTE: We don't care about vertical at the moment
 
-    if len(horizontalSpacings) == 0:
+    if len(horizontalSpacings) == 0 or len(verticalSpacings) == 0:
         return None
 
     samplingPeriodInPixels = mean(horizontalSpacings)
+    gridHeightInPixels = mean(verticalSpacings)
+
+    # Scale signals
+    # TODO: Pass in the grid size in mm !!!
+    signals = mapList(signals, lambda pair: (pair[0], verticallyScaleECGSignal(zeroECGSignal(pair[1]), gridHeightInPixels, ecgData.gridVoltageScale)))
 
     # TODO: Grid size in mm
     samplingPeriod = ecgSignalSamplingPeriod(samplingPeriodInPixels, ecgData.gridTimeScale)
@@ -58,7 +68,7 @@ def convertECGLeads(ecgData: EcgModel):
     length = max([len(s) for _, s in paddedSignals])
     fullSignals = [(key, padRight(signal, length - len(signal))) for (key, signal) in paddedSignals]
 
-    return dict(fullSignals)
+    return dict(fullSignals), dict(images)
 
 
 def exportSignals(leadSignals, filePath, separator='\t'):
@@ -78,7 +88,8 @@ def exportSignals(leadSignals, filePath, separator='\t'):
     collated = np.array([signal for key, signal in leads])
     output = np.swapaxes(collated, 0, 1)
 
-    assert issubclass(type(filePath), Path), f"Path required, {type(filePath)} found."
+    if not issubclass(type(filePath), Path):
+        filePath = Path(filePath)
 
     # TODO: Handle overwriting ??? Maybe just move the file to trash...? Handle on OS case basis?
     if filePath.exists():

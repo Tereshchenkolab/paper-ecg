@@ -4,11 +4,11 @@ Created November 9, 2020
 
 Controls the primary window, including the menu bar and the editor.
 """
-
-import sys
 from pathlib import Path
-from PyQt5 import QtGui, QtWidgets, QtCore
 
+from PyQt5 import QtWidgets
+
+from Conversion import convertECGLeads, exportSignals
 from views.MainWindow import MainWindow
 from views.ImageView import *
 from views.ROIView import *
@@ -16,6 +16,7 @@ from views.ExportFileDialog import *
 from model.EcgModel import *
 from model.LeadModel import *
 from QtWrapper import *
+
 
 class MainController:
 
@@ -167,7 +168,7 @@ class MainController:
             timeScale ([double]): the value of the time scale spinbox
         """
         self.ecg.gridTimeScale = timeScale
-    
+
     def updateEcgVoltScale(self, voltScale):
         """Updates the grid volt scale in the ECG model. This is connected to the
         volt scale spinbox in the global editor pane. It is called whenever the
@@ -196,6 +197,9 @@ class MainController:
     def digitize(self, exportPath, fileType):
         print("ready to digitize")
         print("export path: " + exportPath + "\nfile type: " + fileType)
-        print("grid volt scale: " + str(self.ecg.gridVoltageScale) + 
+        print("grid volt scale: " + str(self.ecg.gridVoltageScale) +
                 "\ngrid time scale: " + str(self.ecg.gridTimeScale))
-        self.ecg.printLeadInfo()
+
+        extractedSignals, previewImages = convertECGLeads(self.ecg)
+        # TODO: Let the user pick the separator?
+        exportSignals(extractedSignals, exportPath, separator='\t')

@@ -4,9 +4,8 @@ Created February 17, 2021
 
 -
 """
-
 from .Common import *
-from . import Vision, Visualization
+from . import Vision
 
 
 def traceGridlines(binaryImage, houghThreshold=80):

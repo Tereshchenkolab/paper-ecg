@@ -1,7 +1,8 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
-from model.EditableImage import EditableImage
-import ImageUtilities
 import numpy as np
+from PyQt5 import QtGui, QtCore, QtWidgets
+
+import ImageUtilities
+
 
 # From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
 class ROIItem(QtWidgets.QGraphicsRectItem):
@@ -205,7 +206,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             fromY = self.mousePressRect.top()
             toX = fromX + mousePos.x() - self.mousePressPos.x()
             toY = fromY + mousePos.y() - self.mousePressPos.y()
-            if boundingRect.bottom() - toY > self.minHeight and mappedRect.y() - (boundingRect.y()-toY) >= sceneRect.top(): 
+            if boundingRect.bottom() - toY > self.minHeight and mappedRect.y() - (boundingRect.y()-toY) >= sceneRect.top():
                 diff.setY(toY - fromY)
                 boundingRect.setTop(toY)
                 rect.setTop(boundingRect.top() + offset)
@@ -283,7 +284,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         if change == QtWidgets.QGraphicsRectItem.ItemPositionChange:
             if self.parentScene is not None:
                 return self.restrictMovement(value)
-        
+
         if change == QtWidgets.QGraphicsRectItem.ItemSelectedChange:
             self.parentViews[0].roiItemSelected.emit(self.leadId, value)
             if value == True:
@@ -291,22 +292,22 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             else:
                 self.setZValue(0)
 
-        return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)    
+        return QtWidgets.QGraphicsRectItem.itemChange(self, change, value)
 
 
     # https://stackoverflow.com/questions/55771100/how-do-i-reimplement-the-itemchange-and-mousemoveevent-of-a-qgraphicspixmapitem
     def restrictMovement(self, value):
-        
+
         boxRect = self.mapToScene(self.boundingRect()).boundingRect()
         handleOffset = self.handleSpace
         sceneRect = self.parentScene.sceneRect()
-       
-        # 'value' represents the amount the item is being moved along the x,y plane so we calculate the actual (x,y) position the item is moving to 
+
+        # 'value' represents the amount the item is being moved along the x,y plane so we calculate the actual (x,y) position the item is moving to
         x = value.x()+self.handles[self.handleTopLeft].x()
         y = value.y()+self.handles[self.handleTopLeft].y()
 
         relativeRect = QtCore.QRectF(sceneRect.topLeft(), sceneRect.size() - boxRect.size())
-        
+
         # If item is being moved out of bounds, override the appropriate x,y values to keep item within scene
         if not relativeRect.contains(x, y):
             if x < 1:
@@ -349,11 +350,11 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
             painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 255)))
             painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0, 255), 2.0, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-            
+
             for handle, rect in self.handles.items():
                 painter.drawRect(rect)
         else:
-            # Set color (grey) and draw box (unselected) 
+            # Set color (grey) and draw box (unselected)
             painter.setPen(QtGui.QPen(QtGui.QColor(128, 128, 128), 2.0, QtCore.Qt.SolidLine))
             painter.setBrush(QtGui.QBrush(QtGui.QColor(128, 128, 128, 64)))
             painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId)
@@ -366,7 +367,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         return self.leadId
 
     def updatePixelData(self):
-        box = self.mapToScene(self.rect()).boundingRect() 
+        box = self.mapToScene(self.rect()).boundingRect()
 
         x = box.toRect().x()
         y = box.toRect().y()
@@ -376,4 +377,3 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.pixelData = np.copy(self.parentViews[0]._image[y:y+h, x:x+w])
         croppedImage = ImageUtilities.opencvImageToPixmap(self.pixelData)
         croppedImage.save(self.leadId + ".png")
-        

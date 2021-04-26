@@ -1,10 +1,13 @@
-from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore
+
 from QtWrapper import *
+
 
 fileTypesDictionary = {
     "Text File (*.txt)": "txt",
     "CSV (*.csv)": "csv"
 }
+
 
 class ExportFileDialog(QtWidgets.QDialog):
 
@@ -45,7 +48,7 @@ class ExportFileDialog(QtWidgets.QDialog):
         )
 
         self.mainLayout.addLayout(self.chooseFileLayout)
-        
+
         HorizontalBoxLayout(owner=self, name="confirmCancelButtonLayout", contents=[
                 Label(
                     owner=self,
@@ -78,7 +81,7 @@ class ExportFileDialog(QtWidgets.QDialog):
 
     def openSaveFileDialog(self):
         path, selectedFilter = QtWidgets.QFileDialog.getSaveFileName(
-                parent=self, 
+                parent=self,
                 caption="Export to File",
                 filter="Text File (*.txt);;CSV (*.csv)"
         )

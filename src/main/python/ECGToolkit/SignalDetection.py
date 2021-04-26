@@ -4,10 +4,9 @@ Created February 17, 2021
 
 -
 """
-
 import numpy as np
+
 from .Vision import binarize, blur, greyscale, otsuThresholdSelection
-from .Optimization import climb1dHill
 
 
 def mallawaarachchi(image, useBlur: bool = False):

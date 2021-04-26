@@ -4,11 +4,11 @@ Created March 2, 2021
 
 Contains all general methods for image processing. (Try to keep all the ugly cv2 calls in here.)
 """
-
 import math
 
 import cv2
 import numpy as np
+
 from .Optimization import climb1dHill
 
 

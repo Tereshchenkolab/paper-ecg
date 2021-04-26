@@ -5,9 +5,9 @@ Created November 9, 2020
 -
 """
 from typing import Tuple
-from PyQt5 import QtCore, QtGui
+
 import cv2
-import numpy as np
+from PyQt5 import QtCore, QtGui
 
 
 def opencvImageToPixmap(image):

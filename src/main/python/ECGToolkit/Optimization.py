@@ -4,7 +4,6 @@ Created February 17, 2021
 
 -
 """
-
 from typing import Callable, Iterable, Optional, Tuple, Union
 
 

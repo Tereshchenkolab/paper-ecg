@@ -4,12 +4,8 @@ Created March 2, 2021
 
 Converts a color image to binary mask of the grid.
 """
-
-
-from . import Visualization
 from .Common import *
 from .Vision import *
-from .Visualization import Color, displayImages
 
 
 def kernelApproach(colorImage):
@@ -26,6 +22,7 @@ def kernelApproach(colorImage):
         cv2.getStructuringElement(cv2.MORPH_CROSS, (2,2))
     )
 
+    # from .Visualization import Color, displayImages
     # displayImages([
     #     (binaryImage, Color.greyscale, "Binary"),
     #     (opened, Color.greyscale, "Opened"),
