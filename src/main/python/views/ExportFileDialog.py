@@ -54,17 +54,12 @@ class ExportFileDialog(QtWidgets.QDialog):
 
         self.leadPreviewLayout = QtWidgets.QFormLayout()
 
-        # print(self.leadPreviewImages)
-
         for leadId, image in self.leadPreviewImages.items():
-            # btn = QPushButton(text="Preview")
-            # btn.clicked.connect(lambda checked, arg=image: print("Lead " + arg + " clicked"))
             self.leadPreviewLayout.addRow(
                 Label(
                     owner=self,
                     text="Lead " + leadId
                 ),
-                # btn
                 PushButton(
                     owner=self,
                     name="button",
@@ -72,8 +67,6 @@ class ExportFileDialog(QtWidgets.QDialog):
                 )
             )
             self.button.clicked.connect(lambda checked, img=image, title=leadId: self.displayPreview(img, title))
-            # print("lead id: ", leadId)
-            # print("image: ", image)
 
         Widget(
             owner=self,
@@ -149,9 +142,4 @@ class ExportFileDialog(QtWidgets.QDialog):
     def displayPreview(self, image, title):
         previewDialog = ImagePreviewDialog(image)
         previewDialog.exec_()
-        # dialog = QtWidgets.QDialog()
-        # label = QLabel(parent=dialog)
-        # label.setPixmap(opencvImageToPixmap(image))
-        # label.adjustSize()
-        # dialog.exec_()
 
