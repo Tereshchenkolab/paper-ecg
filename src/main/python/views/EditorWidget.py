@@ -168,8 +168,8 @@ class Editor(QtWidgets.QWidget):
     def displayImage(self, image):
         self.imageViewer.setImage(image)
 
-    def openExportFileDialog(self):
-        self.exportFileDialog = ExportFileDialog(self)
+    def openExportFileDialog(self, previewImages):
+        self.exportFileDialog = ExportFileDialog(self, previewImages)
         self.exportFileDialog.exec_()
 
     def removeImage(self):

@@ -191,7 +191,8 @@ class MainController:
         self.ecg.leads[leadId].leadStartTime = value
 
     def confirmDigitization(self):
-        self.window.editor.openExportFileDialog()
+        extractedSignals, previewImages = convertECGLeads(self.ecg)
+        self.window.editor.openExportFileDialog(previewImages)
     
     # we have all ECG data and export location - ready to pass off to backend to digitize
     def digitize(self, exportPath, fileType):
