@@ -41,7 +41,7 @@ class ExportFileDialog(QtWidgets.QDialog):
                 contents="Choose file path"
             )
         )
-        self.chooseFileTextBox.setReadOnly(True)    # idk if we want to leave this as read-only but I figured it makes one less thing to error handle at the moment
+        self.chooseFileTextBox.setReadOnly(True) 
         self.chooseFileLayout.addWidget(
                 PushButton(
                 owner=self,
@@ -54,6 +54,7 @@ class ExportFileDialog(QtWidgets.QDialog):
 
         self.leadPreviewLayout = QtWidgets.QFormLayout()
 
+        # Create label and preview button for each lead that was processed
         for leadId, image in self.leadPreviewImages.items():
             self.leadPreviewLayout.addRow(
                 Label(
@@ -140,6 +141,6 @@ class ExportFileDialog(QtWidgets.QDialog):
             self.errorMessageLabel.setText("Please select a valid export path")
 
     def displayPreview(self, image, title):
-        previewDialog = ImagePreviewDialog(image)
+        previewDialog = ImagePreviewDialog(image, title)
         previewDialog.exec_()
 

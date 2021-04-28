@@ -13,6 +13,7 @@ from views.MainWindow import MainWindow
 from views.ImageView import *
 from views.ROIView import *
 from views.ExportFileDialog import *
+from views.MessageDialog import *
 from model.EcgModel import *
 from model.LeadModel import *
 from QtWrapper import *
@@ -51,8 +52,8 @@ class MainController:
         self.window.editor.leadStartTimeChanged.connect(self.updateLeadStartTime)
         self.window.editor.gridTimeScaleChanged.connect(self.updateEcgTimeScale)
         self.window.editor.gridVoltScaleChanged.connect(self.updateEcgVoltScale)
-        self.window.editor.digitizeButtonClicked.connect(self.confirmDigitization)
-        self.window.editor.exportPathChosen.connect(self.digitize)
+        self.window.editor.processDataButtonClicked.connect(self.confirmDigitization)
+        self.window.editor.exportPathChosen.connect(self.processECGData)
 
     def openImageFile(self):
 
@@ -191,15 +192,23 @@ class MainController:
         self.ecg.leads[leadId].leadStartTime = value
 
     def confirmDigitization(self):
-        extractedSignals, previewImages = convertECGLeads(self.ecg)
-        self.window.editor.openExportFileDialog(previewImages)
+        if len(self.ecg.leads) > 0:
+            extractedSignals, previewImages = convertECGLeads(self.ecg)
+            self.window.editor.openExportFileDialog(previewImages)
+        else:
+            warningDialog = MessageDialog(
+                message="Warning: No data to process\n\nPlease select at least one lead to digitize",
+                title="Warning"
+            )
+            warningDialog.exec_()
+            print("need at least one lead image")
     
     # we have all ECG data and export location - ready to pass off to backend to digitize
-    def digitize(self, exportPath, fileType):
-        print("ready to digitize")
-        print("export path: " + exportPath + "\nfile type: " + fileType)
-        print("grid volt scale: " + str(self.ecg.gridVoltageScale) +
-                "\ngrid time scale: " + str(self.ecg.gridTimeScale))
+    def processECGData(self, exportPath, fileType):
+        # print("ready to digitize")
+        # print("export path: " + exportPath + "\nfile type: " + fileType)
+        # print("grid volt scale: " + str(self.ecg.gridVoltageScale) +
+        #         "\ngrid time scale: " + str(self.ecg.gridTimeScale))
 
         extractedSignals, previewImages = convertECGLeads(self.ecg)
         # TODO: Let the user pick the separator?

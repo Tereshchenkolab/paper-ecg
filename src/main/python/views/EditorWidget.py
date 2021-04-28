@@ -23,7 +23,7 @@ class Editor(QtWidgets.QWidget):
     leadStartTimeChanged = QtCore.pyqtSignal(object, float)
     gridVoltScaleChanged = QtCore.pyqtSignal(float)
     gridTimeScaleChanged = QtCore.pyqtSignal(float)
-    digitizeButtonClicked = QtCore.pyqtSignal()
+    processDataButtonClicked = QtCore.pyqtSignal()
     exportPathChosen = QtCore.pyqtSignal(str, str)
     removeLead = QtCore.pyqtSignal(object)
 
@@ -74,7 +74,7 @@ class Editor(QtWidgets.QWidget):
         )
         self.editPanel.setCurrentIndex(0)
 
-    def showGlobalView(self, voltScale=0.0, timeScale=0.0):
+    def showGlobalView(self, voltScale=1.0, timeScale=1.0):
         self.EditPanelGlobalView.setValues(voltScale, timeScale)
         self.editPanel.setCurrentIndex(0)
 
@@ -149,8 +149,8 @@ class Editor(QtWidgets.QWidget):
         self.EditPanelGlobalView.brightnessSlider.setValue(0)
         self.EditPanelGlobalView.contrastSlider.setValue(0)
         self.EditPanelGlobalView.rotationSlider.setValue(0)
-        self.EditPanelGlobalView.voltScaleSpinBox.setValue(0)
-        self.EditPanelGlobalView.timeScaleSpinBox.setValue(0)
+        self.EditPanelGlobalView.clearTimeSpinBox()
+        self.EditPanelGlobalView.clearVoltSpinBox()
         self.showGlobalView()
 
     def loadImageFromPath(self, path: Path):

@@ -1,18 +1,21 @@
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from QtWrapper import *
 from ImageUtilities import opencvImageToPixmap
 
 class ImagePreviewDialog(QtWidgets.QDialog):
 
-    def __init__(self, image):
+    def __init__(self, image, leadId):
         super().__init__()
         self.pixmap = opencvImageToPixmap(image)
+        self.leadId = leadId
         self.initUI()
     
     def initUI(self):
-        
+        self.setWindowTitle("Lead " + self.leadId)
+
         self.layout = QVBoxLayout()
-        self.margins = QtCore.QMargins(4,4,4,4)
+        self.margins = QtCore.QMargins(4, 4, 4, 4)
 
         self.pixmapLabel = QLabel()
         self.pixmapLabel.setContentsMargins(self.margins)
@@ -21,7 +24,7 @@ class ImagePreviewDialog(QtWidgets.QDialog):
         self.pixmapLabel.setMinimumSize(1, 1)
         
         self.layout.addWidget(self.pixmapLabel)
-        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.setContentsMargins(0, 0, 0, 0)
         
         self.setLayout(self.layout)
 
