@@ -20,6 +20,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def buildUI(self):
         self.buildMenuBar()
+        self.buildLeadButtonDictionary()
 
         self.editor = Editor()
         self.setCentralWidget(self.editor)
@@ -69,6 +70,13 @@ class MainWindow(QtWidgets.QMainWindow):
                     displayName="Open",
                     shortcut=QtGui.QKeySequence.Open,
                     statusTip="Open an image file"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="fileMenuClose",
+                    displayName="Close",
+                    shortcut=QtGui.QKeySequence.Close,
+                    statusTip="Close image file"
                 ),
                 Qt.Separator(),
                 Qt.MenuAction(
@@ -194,3 +202,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def resizeEvent(self, event):
         QtWidgets.QMainWindow.resizeEvent(self, event)
+
+    def buildLeadButtonDictionary(self):
+        # Creates relationship between lead ID and the menu button used to add that lead
+        self.leadButtons = {
+            "I": self.addLead1,
+            "II": self.addLead2,
+            "III": self.addLead3,
+            "aVR": self.addLeadaVR,
+            "aVL": self.addLeadaVL,
+            "aVF": self.addLeadaVF,
+            "V1": self.addLeadV1,
+            "V2": self.addLeadV2,
+            "V3": self.addLeadV3,
+            "V4": self.addLeadV4,
+            "V5": self.addLeadV5,
+            "V6": self.addLeadV6
+        }

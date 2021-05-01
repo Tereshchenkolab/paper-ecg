@@ -1,6 +1,8 @@
 from PyQt5 import QtWidgets, QtCore
-
+from ECGToolkit.Visualization import displayColorImage
 from QtWrapper import *
+from views.ImagePreviewDialog import ImagePreviewDialog
+from ImageUtilities import opencvImageToPixmap
 
 
 fileTypesDictionary = {
@@ -11,8 +13,9 @@ fileTypesDictionary = {
 
 class ExportFileDialog(QtWidgets.QDialog):
 
-    def __init__(self, parent):
+    def __init__(self, parent, previewImages):
         super().__init__()
+        self.leadPreviewImages = previewImages
         self.editorWidget = parent
         self.fileExportPath = None
         self.fileType = None
@@ -38,7 +41,7 @@ class ExportFileDialog(QtWidgets.QDialog):
                 contents="Choose file path"
             )
         )
-        self.chooseFileTextBox.setReadOnly(True)    # idk if we want to leave this as read-only but I figured it makes one less thing to error handle at the moment
+        self.chooseFileTextBox.setReadOnly(True) 
         self.chooseFileLayout.addWidget(
                 PushButton(
                 owner=self,
@@ -48,6 +51,44 @@ class ExportFileDialog(QtWidgets.QDialog):
         )
 
         self.mainLayout.addLayout(self.chooseFileLayout)
+
+        self.leadPreviewLayout = QtWidgets.QFormLayout()
+
+        # Create label and preview button for each lead that was processed
+        for leadId, image in self.leadPreviewImages.items():
+            self.leadPreviewLayout.addRow(
+                Label(
+                    owner=self,
+                    text="Lead " + leadId
+                ),
+                PushButton(
+                    owner=self,
+                    name="button",
+                    text="Preview"
+                )
+            )
+            self.button.clicked.connect(lambda checked, img=image, title=leadId: self.displayPreview(img, title))
+
+        Widget(
+            owner=self,
+            name="leadPreviewWidget",
+            layout=self.leadPreviewLayout
+        )
+
+        VerticalBoxLayout(owner=self, name="leadPreviewLayout", contents=[
+            Label(
+                owner=self,
+                name="leadPreviewLabel",
+                text="Preview Selected Leads:"
+            ),
+            ScrollArea(
+                owner=self,
+                name="leadPreivewScrollArea",
+                innerWidget=self.leadPreviewWidget
+            )
+        ])
+
+        self.mainLayout.addLayout(self.leadPreviewLayout)
 
         HorizontalBoxLayout(owner=self, name="confirmCancelButtonLayout", contents=[
                 Label(
@@ -98,3 +139,8 @@ class ExportFileDialog(QtWidgets.QDialog):
         else:
             print("no export path selected")
             self.errorMessageLabel.setText("Please select a valid export path")
+
+    def displayPreview(self, image, title):
+        previewDialog = ImagePreviewDialog(image, title)
+        previewDialog.exec_()
+

@@ -52,8 +52,8 @@ class EditPanelGlobalView(QtWidgets.QWidget):
             DoubleSpinBox(
                 owner=self,
                 name="timeScaleSpinBox",
-                minVal=0.0,
-                maxVal=500.0,
+                minVal=0.01,
+                maxVal=1000.0,
                 suffix=" mm/s"
             )
         )
@@ -66,43 +66,43 @@ class EditPanelGlobalView(QtWidgets.QWidget):
             DoubleSpinBox(
                 owner=self,
                 name="voltScaleSpinBox",
-                minVal=0.0,
-                maxVal=500.0,
+                minVal=0.01,
+                maxVal=1000.0,
                 suffix=" mm/mV"
             )
         )
-        self.controlsLayout.addRow(
-            Label(
-                owner=self,
-                name="processingAlgorithmBoxLabel",
-                text="Processing algorithm: "
-            ),
-            ComboBox(
-                owner=self,
-                name="processingAlgorithmComboBox",
-                items=[
-                    "Option 1",
-                    "Option 2"
-                ]
-            )
-        )
+        # self.controlsLayout.addRow(
+        #     Label(
+        #         owner=self,
+        #         name="processingAlgorithmBoxLabel",
+        #         text="Processing algorithm: "
+        #     ),
+        #     ComboBox(
+        #         owner=self,
+        #         name="processingAlgorithmComboBox",
+        #         items=[
+        #             "Option 1",
+        #             "Option 2"
+        #         ]
+        #     )
+        # )
 
         self.mainLayout.addLayout(self.controlsLayout)
 
         self.mainLayout.addWidget(
             PushButton(
                 owner=self,
-                name="digitizeButton",
-                text="Digitize"
+                name="processDataButton",
+                text="Process Lead Data"
             ),
             alignment=QtCore.Qt.AlignBottom | QtCore.Qt.AlignCenter
         )
 
         self.setLayout(self.mainLayout)
+  
+        self.clearTimeSpinBox()
+        self.clearVoltSpinBox()
 
-        self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
-        self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
-        self.digitizeButton.clicked.connect(lambda: self.editorWidget.digitizeButtonClicked.emit())
 
     def connectUI(self):
         # Image editing controls
@@ -120,9 +120,18 @@ class EditPanelGlobalView(QtWidgets.QWidget):
 
         self.autoRotateButton.clicked.connect(self.editorWidget.autoRotate)
 
+        self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
+        self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
+        self.processDataButton.clicked.connect(lambda: self.editorWidget.processDataButtonClicked.emit())
+        
+
     def clearVoltSpinBox(self):
-        self.voltScaleSpinBox.setValue(0.0)
+        self.voltScaleSpinBox.setValue(1.0)
 
     def clearTimeSpinBox(self):
-        self.timeScaleSpinBox.setValue(0.0)
+        self.timeScaleSpinBox.setValue(1.0)
+
+    def setValues(self, voltScale, timeScale):
+        self.voltScaleSpinBox.setValue(voltScale)
+        self.timeScaleSpinBox.setValue(timeScale)
 

@@ -134,8 +134,8 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         self.updatePixelData()
 
-        self.update()
-        self.parentViews[0].itemMoved.emit(self)
+        self.update()   
+        # self.parentViews[0].itemMoved.emit(self)
 
 
     def boundingRect(self):
@@ -286,7 +286,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
                 return self.restrictMovement(value)
 
         if change == QtWidgets.QGraphicsRectItem.ItemSelectedChange:
-            self.parentViews[0].itemSelected.emit(self.leadId, value)
+            self.parentViews[0].roiItemSelected.emit(self.leadId, value)
             if value == True:
                 self.setZValue(1)
             else:

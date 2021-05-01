@@ -11,10 +11,8 @@ import ImageUtilities
 
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
 class ImageView(QtWidgets.QGraphicsView):
-    itemSelected = QtCore.pyqtSignal(object, bool)
-    itemDeselected = QtCore.pyqtSignal(object)
-    itemMoved = QtCore.pyqtSignal(object)
-
+    roiItemSelected = QtCore.pyqtSignal(object, bool)
+    
     def __init__(self):
         super().__init__()
 
@@ -64,10 +62,29 @@ class ImageView(QtWidgets.QGraphicsView):
         self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
         self._scene.setSceneRect(QtCore.QRectF(self._pixmapItem.pixmap().rect()))
 
+        self.updateAllRoiBoxes()
+
+    def updateAllRoiBoxes(self):
         # update pixel data for each roi present in the scene
         for item in self._scene.items():
             if item.type == QtWidgets.QGraphicsRectItem.UserType:
                 item.updatePixelData()
+
+    def removeImage(self):
+        self._image = None
+        self._pixmapItem.setPixmap(QtGui.QPixmap())
+        self._empty = True
+
+    def removeAllRoiBoxes(self):
+        # remove roi boxes from scene
+        for item in self._scene.items():
+            if item.type == QtWidgets.QGraphicsRectItem.UserType:
+                self._scene.removeItem(item)
+
+    def removeRoiBox(self, lead):
+        for item in self._scene.items():
+            if item.type == QtWidgets.QGraphicsRectItem.UserType and item.leadId == lead.leadId:
+                self._scene.removeItem(item)
 
     def event(self, event):
         # Detects pinching gesture on macOS
