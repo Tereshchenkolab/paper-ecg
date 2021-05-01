@@ -9,5 +9,6 @@ opencv-python-headless>=4.4
 qimage2ndarray
 
 # Helper
+matplotlib
 mypy
 pathlib
