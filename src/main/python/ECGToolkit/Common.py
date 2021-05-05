@@ -21,10 +21,10 @@ median = np.median
 List = list
 Int = int
 Float = float
+Numeric = Union[Float, Int]
 
 A = TypeVar("A")
 B = TypeVar("B")
-Numeric = Union[Float, Int]
 
 
 def reversedRange(stop):

@@ -54,11 +54,11 @@ def convertECGLeads(ecgData: Ecg):
     gridHeightInPixels = mean(verticalSpacings)
 
     # Scale signals
-    # TODO: Pass in the grid size in mm !!!
-    signals = mapList(signals, lambda pair: (pair[0], verticallyScaleECGSignal(zeroECGSignal(pair[1]), gridHeightInPixels, ecgData.gridVoltageScale)))
+    # TODO: Pass in the grid size in mm
+    signals = mapList(signals, lambda pair: (pair[0], verticallyScaleECGSignal(zeroECGSignal(pair[1]), gridHeightInPixels, ecgData.gridVoltageScale, gridSizeInMillimeters=1.0)))
 
-    # TODO: Grid size in mm
-    samplingPeriod = ecgSignalSamplingPeriod(samplingPeriodInPixels, ecgData.gridTimeScale)
+    # TODO: Pass in the grid size in mm
+    samplingPeriod = ecgSignalSamplingPeriod(samplingPeriodInPixels, ecgData.gridTimeScale, gridSizeInMillimeters=1.0)
 
     # 3. Zero pad all signals on the left based on their start times and the samplingPeriod
     # take the max([len(x) for x in signals]) and zero pad all signals on the right
@@ -91,7 +91,6 @@ def exportSignals(leadSignals, filePath, separator='\t'):
     if not issubclass(type(filePath), Path):
         filePath = Path(filePath)
 
-    # TODO: Handle overwriting ??? Maybe just move the file to trash...? Handle on OS case basis?
     if filePath.exists():
         print("Warning: Output file will be overwritten!")
 
