@@ -28,5 +28,6 @@ def traceGridlines(binaryImage, houghThreshold=80):
         return min([verticalGridSpacing, horizontalGridSpacing])
 
 
-# TODO use median?
-# TODO Try using some sort of clustering and picking the smallest cluster below a threshold
+# TODO: Use median?
+
+# TODO: Try using some sort of clustering and picking the smallest cluster below a threshold

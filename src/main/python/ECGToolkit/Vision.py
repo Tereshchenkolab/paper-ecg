@@ -41,7 +41,7 @@ def openImage(binaryImage):
     return opened
 
 
-# Guassian blur
+# Gaussian blur
 def blur(greyImage, kernelSize: int = 2):
     def guassianKernel(size):
         return np.ones((size,size),np.float32) / (size**2)
@@ -84,7 +84,6 @@ def otsuThresholdSelection(image: np.ndarray):
     http://web-ext.u-aizu.ac.jp/course/bmclass/documents/otsu1979.pdf
     """
 
-    # assert image.dtype in set(np.uint, uint8, int), f"Expects only integers, not '{image.dtype}'"
     L = 256
     height, width = image.shape
     N = height * width
