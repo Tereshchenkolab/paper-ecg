@@ -27,6 +27,13 @@ fbs run
 
 This will start the interpreted version of the project.
 
+In order to create an executable that can be distributed, run:
+
+```
+fbs build
+```
+
+This only builds an executable targeting the current OS (i.e., virtualization or multiple machines is necessary to produce builds for each OS)
 
 ## Dependencies
 
