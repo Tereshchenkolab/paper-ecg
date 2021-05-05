@@ -41,7 +41,7 @@ class ExportFileDialog(QtWidgets.QDialog):
                 contents="Choose file path"
             )
         )
-        self.chooseFileTextBox.setReadOnly(True) 
+        self.chooseFileTextBox.setReadOnly(True)
         self.chooseFileLayout.addWidget(
                 PushButton(
                 owner=self,
@@ -143,4 +143,3 @@ class ExportFileDialog(QtWidgets.QDialog):
     def displayPreview(self, image, title):
         previewDialog = ImagePreviewDialog(image, title)
         previewDialog.exec_()
-

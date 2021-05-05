@@ -10,7 +10,7 @@ class ImagePreviewDialog(QtWidgets.QDialog):
         self.pixmap = opencvImageToPixmap(image)
         self.leadId = leadId
         self.initUI()
-    
+
     def initUI(self):
         self.setWindowTitle("Lead " + self.leadId)
 
@@ -22,10 +22,10 @@ class ImagePreviewDialog(QtWidgets.QDialog):
         self.pixmapLabel.setPixmap(self.pixmap)
         self.pixmapLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.pixmapLabel.setMinimumSize(1, 1)
-        
+
         self.layout.addWidget(self.pixmapLabel)
         self.layout.setContentsMargins(0, 0, 0, 0)
-        
+
         self.setLayout(self.layout)
 
     def resizeEvent(self, event):

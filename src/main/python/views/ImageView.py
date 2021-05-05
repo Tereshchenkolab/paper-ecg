@@ -12,7 +12,7 @@ import ImageUtilities
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
 class ImageView(QtWidgets.QGraphicsView):
     roiItemSelected = QtCore.pyqtSignal(object, bool)
-    
+
     def __init__(self):
         super().__init__()
 

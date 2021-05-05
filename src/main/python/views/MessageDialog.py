@@ -8,7 +8,7 @@ class MessageDialog(QtWidgets.QDialog):
         self.title = title
         self.initUI()
         self.connectUI()
-    
+
     def initUI(self):
         self.setWindowTitle(self.title)
         VerticalBoxLayout(owner=self, name="mainLayout", contents=[

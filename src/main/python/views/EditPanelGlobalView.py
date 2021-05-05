@@ -99,7 +99,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         )
 
         self.setLayout(self.mainLayout)
-  
+
         self.clearTimeSpinBox()
         self.clearVoltSpinBox()
 
@@ -123,7 +123,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
         self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
         self.processDataButton.clicked.connect(lambda: self.editorWidget.processDataButtonClicked.emit())
-        
+
 
     def clearVoltSpinBox(self):
         self.voltScaleSpinBox.setValue(1.0)
@@ -134,4 +134,3 @@ class EditPanelGlobalView(QtWidgets.QWidget):
     def setValues(self, voltScale, timeScale):
         self.voltScaleSpinBox.setValue(voltScale)
         self.timeScaleSpinBox.setValue(timeScale)
-

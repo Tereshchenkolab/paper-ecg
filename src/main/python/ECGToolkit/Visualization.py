@@ -20,7 +20,6 @@ class Color:
 
 # Use matplotlib to show an image with BGR color (standard for openCV)
 def displayColorImage(image, title=""):
-    # plt.subplot(2,2,1)
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.xticks([]), plt.yticks([])  # to hide tick values on X and Y axis
     plt.title(title)
@@ -29,7 +28,6 @@ def displayColorImage(image, title=""):
 
 # Use matplotlib to show an image with greyscale color (2d array)
 def displayGreyscaleImage(image, title=""):
-    # plt.subplot(2,2,1)
     plt.imshow(image, cmap='gray')
     plt.xticks([]), plt.yticks([])  # to hide tick values on X and Y axis
     plt.title(title)

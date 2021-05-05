@@ -8,7 +8,7 @@ class EditPanelLeadView(QtWidgets.QWidget):
         super().__init__()
 
         self.parent = parent # the editor widget
-        
+
         self.lead = None
 
         self.sizePolicy().setHorizontalPolicy(QtWidgets.QSizePolicy.Expanding)
@@ -46,7 +46,7 @@ class EditPanelLeadView(QtWidgets.QWidget):
         )
 
         self.mainlayout.addLayout(self.controlsLayout)
-        
+
         self.mainlayout.addWidget(
             PushButton(
                 owner=self,
