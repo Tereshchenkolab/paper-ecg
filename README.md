@@ -37,6 +37,10 @@ fbs build
 
 This only builds an executable targeting the current OS (i.e., virtualization or multiple machines is necessary to produce builds for each OS).
 
+## Contributing
+
+View the [issues list](https://github.com/Tereshchenkolab/paper-ecg/issues) to see what tasks are available to work on.
+
 ## Dependencies
 
 The project currently requires Python `3.6.7` to work with `fbs` (see [3.7 support issue](https://github.com/mherrmann/fbs/issues/61)).
