@@ -55,7 +55,8 @@ def extractGridFromImage(image, detectionMethod, spacingReductionMethod=Common.m
 
         return gridSpacing
 
-    gridBinary = detectionMethod(image)
+    # gridBinary = detectionMethod(image)
+    gridBinary = Vision.binarize(Vision.greyscale(image), 230)
 
     # TODO: Modularize the line extraction process.
     lines = Vision.houghLines(gridBinary, threshold=80)

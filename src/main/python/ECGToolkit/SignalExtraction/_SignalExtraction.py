@@ -268,7 +268,7 @@ def traceLines(image: np.ndarray, radius: int = 12, orientationSmoothing: int = 
         unclaimedPoints = filterList(thisColumnPoints, lambda x: x not in claimedPoints)
 
         for row, column in unclaimedPoints:
-            print(f"Creating new signal for ({row},{column})")
+            # print(f"Creating new signal for ({row},{column})")
             signalBuilders.append(SignalBuilder.startingAt(row, column, radius, orientationSmoothing))
             claimedPoints.add((row, column))
 

@@ -43,6 +43,8 @@ def openImage(binaryImage):
 
 # Gaussian blur
 def blur(greyImage, kernelSize: int = 2):
+    assert len(greyImage.shape) == 2, "Must be greyscale!"
+
     def guassianKernel(size):
         return np.ones((size,size),np.float32) / (size**2)
 
@@ -58,9 +60,15 @@ def greyscale(colorImage: np.ndarray):
     return cv2.cvtColor(colorImage, cv2.COLOR_BGR2GRAY)
 
 
-def binarize(image, threshold):
-    _, binaryImage = cv2.threshold(image, threshold, 1, cv2.THRESH_BINARY_INV)
+def binarize(greyImage, threshold):
+    assert len(greyImage.shape) == 2, "Must be greyscale!"
+
+    _, binaryImage = cv2.threshold(greyImage, threshold, 1, cv2.THRESH_BINARY_INV)
     return binaryImage
+
+
+def invert(greyscaleImage):
+    assert len(greyscaleImage.shape) == 2
 
 
 def histogram(greyImage: np.ndarray):
