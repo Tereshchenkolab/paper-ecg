@@ -53,6 +53,23 @@ class ExportFileDialog(QtWidgets.QDialog):
                     text="..."
                 )
             ]),
+            HorizontalBoxLayout(owner=self, name="delimiterChoiceLayout", contents=[
+                    Label(
+                        owner=self,
+                        name="delimiterLabel",
+                        text="Data Delimiter: "
+                    ),
+                    ComboBox(
+                        owner=self,
+                        name="delimiterDropdown",
+                        items=[
+                            "Comma",
+                            "Tab",
+                            "Space"
+                        ]
+                    )
+                
+            ]),
             VerticalBoxLayout(owner=self, name="leadPreviewLayout", contents=[
                 Label(
                     owner=self, 
@@ -89,7 +106,9 @@ class ExportFileDialog(QtWidgets.QDialog):
             ])
         ])
 
+        self.delimiterChoiceLayout.setAlignment(QtCore.Qt.AlignLeft)
         self.confirmCancelButtonLayout.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)
+        
         self.setLayout(self.mainLayout)
 
         self.connectUI()

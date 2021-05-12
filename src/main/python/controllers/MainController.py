@@ -215,8 +215,14 @@ class MainController:
         else:
             exportFileDialog = ExportFileDialog(previewImages)
             if exportFileDialog.exec_():
-                self.exportECGData(exportFileDialog.fileExportPath, exportFileDialog.fileType, extractedSignals)
+                self.exportECGData(exportFileDialog.fileExportPath, exportFileDialog.delimiterDropdown.currentText(), extractedSignals)
 
-    def exportECGData(self, exportPath, fileType, extractedSignals):
-        # TODO: Let the user pick the separator?
-        exportSignals(extractedSignals, exportPath, separator='\t')
+    def exportECGData(self, exportPath, delimiter, extractedSignals):
+        if delimiter == "Comma":
+            seperator = ','
+        elif delimiter == "Tab":
+            seperator = '\t'
+        elif delimiter == "Space":
+            seperator = ' '
+    
+        exportSignals(extractedSignals, exportPath, separator=seperator)
