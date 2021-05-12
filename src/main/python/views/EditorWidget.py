@@ -24,7 +24,6 @@ class Editor(QtWidgets.QWidget):
     gridVoltScaleChanged = QtCore.pyqtSignal(float)
     gridTimeScaleChanged = QtCore.pyqtSignal(float)
     processDataButtonClicked = QtCore.pyqtSignal()
-    exportPathChosen = QtCore.pyqtSignal(str, str)
     removeLead = QtCore.pyqtSignal(object)
 
     image = None # The openCV image
@@ -37,41 +36,38 @@ class Editor(QtWidgets.QWidget):
     def initUI(self):
         self.setLayout(
             HorizontalBoxLayout(self, "main", margins=(0,0,0,0), contents=[
-                HorizontalSplitter([
+                HorizontalSplitter(owner=self, name="viewSplitter", contents=[
                     Custom(
                         owner=self,
                         name="imageViewer",
                         widget=ImageView()
                     ),
-
                     ScrollArea(
-                        owner=self,
-                        name="scrollArea",
+                        owner=self, 
+                        name="scrollArea", 
                         horizontalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOff,
                         verticalScrollBarPolicy=QtCore.Qt.ScrollBarAsNeeded,
                         widgetIsResizable=True,
                         innerWidget=
-                            StackedWidget(
+                        StackedWidget(owner=self, name="editPanel", widgets=[
+                            Custom(
                                 owner=self,
-                                name="editPanel",
-                                widgets=[
-                                    Custom(
-                                        owner=self,
-                                        name="EditPanelGlobalView",
-                                        widget=EditPanelGlobalView(self)
-                                    ),
-                                    Custom(
-                                        owner=self,
-                                        name="EditPanelLeadView",
-                                        widget=EditPanelLeadView(self)
-                                    )
-                                ]
+                                name="EditPanelGlobalView",
+                                widget=EditPanelGlobalView(self)
+                            ),
+                            Custom(
+                                owner=self,
+                                name="EditPanelLeadView",
+                                widget=EditPanelLeadView(self)
                             )
-                        )
-                    ])
-                ]
-            )
+                        ])
+                    )
+                ])
+            ])
         )
+        self.viewSplitter.setCollapsible(0,False)
+        self.viewSplitter.setCollapsible(1,False)
+        self.viewSplitter.setSizes([2,1])
         self.editPanel.setCurrentIndex(0)
 
     def showGlobalView(self, voltScale=1.0, timeScale=1.0):
@@ -143,9 +139,7 @@ class Editor(QtWidgets.QWidget):
         self.adjustRotation()
 
     def resetImageEditControls(self):
-        # TODO: Implement this (and call when a new image is loaded ... ?)
         # IDEA: Only show the image editing controls when there is a image loaded?
-
         self.EditPanelGlobalView.brightnessSlider.setValue(0)
         self.EditPanelGlobalView.contrastSlider.setValue(0)
         self.EditPanelGlobalView.rotationSlider.setValue(0)
@@ -167,10 +161,6 @@ class Editor(QtWidgets.QWidget):
 
     def displayImage(self, image):
         self.imageViewer.setImage(image)
-
-    def openExportFileDialog(self, previewImages):
-        self.exportFileDialog = ExportFileDialog(self, previewImages)
-        self.exportFileDialog.exec_()
 
     def removeImage(self):
         self.image = None

@@ -13,10 +13,9 @@ fileTypesDictionary = {
 
 class ExportFileDialog(QtWidgets.QDialog):
 
-    def __init__(self, parent, previewImages):
+    def __init__(self, previewImages):
         super().__init__()
         self.leadPreviewImages = previewImages
-        self.editorWidget = parent
         self.fileExportPath = None
         self.fileType = None
         self.setWindowTitle("Export ECG Data")
@@ -24,76 +23,57 @@ class ExportFileDialog(QtWidgets.QDialog):
         self.buildUI()
 
     def buildUI(self):
-        self.mainLayout = QVBoxLayout()
-
-        self.chooseFileLayout = QHBoxLayout()
-        self.chooseFileLayout.addWidget(
-            Label(
-                owner=self,
-                name="chooseFileLabel",
-                text="Export to:"
-            )
-        )
-        self.chooseFileLayout.addWidget(
-            LineEdit(
-                owner=self,
-                name="chooseFileTextBox",
-                contents="Choose file path"
-            )
-        )
-        self.chooseFileTextBox.setReadOnly(True)
-        self.chooseFileLayout.addWidget(
-                PushButton(
-                owner=self,
-                name="chooseFileButton",
-                text="..."
-            )
-        )
-
-        self.mainLayout.addLayout(self.chooseFileLayout)
 
         self.leadPreviewLayout = QtWidgets.QFormLayout()
 
         # Create label and preview button for each lead that was processed
         for leadId, image in self.leadPreviewImages.items():
             self.leadPreviewLayout.addRow(
-                Label(
-                    owner=self,
-                    text="Lead " + leadId
-                ),
-                PushButton(
-                    owner=self,
-                    name="button",
-                    text="Preview"
-                )
+                Label(owner=self, text="Lead " + leadId),
+                PushButton(owner=self, name="button", text="Preview")
             )
             self.button.clicked.connect(lambda checked, img=image, title=leadId: self.displayPreview(img, title))
 
-        Widget(
-            owner=self,
-            name="leadPreviewWidget",
-            layout=self.leadPreviewLayout
-        )
-
-        VerticalBoxLayout(owner=self, name="leadPreviewLayout", contents=[
-            Label(
-                owner=self,
-                name="leadPreviewLabel",
-                text="Preview Selected Leads:"
-            ),
-            ScrollArea(
-                owner=self,
-                name="leadPreivewScrollArea",
-                innerWidget=self.leadPreviewWidget
-            )
-        ])
-
-        self.mainLayout.addLayout(self.leadPreviewLayout)
-
-        HorizontalBoxLayout(owner=self, name="confirmCancelButtonLayout", contents=[
+        VerticalBoxLayout(owner=self, name="mainLayout", contents=[
+            HorizontalBoxLayout(owner=self, name="chooseFileLayout", contents=[
                 Label(
-                    owner=self,
-                    name="errorMessageLabel",
+                    owner=self, 
+                    name="chooseFileLabel", 
+                    text="Export to:"
+                ),
+                LineEdit(
+                    owner=self, 
+                    name="chooseFileTextBox", 
+                    contents="Choose file path", 
+                    readOnly=True
+                ),
+                PushButton(
+                    owner=self, 
+                    name="chooseFileButton", 
+                    text="..."
+                )
+            ]),
+            VerticalBoxLayout(owner=self, name="leadPreviewLayout", contents=[
+                Label(
+                    owner=self, 
+                    name="leadPreviewLabel", 
+                    text="Preview Selected Leads:"
+                ),
+                ScrollArea(
+                    owner=self, 
+                    name="leadPreivewScrollArea", 
+                    innerWidget= 
+                        Widget(
+                            owner=self, 
+                            name="leadPreviewWidget", 
+                            layout=self.leadPreviewLayout
+                        )
+                )
+            ]),
+            HorizontalBoxLayout(owner=self, name="confirmCancelButtonLayout", contents=[
+                Label(
+                    owner=self, 
+                    name="errorMessageLabel", 
                     text=""
                 ),
                 PushButton(
@@ -106,11 +86,10 @@ class ExportFileDialog(QtWidgets.QDialog):
                     name="cancelButton",
                     text="Cancel"
                 )
-            ]
-        )
-        self.confirmCancelButtonLayout.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)
-        self.mainLayout.addLayout(self.confirmCancelButtonLayout)
+            ])
+        ])
 
+        self.confirmCancelButtonLayout.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)
         self.setLayout(self.mainLayout)
 
         self.connectUI()
@@ -122,9 +101,9 @@ class ExportFileDialog(QtWidgets.QDialog):
 
     def openSaveFileDialog(self):
         path, selectedFilter = QtWidgets.QFileDialog.getSaveFileName(
-                parent=self,
-                caption="Export to File",
-                filter="Text File (*.txt);;CSV (*.csv)"
+            parent=self,
+            caption="Export to File",
+            filter="Text File (*.txt);;CSV (*.csv)"
         )
         if path is not "" and selectedFilter in fileTypesDictionary:
             self.errorMessageLabel.setText("")
@@ -134,8 +113,7 @@ class ExportFileDialog(QtWidgets.QDialog):
 
     def confirmExportPath(self):
         if self.fileExportPath is not None and self.fileType is not None:
-            self.editorWidget.exportPathChosen.emit(self.fileExportPath, self.fileType)
-            self.close()
+            self.accept()
         else:
             print("no export path selected")
             self.errorMessageLabel.setText("Please select a valid export path")

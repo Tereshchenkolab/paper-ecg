@@ -7,7 +7,7 @@ Wrapper to simplify interacting with Qt
 from typing import cast, List, Optional, Tuple, Union
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget, QStackedWidget, QSpinBox, QDoubleSpinBox, QLineEdit
+from PyQt5.QtWidgets import QAction, QComboBox, QGroupBox, QHBoxLayout, QLabel, QLayout, QMenu, QMenuBar, QMainWindow, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTabWidget, QVBoxLayout, QWidget, QStackedWidget, QSpinBox, QDoubleSpinBox, QLineEdit, QFormLayout
 
 
 class SplitterOrientation:
@@ -176,7 +176,7 @@ def HorizontalSlider(
 def HorizontalSplitter(
     contents=List[QWidget],
     owner: QWidget = None,
-    name: str = None
+    name: str = None,
 ) -> QSplitter:
     splitter = QSplitter(QtCore.Qt.Horizontal)
 
@@ -447,9 +447,26 @@ def Widget(
 def LineEdit(
     owner: QWidget = None,
     name: str = None,
-    contents: str = ""
+    contents: str = "",
+    readOnly: bool = False
 ) -> QLineEdit:
 
     lineEdit = QLineEdit()
     lineEdit.setText(contents)
+    lineEdit.setReadOnly(readOnly)
     return lineEdit
+
+@bindsToClass
+def FormLayout(
+    contents: List[Tuple[QWidget, QWidget]],
+    name: Optional[str] = None,
+    owner: Optional[QWidget] = None
+) -> QFormLayout:
+
+    layout = QFormLayout()
+
+    for item in contents:
+        item1, item2 = item
+        layout.addRow(item1, item2)
+
+    return layout

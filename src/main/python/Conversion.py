@@ -35,7 +35,7 @@ def convertECGLeads(ecgData: Ecg):
 
     # If all signals failed -> Failure
     if all([signalData is None for _, signalData in signals]):
-        return None
+        return None, None
 
     images = mapList(
         zip(leads, signals),
@@ -48,7 +48,7 @@ def convertECGLeads(ecgData: Ecg):
     verticalSpacings   = [vSpace for _, (_, vSpace) in gridSpacings if vSpace is not None]
 
     if len(horizontalSpacings) == 0 or len(verticalSpacings) == 0:
-        return None
+        return None, None
 
     samplingPeriodInPixels = mean(horizontalSpacings)
     gridHeightInPixels = mean(verticalSpacings)

@@ -16,21 +16,10 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.connectUI()
 
     def initUI(self):
-        self.mainLayout = QtWidgets.QVBoxLayout()
-        self.mainLayout.setAlignment(QtCore.Qt.AlignTop)
-        self.mainLayout.setContentsMargins(5, 5, 5, 5)
-        self.mainLayout.addWidget(
-            GroupBox(
-                owner=self,
-                name="adjustmentsGroup",
-                title="Image Adjustments",
-                layout=
 
-                VerticalBoxLayout(
-                    owner=self,
-                    name="adjustmentsGroupLayout",
-                    contents=[
-
+        VerticalBoxLayout(owner=self, name="mainLayout", margins=(5, 5, 5, 5), contents=[
+            GroupBox(owner=self, name="adjustmentsGroup", title="Image Adjustments", layout=
+                VerticalBoxLayout(owner=self, name="adjustmentsGroupLayout", contents=[
                     Label("Brightness"),
                     HorizontalSlider(self, "brightnessSlider"),
                     Label("Contrast"),
@@ -39,65 +28,45 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                     HorizontalSlider(self, "rotationSlider"),
                     PushButton(self, "autoRotateButton", text="Auto Rotate")
                 ])
-            )
-        )
-
-        self.controlsLayout = QtWidgets.QFormLayout()
-        self.controlsLayout.addRow(
-            Label(
-                owner=self,
-                name="timeScaleLabel",
-                text="Time Scale: "
             ),
-            DoubleSpinBox(
-                owner=self,
-                name="timeScaleSpinBox",
-                minVal=0.01,
-                maxVal=1000.0,
-                suffix=" mm/s"
-            )
-        )
-        self.controlsLayout.addRow(
-            Label(
-                owner=self,
-                name="voltScaleLabel",
-                text="Voltage Scale: "
-            ),
-            DoubleSpinBox(
-                owner=self,
-                name="voltScaleSpinBox",
-                minVal=0.01,
-                maxVal=1000.0,
-                suffix=" mm/mV"
-            )
-        )
-        # self.controlsLayout.addRow(
-        #     Label(
-        #         owner=self,
-        #         name="processingAlgorithmBoxLabel",
-        #         text="Processing algorithm: "
-        #     ),
-        #     ComboBox(
-        #         owner=self,
-        #         name="processingAlgorithmComboBox",
-        #         items=[
-        #             "Option 1",
-        #             "Option 2"
-        #         ]
-        #     )
-        # )
-
-        self.mainLayout.addLayout(self.controlsLayout)
-
-        self.mainLayout.addWidget(
+            FormLayout(owner=self, name="controlsLayout", contents=[
+                [
+                    Label(
+                        owner=self,
+                        name="timeScaleLabel",
+                        text="Time Scale: "
+                    ),
+                    DoubleSpinBox(
+                        owner=self,
+                        name="timeScaleSpinBox",
+                        minVal=0.01,
+                        maxVal=1000.0,
+                        suffix=" mm/s"
+                    )
+                ],
+                [
+                    Label(
+                        owner=self,
+                        name="voltScaleLabel",
+                        text="Voltage Scale: "
+                    ),
+                    DoubleSpinBox(
+                        owner=self,
+                        name="voltScaleSpinBox",
+                        minVal=0.01,
+                        maxVal=1000.0,
+                        suffix=" mm/mV"
+                    )
+                ]
+            ]),
             PushButton(
-                owner=self,
-                name="processDataButton",
+                owner=self, 
+                name="processDataButton", 
                 text="Process Lead Data"
-            ),
-            alignment=QtCore.Qt.AlignBottom | QtCore.Qt.AlignCenter
-        )
+            )
+        ])
 
+        self.mainLayout.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
         self.setLayout(self.mainLayout)
 
         self.clearTimeSpinBox()

@@ -30,7 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
         self.resize(800, 500)
 
-        self.show()
+        self.showMaximized()
 
 
     def buildMenuBar(self):
@@ -39,22 +39,7 @@ class MainWindow(QtWidgets.QMainWindow):
             name='bar',
             menus=[
                 self.buildFileMenu(),
-                self.buildEditMenu(),
-                self.buildLeadMenu(),
-                Qt.Menu(
-                    owner=self,
-                    name='windowMenu',
-                    displayName='Window',
-                    items=[
-                        Qt.MenuAction(
-                            owner=self,
-                            name="windowMenuExample",
-                            displayName="Example",
-                            shortcut=None,
-                            statusTip="Example status tip"
-                        )
-                    ]
-                )
+                self.buildLeadMenu()
             ]
         )
 
@@ -77,35 +62,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     displayName="Close",
                     shortcut=QtGui.QKeySequence.Close,
                     statusTip="Close image file"
-                ),
-                Qt.Separator(),
-                Qt.MenuAction(
-                    owner=self,
-                    name="fileMenuExport",
-                    displayName="Export",
-                    shortcut="Ctrl+E",
-                    statusTip="Export to a signal file"
                 )
             ]
         )
-
-
-    def buildEditMenu(self):
-        return Qt.Menu(
-            owner=self,
-            name='editMenu',
-            displayName='Edit',
-            items=[
-                Qt.MenuAction(
-                    owner=self,
-                    name="editMenuExample",
-                    displayName="Example",
-                    shortcut=None,
-                    statusTip="Example status tip"
-                )
-            ]
-        )
-
 
     def buildLeadMenu(self):
         return Qt.Menu(
