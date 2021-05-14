@@ -25,6 +25,8 @@ There are two different ways to install Python `3.6.7`:
 
 Install Python `3.6.7` from the [python website](https://www.python.org/downloads/release/python-367/).
 
+- [Click here](https://www.python.org/ftp/python/3.6.7/python-3.6.7-amd64.exe) to download Python 3.6.7 for Windows.
+
 You can verify that the install was successful with:
 
 ```
