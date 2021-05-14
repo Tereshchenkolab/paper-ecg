@@ -74,9 +74,9 @@ POSIX | bash/zsh        | `$ source .env/bin/activate`
 Windows | cmd.exe       | `C:\> .env\Scripts\activate.bat`
 |"      | PowerShell    | `PS C:\> .env\Scripts\Activate.ps1`
 
-##### 💡 Pro Tip
+##### 💡 Pro Tip for VSCode
 
-check the "Python > Env > Active Env In Current Terminal" box in the workspace settings or add this setting to `.vscode/settings.json`:
+Check the "Python > Env > Active Env In Current Terminal" box in the workspace settings or add this setting to `.vscode/settings.json`:
 
 ```
 "python.terminal.activateEnvInCurrentTerminal": true,
