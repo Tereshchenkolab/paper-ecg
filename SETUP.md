@@ -34,6 +34,11 @@ You can verify that the install was successful with:
 3.6.7
 ```
 
+If on Windows, try:
+```
+py -3.6 --version
+```
+
 If this returns `2.7.X`, try `python3 --version`. 
 If that works, use `python3` in place of `python` for the rest of instructions. 
 
@@ -44,9 +49,9 @@ If neither of those works you will need to specify the full path to the Python 3
 3.6.7
 ```
 
-### Create an environment (Optional)
+### Create an environment (Optional) and install dependencies
 
- If you are not a Python power user, it is recommended *not to use a virtual environment* (since it is complicated), and skip to straight to the "Install dependencies" section. 
+ If you are not a Python power user, it is recommended *not to use a virtual environment* (since it is complicated), and go to the "Install dependencies globally" section instead. 
  If you have mutliple Python projects and want to keep the dependencies isolated, you may want to use a virtual environment.
 
 Python comes bundled with an environment manager, `venv` (not to be confused with `virtualenv` or `pyenv`). 
@@ -84,16 +89,36 @@ Check the "Python > Env > Active Env In Current Terminal" box in the workspace s
 ```
 "python.terminal.activateEnvInCurrentTerminal": true,
 ```
+
+#### Install dependencies
+
+To install all of the dependencies in your new environment, run:
+
+`pip install -r requirements.txt`
+
+> 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
+
+Now, running `fbs run` should build and run the project.
+
     
 #### Deactivating
 
 After you have finished working on the project, and you want to return to your normal shell, you can deactivate the environment by running `deactivate` (works on all platforms).
 
-### Install dependencies
+### Install dependencies globally (without a virtual environment)
 
-To install all of the dependencies in your new environment, run:
+If you set up a virtual environment, you do not need to complete this step.
 
-`pip install -r requirements.txt`
+On Windows, run:
+
+```
+py -3.6 -m pip install -r requirements.txt
+```
+
+On Linux and Mac, use either `python`, `python3`, or the full path:
+```
+[python or python3 or /path/to/python3.6.7] -m pip install -r requirements.txt
+```
 
 > 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
 
