@@ -21,7 +21,7 @@ There are two different ways to install Python `3.6.7`:
 
 ## 1. Official Python Installer
 
-### Install Python
+### Step 1: Install Python
 
 Install Python `3.6.7` from the [python website](https://www.python.org/downloads/release/python-367/).
 
@@ -49,7 +49,14 @@ If neither of those works you will need to specify the full path to the Python 3
 3.6.7
 ```
 
-### Create an environment (Optional) and install dependencies
+### Step 2: Install Dependencies
+
+There are two options:
+
+1. Install dependencies globally
+1. Create an environment
+
+#### Option 2.1: Create an environment (Optional) and install dependencies
 
  If you are not a Python power user, it is recommended *not to use a virtual environment* (since it is complicated), and go to the "Install dependencies globally" section instead. 
  If you have mutliple Python projects and want to keep the dependencies isolated, you may want to use a virtual environment.
@@ -68,7 +75,7 @@ Create a virtual environment for the project.
 > python -m venv .env
 ```
 
-#### Activating
+##### Activating
 
 In order to utilize the isolated environment you will need to activate the environment.
 The activation command varies between operating systems and shells, and the correct command to use is given in the table below:
@@ -122,8 +129,9 @@ On Linux and Mac, use either `python`, `python3`, or the full path:
 
 > 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
 
-Now, running `fbs run` should build and run the project.
+Now, running `fbs run` should build and run the project. If on Windows, try `py -3.6 -m fbs run`.
 
+Return to [Getting Started](README.md)
 
 
 ## 2. `pyenv` (macOS/Linux only)
