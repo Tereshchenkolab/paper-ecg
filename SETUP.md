@@ -44,7 +44,10 @@ If neither of those works you will need to specify the full path to the Python 3
 3.6.7
 ```
 
-### Create an environment
+### Create an environment (Optional)
+
+ If you are not a Python power user, it is recommended *not to use a virtual environment* (since it is complicated), and skip to straight to the "Install dependencies" section. 
+ If you have mutliple Python projects and want to keep the dependencies isolated, you may want to use a virtual environment.
 
 Python comes bundled with an environment manager, `venv` (not to be confused with `virtualenv` or `pyenv`). 
 We will use this tool to keep all of the dependencies for the project separate from any other Python packages you may have installed.
