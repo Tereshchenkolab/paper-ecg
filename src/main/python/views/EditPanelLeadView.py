@@ -34,9 +34,9 @@ class EditPanelLeadView(QtWidgets.QWidget):
                     DoubleSpinBox(
                         owner=self,
                         name="leadStartTimeSpinBox",
-                        suffix=" ms",
+                        suffix=" sec",
                         minVal=0.0,
-                        maxVal=500.0
+                        maxVal=100.0
                     )
                 ]
             ]),
