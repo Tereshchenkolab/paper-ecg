@@ -41,7 +41,7 @@ def detectSignal(image, otsuHedging: int = 0.6, kernelSize: int = 3, erosions: i
 
 
 # image = loadImage("leadPictures/slighty-noisey-aVL-small.png")
-# image = loadImage("leadPictures/slighty-noisey-aVL.png")
+# image = loadImage("leadPictures/007-cropped.jpeg")
 # image = loadImage("leadPictures/II.png")
 image = loadImage("leadPictures/fullscan-II-cropped.png")
 
