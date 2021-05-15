@@ -9,7 +9,10 @@ See our sprint documents [here](scrum/README.md).
 
 ## Getting Started
 
-Follow the [set-up instructions](SETUP.md)
+Follow the set-up instructions:
+
+- [macOS / Linux](SETUP.md)
+- [Windows](SETUP.md)
 
 You should now have:
 
@@ -25,6 +28,12 @@ You can now run:
 fbs run
 ```
 
+Or, on Windows, you may need to run:
+
+```
+py -3.6 -m fbs run
+```
+
 This will start the interpreted version of the project.
 
 ### Build
@@ -33,6 +42,12 @@ In order to create an executable that can be distributed, run:
 
 ```
 fbs build
+```
+
+Or, on Windows, you may need to run:
+
+```
+py -3.6 -m fbs build
 ```
 
 This only builds an executable targeting the current OS (i.e., virtualization or multiple machines is necessary to produce builds for each OS).
