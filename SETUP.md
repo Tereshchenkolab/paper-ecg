@@ -2,20 +2,23 @@
 
 # Setup Instructions
 
-This guide takes you from a fresh install of Linux/MacOS to having the project running. 
+This guide takes you from a fresh install of macOS / Linux to having the project running. 
 
-> Note: The only Linux distribution official supported by this guide is **Ubuntu**.
+> **Note:** The only Linux distribution official supported by this guide is **Ubuntu**.
 
 The steps involved are:
 
-1. Installing Pyenv
-1. Installing Python `3.6.7`
-1. Setting up an environment
-1. Installing dependencies
+1. [Installing Pyenv](#install-pyenv)
+1. [Installing Python `3.6.7`](#install-python-367)
+1. [Setting up an environment](#set-up-an-environment)
+1. [Installing dependencies](#install-dependencies)
 
 This guide also explains:
-- How to build the project
-- Un-installation
+
+- [How to run the application](#run-the-application)
+- [Un-installation](#uninstalling)
+
+
 
 ## Install Pyenv
 
@@ -36,51 +39,51 @@ Pyenv is the best tool for managing different Python versions and isolating depe
 
 1. Configure your shell correctly:
 
-    - **macOS**
+    **macOS**
 
-        1. Add these lines to `.zshrc`:
-            ```bash
-            eval "$(pyenv init -)"
-            eval "$(pyenv virtualenv-init -)"
-            ```
-            This can be done automatically by running:
-            ```bash
-            echo 'eval "$(pyenv init -)"' >> ~/.zshrc
-            echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
-            ```
+    1. Add these lines to `.zshrc`:
+        ```bash
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+        ```
+        This can be done automatically by running:
+        ```bash
+        echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+        echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
+        ```
 
-    - **Linux**
+    **Linux**
 
-        1. Add these lines to the top of `.profile`:
+    1. Add these lines to the top of `.profile`:
 
-            ```bash
-            export PYENV_ROOT="$HOME/.pyenv"
-            export PATH="$PYENV_ROOT/bin:$PATH"
-            eval "$(pyenv init --path)"
-            ```
+        ```bash
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$(pyenv init --path)"
+        ```
 
-        2. Add these lines to `.bashrc`:
-            ```bash
-            eval "$(pyenv init -)"
-            eval "$(pyenv virtualenv-init -)"
-            ```
-            This can be done automatically by running:
-            ```bash
-            echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-            echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-            ```
-        
-        3. Changes to `.profile` do not become active until you log out and log back in again (or restart), but can be applied to the current shell by running `source ~/.profile`.
+    2. Add these lines to `.bashrc`:
+        ```bash
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+        ```
+        This can be done automatically by running:
+        ```bash
+        echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+        echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+        ```
 
-            - Run `source ~/.profile`
-            
-                OR
-            - Logout and login
-            
-                OR
-            - Restart
+    3. Changes to `.profile` do not become active until you log out and log back in again (or restart), but can be applied to the current shell by running `source ~/.profile`.
 
-        > ⚠️ Note: as of May 2021 there was discussion of further changes to the Pyenv environment setup, so run `pyenv init` or read the [environment configuration guide](https://github.com/pyenv/pyenv#basic-github-checkout) on the Pyenv Github for the most up to date information.
+        - Run `source ~/.profile`
+
+            OR
+        - Logout and login
+
+            OR
+        - Restart
+
+    > ⚠️ Note: as of May 2021 there was discussion of further changes to the Pyenv environment setup, so run `pyenv init` or read the [environment configuration guide](https://github.com/pyenv/pyenv#basic-github-checkout) on the Pyenv Github for the most up to date information.
 
 
 
@@ -98,6 +101,8 @@ Pyenv is the best tool for managing different Python versions and isolating depe
     In general `pyenv install 3.6.7` is sufficient to install a Python version via `pyenv`.
 
     If you encounter any issues, check the Pyenv [troubleshooting guide](https://github.com/pyenv/pyenv/wiki/Common-build-problems).
+
+
 
 ## Set up an environment
 
@@ -121,6 +126,8 @@ Pyenv is the best tool for managing different Python versions and isolating depe
     3.6.7
     ```
 
+
+
 ## Install dependencies
 
 Use `pip install` to install required dependencies:
@@ -132,15 +139,18 @@ pip install -r requirements.txt
 > ⚠️ This may take several minutes
 
 
-## Build the project
 
-Now, running `fbs run` should build and run the project.
+## Run the application
+
+Navigate to the project root directory (`.../paper-ecg/`) and run `fbs run` to run the project.
 
 ***(Ubuntu) Tip:*** If `fbs run` fails because of `qt.qpa.plugin: Could not load the Qt platform plugin "xcb" ...` try re-installing `xcb`:
 
 ```bash
 sudo apt install --reinstall libxcb-xinerama0
 ```
+
+
 
 ## Uninstalling
 
