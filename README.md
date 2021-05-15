@@ -12,7 +12,7 @@ See our sprint documents [here](scrum/README.md).
 Follow the set-up instructions:
 
 - [macOS / Linux](SETUP.md)
-- [Windows](SETUP.md)
+- [Windows](SETUP-WINDOWS.md)
 
 You should now have:
 
