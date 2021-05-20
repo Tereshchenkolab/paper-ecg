@@ -4,6 +4,7 @@ Created ???
 
 High-level API for applications to use.
 """
+from math import pi
 from . import Common
 from . import GridDetection
 from . import Vision
@@ -24,7 +25,8 @@ def estimateRotationAngle(image, houghThreshold=80):
 
 def extractSignalFromImage(image, detectionMethod, extractionMethod):
     signalBinary = detectionMethod(image)
-    signal = extractionMethod(signalBinary)
+    pixelValues = extractionMethod(signalBinary)
+    signal = pixelValues * -1  # Pixels are 0 at the top of the image
 
     return signal
 
@@ -78,12 +80,12 @@ def verticallyScaleECGSignal(signal, gridSizeInPixels: float, millimetersPerMill
     Returns:
         np.ndarray: Scaled signal.
     """
-    gridsPerPixel = 1 / gridSizeInPixels
-    millimetersPerGrid = gridSizeInMillimeters
-    milliVoltsPerMillimeter = 1 / millimetersPerMilliVolt
-    milliVoltsPerPixel = gridsPerPixel * millimetersPerGrid * milliVoltsPerMillimeter
-
-    return signal * milliVoltsPerPixel * 1000
+    gridsPerPixel = 1 / gridSizeInPixels                   # Converts size in pixels to size in grid
+    millimetersPerGrid = gridSizeInMillimeters             # Converts size in grid to size in mm
+    milliVoltsPerMillimeter = 1 / millimetersPerMilliVolt  # Converts size in mm to size in mV
+    microVoltsPerMilliVolt = 1000                          # Converts size in mV to size in μV
+    microVoltsPerPixel = gridsPerPixel * millimetersPerGrid * milliVoltsPerMillimeter * microVoltsPerMilliVolt
+    return signal * microVoltsPerPixel
 
 
 def ecgSignalSamplingPeriod(gridSizeInPixels: float, millimetersPerSecond: float = 25.0, gridSizeInMillimeters: float = 1.0):
