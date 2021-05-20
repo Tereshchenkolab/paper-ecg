@@ -25,7 +25,7 @@ class MainController:
         self.window = MainWindow()
         self.connectUI()
         # The ECG model that we will update and pass to the backend to process
-        self.ecg = Ecg() 
+        self.ecg = Ecg()
 
     def connectUI(self):
         """
@@ -90,11 +90,11 @@ class MainController:
     def closeImageFile(self):
         """Closes out current image file and resets editor controls."""
         self.window.editor.removeImage()
-        self.removeAllLeads() 
-        self.window.editor.resetImageEditControls()       
+        self.removeAllLeads()
+        self.window.editor.resetImageEditControls()
 
     def addLead(self, leadId):
-        """Adds a Lead ROI box to the image view and corresponding lead object to the ECG model. 
+        """Adds a Lead ROI box to the image view and corresponding lead object to the ECG model.
 
         Args:
             leadId (str): the ID of the lead to be added
@@ -128,21 +128,21 @@ class MainController:
         # Re-enable add lead menu button
         self.window.leadButtons[leadROI.leadId].setEnabled(True)
         # Set editor pane back to global view
-        self.setEditorPane()                                      
+        self.setEditorPane()
         # Delete lead data from ecg model
-        del self.ecg.leads[leadROI.leadId]                            
+        del self.ecg.leads[leadROI.leadId]
 
     def removeAllLeads(self):
         """Removes all of the ROI boxes present and their corresponding leads from the ECG model."""
         # Remove all lead roi boxes from image view
-        self.window.editor.imageViewer.removeAllRoiBoxes() 
+        self.window.editor.imageViewer.removeAllRoiBoxes()
         # Re-enable all add lead menu buttons
-        for lead, button in self.window.leadButtons.items():   
-            button.setEnabled(True)             
+        for lead, button in self.window.leadButtons.items():
+            button.setEnabled(True)
         # Set editor pane back to global view
-        self.setEditorPane()                                    
+        self.setEditorPane()
         # Clear all lead data from model
-        self.ecg.leads.clear()                                  
+        self.ecg.leads.clear()
 
     def setEditorPane(self, leadId=None, leadSelected=False):
         """Switch the Editor pane between Global and Lead-Detail view. Lead-Detail view
@@ -182,7 +182,7 @@ class MainController:
 
     def updateLeadStartTime(self, leadId, value):
         """Updates the start time of a lead in the ECG model. This is connected to the
-        start time spinbox in the lead-detail editor pane. It is called whenever the 
+        start time spinbox in the lead-detail editor pane. It is called whenever the
         spinbox is updated and the leadStartTimeChanged signal is emitted.
 
         Args:
@@ -200,13 +200,13 @@ class MainController:
                 title="Warning"
             )
             warningDialog.exec_()
-    
+
     # we have all ECG data and export location - ready to pass off to backend to digitize
     def processECGData(self):
         extractedSignals, previewImages = convertECGLeads(self.ecg)
-        
+
         if extractedSignals is None:
-            
+
             errorDialog = MessageDialog(
                 message="Error: Signal Processing Failed\n\nPlease check your lead selection boxes",
                 title="Error"
@@ -218,11 +218,7 @@ class MainController:
                 self.exportECGData(exportFileDialog.fileExportPath, exportFileDialog.delimiterDropdown.currentText(), extractedSignals)
 
     def exportECGData(self, exportPath, delimiter, extractedSignals):
-        if delimiter == "Comma":
-            seperator = ','
-        elif delimiter == "Tab":
-            seperator = '\t'
-        elif delimiter == "Space":
-            seperator = ' '
-    
-        exportSignals(extractedSignals, exportPath, separator=seperator)
+        seperatorMap = {"Comma":',', "Tab":'\t', "Space":' '}
+        assert delimiter in seperatorMap, f"Unrecognized delimiter {delimiter}"
+
+        exportSignals(extractedSignals, exportPath, separator=seperatorMap[delimiter])
