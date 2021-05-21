@@ -63,7 +63,6 @@ class MainController:
         #  https://docs.python.org/3/library/pathlib.html
         path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg)"))
         self.outputDirectory = os.path.splitext(path)[0]
-
         if not os.path.exists(self.outputDirectory):
             os.mkdir(self.outputDirectory)
 
