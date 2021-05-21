@@ -1,171 +1,178 @@
-[Project Homepage](README.md) /  Setup Instructions
+[Project Homepage](README.md) / Setup Instructions (Unix)
 
 # Setup Instructions
 
-This guide takes you from a fresh install of Linux/MacOS/Windows to having the project running.
+This guide takes you from a fresh install of macOS / Linux to having the project running. 
+
+> **Note:** The only Linux distribution official supported by this guide is **Ubuntu**.
 
 The steps involved are:
 
-- Installing Python `3.6.7`
-- Setting up an environment
-- Loading dependencies
+1. [Installing Pyenv](#install-pyenv)
+1. [Installing Python `3.6.7`](#install-python-367)
+1. [Setting up an environment](#set-up-an-environment)
+1. [Installing dependencies](#install-dependencies)
 
-There are two different ways to install Python `3.6.7`:
+This guide also explains:
 
-1. Official Python Installer — This option is best for windows. ([jump](#1-official-python-installer))
-1. `pyenv` — This option is best for Linux/macOS.([jump](#2-pyenv-macoslinux-only))
-
-> ⚠️ This guide is designed to work in any shell, so the `>` is used to denote the shell prompt even thought your shell may have `%` or `$`.
-
-
-
-## 1. Official Python Installer
-
-### Install Python
-
-Install Python `3.6.7` from the [python website](https://www.python.org/downloads/release/python-367/).
-
-You can verify that the install was successful with:
-
-```
-> python --version
-3.6.7
-```
-
-If this returns `2.7.X`, try `python3 --version`. 
-If that works, use `python3` in place of `python` for the rest of instructions. 
-
-If neither of those works you will need to specify the full path to the Python 3.6.7 executable:
-
-```
-> /path/to/python3.6.7 --version
-3.6.7
-```
-
-### Create an environment
-
-Python comes bundled with an environment manager, `venv` (not to be confused with `virtualenv` or `pyenv`). 
-We will use this tool to keep all of the dependencies for the project separate from any other Python packages you may have installed.
-Check out the [venv documentation](https://docs.python.org/3/library/venv.html)) for more information.
-
-> 💡 Environments isolate different Python projects to prevent dependency conflicts.
-
-Make sure when you run `python --version` you get `3.6.7`, or you are using the full path to the executable.
-
-Create a virtual environment for the project. 
-
-```
-> python -m venv .env
-```
-
-#### Activating
-
-In order to utilize the isolated environment you will need to activate the environment.
-The activation command varies between operating systems and shells, and the correct command to use is given in the table below:
-
-Platform|Shell          | Command to activate virtual environment
-|-    |-                |-|
-POSIX | bash/zsh        | `$ source .env/bin/activate`
-|"    | fish            | `$ source .env/bin/activate.fish`
-|"    | csh/tcsh        | `$ source .env/bin/activate.csh`
-|"    | PowerShell Core | `$ .env/bin/Activate.ps1`
-Windows | cmd.exe       | `C:\> .env\Scripts\activate.bat`
-|"      | PowerShell    | `PS C:\> .env\Scripts\Activate.ps1`
-
-##### 💡 Pro Tip
-
-check the "Python > Env > Active Env In Current Terminal" box in the workspace settings or add this setting to `.vscode/settings.json`:
-
-```
-"python.terminal.activateEnvInCurrentTerminal": true,
-```
-    
-#### Deactivating
-
-After you have finished working on the project, and you want to return to your normal shell, you can deactivate the environment by running `deactivate` (works on all platforms).
-
-### Install dependencies
-
-To install all of the dependencies in your new environment, run:
-
-`pip install -r requirements.txt`
-
-> 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
-
-Now, running `fbs run` should build and run the project.
+- [How to run the application](#run-the-application)
+- [Un-installation](#uninstalling)
 
 
 
-## 2. `pyenv` (macOS/Linux only)
+## Install Pyenv
 
-`pyenv` is the most common tool for managing different Python versions.
+Pyenv is the best tool for managing different Python versions and isolating dependencies.
 
-### Install `pynenv`
+1. Install Pyenv via appropriate means for your system
 
-#### macOS
+    - **macOS**: Follow the [installation instructions](https://github.com/pyenv/pyenv#installation) in the Pyenv GitHub repository.
 
-Follow the [installation instructions](https://github.com/pyenv/pyenv#installation) on the `pyenv` GitHub.
+    - **Linux**: Use the automatic installer:
 
-#### Linux
+        ```bash
+        $ curl https://pyenv.run | bash
+        ```
+        > Read the [automatic installer documentation](https://github.com/pyenv/pyenv-installer)
 
-Use the automatic [installer](https://github.com/pyenv/pyenv-installer):
+        ***(Ubuntu) Tip:*** If `pyenv` fails because it couldn't find `zlib`, run: `sudo apt install zlib1g-dev`.
 
-```
-$ curl https://pyenv.run | bash
-```
+1. Configure your shell correctly:
 
-**(Ubuntu) Tip:** If `pyenv` fails because it couldn't find `zlib`, run: `sudo apt-get install zlib1g-dev`.
+    **macOS**
 
-**Note:** you may need to follow the instructions to add the `pyenv` setup to your `.bashrc`.
+    1. Add these lines to `.zshrc`:
+        ```bash
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+        ```
+        This can be done automatically by running:
+        ```bash
+        echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+        echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
+        ```
 
-Then, follow the pre-requisites for your system in the [troubleshooting guide](https://github.com/pyenv/pyenv/wiki/Common-build-problems) (or try your luck and return here if `pyenv` fails).
+    **Linux**
 
-### Download Python 3.6.7
+    1. Add these lines to the top of `.profile`:
 
-```
-env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.6.7
-```
+        ```bash
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$(pyenv init --path)"
+        ```
 
-For PyInstaller to work correctly, you need a complete Python installation, so you need to specify `--enable-shared`. 
-In general `pyenv install 3.6.7` is sufficient to install a Python version via `pyenv`.
+    2. Add these lines to `.bashrc`:
+        ```bash
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+        ```
+        This can be done automatically by running:
+        ```bash
+        echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+        echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+        ```
 
-### Configure an environment
+    3. Changes to `.profile` do not become active until you log out and log back in again (or restart), but can be applied to the current shell by running `source ~/.profile`.
 
-Use `pyenv` to create a virtual environment for the project. 
+        - Run `source ~/.profile`
 
-```
-pyenv virtualenv 3.6.7 paper-ecg
-```
+            OR
+        - Logout and login
 
-Assign that virtual environment to the current directory (this automatically activates the environment).
+            OR
+        - Restart
 
-```
-pyenv local paper-ecg
-```
+    > ⚠️ Note: as of May 2021 there was discussion of further changes to the Pyenv environment setup, so run `pyenv init` or read the [environment configuration guide](https://github.com/pyenv/pyenv#basic-github-checkout) on the Pyenv Github for the most up to date information.
 
-Now, whenever this folder is the working directory in terminal, this environment will be used.
-Test this out by running:
 
-```
-> python --version
-3.6.7
-```
 
-### Install dependencies
+## Install Python 3.6.7
 
-```
-$ pip install --upgrade pip
-$ pip install -r requirements.txt
+1. Install Python [build dependencies](https://github.com/pyenv/pyenv/wiki#suggested-build-environment).
+
+
+1. Install Python 3.6.7 using `pyenv install` with custom options:
+    ```bash
+    env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.6.7
+    ```
+
+    In order for PyInstaller to work correctly, you need a complete Python installation, so you need to specify `--enable-shared`. 
+    In general `pyenv install 3.6.7` is sufficient to install a Python version via `pyenv`.
+
+    If you encounter any issues, check the Pyenv [troubleshooting guide](https://github.com/pyenv/pyenv/wiki/Common-build-problems).
+
+
+
+## Set up an environment
+
+1. Use `pyenv` to create a virtual environment for the project. 
+
+    ```bash
+    pyenv virtualenv 3.6.7 paper-ecg
+    ```
+
+2. Navigate to the project root directory (`.../paper-ecg/`) and assign the virtual environment you just created to the current directory (this automatically activates the environment).
+
+    ```bash
+    pyenv local paper-ecg
+    ```
+
+    Now, whenever this folder is the working directory in terminal, this environment will be used.
+    Test this out by running:
+
+    ```bash
+    > python --version
+    3.6.7
+    ```
+
+
+
+## Install dependencies
+
+Use `pip install` to install required dependencies:
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
 > ⚠️ This may take several minutes
 
-> 💡 If pip complains about being out of date, just run `pip install --upgrade pip`
 
-Now, running `fbs run` should build and run the project.
 
-**(Ubuntu) Tip:** If `fbs run` fails because of `qt.qpa.plugin: Could not load the Qt platform plugin "xcb" ...` try re-installing `xcb`:
+## Run the application
 
+Navigate to the project root directory (`.../paper-ecg/`) and run `fbs run` to run the project.
+
+***(Ubuntu) Tip:*** If `fbs run` fails because of `qt.qpa.plugin: Could not load the Qt platform plugin "xcb" ...` try re-installing `xcb`:
+
+```bash
+sudo apt install --reinstall libxcb-xinerama0
+```
+
+
+
+## Uninstalling
+
+If you no longer want to have the `paper-ecg` virtualenv, you can delete it:
+
+```bash
+pyenv virtualenv-delete paper-ecg
+```
+
+If you wish to remove Python 3.6.7:
+```bash
+pyenv uninstall 3.6.7
+```
+
+If you would like to completely uninstall Pyenv:
+
+- **macOS**: 
+    ```bash
+    brew uninstall pyenv
     ```
-    sudo apt-get install --reinstall libxcb-xinerama0
+
+- **Linux**: 
+    ```bash
+    rm -rf $HOME/.pyenv
     ```

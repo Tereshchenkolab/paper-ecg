@@ -60,11 +60,15 @@ def greyscale(colorImage: np.ndarray):
     return cv2.cvtColor(colorImage, cv2.COLOR_BGR2GRAY)
 
 
-def binarize(greyImage, threshold):
-    assert len(greyImage.shape) == 2, "Must be greyscale!"
+def binarize(greyscaleImage, threshold, inverse=True):
+    assert len(greyscaleImage.shape) == 2, "Must be greyscale!"
 
-    _, binaryImage = cv2.threshold(greyImage, threshold, 1, cv2.THRESH_BINARY_INV)
-    return binaryImage
+    if inverse:
+        _, binaryImage = cv2.threshold(greyscaleImage, threshold, 1, cv2.THRESH_BINARY_INV)
+        return binaryImage
+    else:
+        _, binaryImage = cv2.threshold(greyscaleImage, threshold, 1, cv2.THRESH_BINARY)
+        return binaryImage
 
 
 def invert(greyscaleImage):

@@ -14,46 +14,41 @@ class EditPanelLeadView(QtWidgets.QWidget):
         self.sizePolicy().setHorizontalPolicy(QtWidgets.QSizePolicy.Expanding)
         self.sizePolicy().setVerticalPolicy(QtWidgets.QSizePolicy.Fixed)
 
-        self.title = QtWidgets.QLabel()
-        self.imagePreview = QtWidgets.QLabel()
-
         self.initUI()
 
     def initUI(self):
 
-        self.mainlayout = QtWidgets.QVBoxLayout()
-        self.mainlayout.setAlignment(QtCore.Qt.AlignTop)
-        self.mainlayout.setContentsMargins(5, 5, 5, 5)
-
-        self.title.setAlignment(QtCore.Qt.AlignCenter)
-        self.mainlayout.addWidget(self.title)
-
-        self.controlsLayout = QtWidgets.QFormLayout()
-
-        self.controlsLayout.addRow(
+        VerticalBoxLayout(owner=self, name="mainlayout", margins=(5, 5, 5, 5), contents=[
             Label(
-                owner=self,
-                name="leadStartTimeLabel",
-                text="Start time: "
+                owner=self, 
+                name="title", 
+                text=""
             ),
-            DoubleSpinBox(
-                owner=self,
-                name="leadStartTimeSpinBox",
-                suffix=" ms",
-                minVal=0.0,
-                maxVal=500.0
-            )
-        )
-
-        self.mainlayout.addLayout(self.controlsLayout)
-
-        self.mainlayout.addWidget(
+            FormLayout(owner=self, name="controlsLayout", contents=[
+                [
+                    Label(
+                        owner=self,
+                        name="leadStartTimeLabel",
+                        text="Start time: "
+                    ),
+                    DoubleSpinBox(
+                        owner=self,
+                        name="leadStartTimeSpinBox",
+                        suffix=" ms",
+                        minVal=0.0,
+                        maxVal=500.0
+                    )
+                ]
+            ]),
             PushButton(
-                owner=self,
-                name="deleteLeadButton",
+                owner=self, 
+                name="deleteLeadButton", 
                 text="Delete Lead"
             )
-        )
+        ])
+
+        self.mainlayout.setAlignment(QtCore.Qt.AlignTop)
+        self.title.setAlignment(QtCore.Qt.AlignCenter)
 
         self.setLayout(self.mainlayout)
         self.leadStartTimeSpinBox.valueChanged.connect(self.startTimeChanged)
@@ -66,7 +61,6 @@ class EditPanelLeadView(QtWidgets.QWidget):
         self.leadStartTimeSpinBox.setValue(lead.leadStartTime)
 
     def setTitle(self, leadId):
-        # self.leadId = leadId
         self.title.setText("Lead " + leadId)
 
     def startTimeChanged(self):
