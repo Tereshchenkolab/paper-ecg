@@ -59,7 +59,7 @@ class MainController:
 
         # Per pathlib documentation, if no selection is made then Path('.') is returned
         #  https://docs.python.org/3/library/pathlib.html
-        path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg)"))
+        path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg *.jpeg *.tif *.tiff)"))
 
         if path != Path('.'):
             self.window.editor.loadImageFromPath(path)
