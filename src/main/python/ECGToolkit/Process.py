@@ -10,15 +10,20 @@ from . import GridDetection
 from . import Vision
 
 
-def estimateRotationAngle(image, houghThreshold=80):
-    binaryImage = GridDetection.kernelApproach(image)
+def estimateRotationAngle(image, houghThresholdFraction=0.25):
+    binaryImage = GridDetection.thresholdApproach(image)
+
+    _, width = image.shape[:2] if len(image.shape) == 3 else image.shape
+    houghThreshold = int(width * houghThresholdFraction)
     lines = Vision.houghLines(binaryImage, houghThreshold)
+
     angles = Common.mapList(lines, Vision.houghLineToAngle)
     offsets = Common.mapList(angles, lambda angle: angle % 90)
     candidates = Common.filterList(offsets, lambda offset: abs(offset) < 30)
 
     if len(candidates) > 1:
-        return Common.mean(candidates)
+        estimatedAngle = Common.mean(candidates)
+        return estimatedAngle
     else:
         return None
 
@@ -44,13 +49,19 @@ def extractGridFromImage(image, detectionMethod, spacingReductionMethod=Common.m
         """Takes all of the lines in an image, filters to those oriented in the specified direction, and estimates
         the most likely underlying spacing (some or many lines may be missing so mean is not necessarily suitable)"""
 
-        if Common.emptyOrNone(lines): return None
+        if Common.emptyOrNone(lines):
+            print("WARNING: No lines available")
+            return None
 
         orientedLines = Vision.getLinesInDirection(lines, direction)
-        if Common.emptyOrNone(orientedLines): return None
+        if Common.emptyOrNone(orientedLines):
+            print("WARNING: No lines in direction")
+            return None
 
         distances = Common.calculateDistancesBetweenValues(sorted(orientedLines))
-        if Common.emptyOrNone(distances): return None
+        if Common.emptyOrNone(distances):
+            print("WARNING: No distances")
+            return None
 
         # TODO: Implement an autocorrelation approach or something else to do a better job of this (median?)...
         gridSpacing = spacingReductionMethod(distances)

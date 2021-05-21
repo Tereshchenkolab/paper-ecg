@@ -9,7 +9,7 @@ import numpy as np
 from .Vision import binarize, blur, greyscale, otsuThresholdSelection
 
 
-def mallawaarachchi(image, useBlur: bool = False):
+def mallawaarachchi(image, useBlur: bool = False, invert: bool = True):
     """The most straightforward implementation of binarization from Mallawaarachchi et. al., 2014"""
 
     # "The first [this] method tends to preserve significantly more information than the second does. For traces with minimal
@@ -28,5 +28,5 @@ def mallawaarachchi(image, useBlur: bool = False):
     # Get the threshold using the method from Otsu
     threshold = otsuThresholdSelection(blurredImage)
 
-    binaryImage = binarize(blurredImage, threshold)
+    binaryImage = binarize(blurredImage, threshold, invert)
     return binaryImage

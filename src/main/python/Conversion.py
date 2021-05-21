@@ -23,7 +23,7 @@ def convertECGLeads(ecgData: Ecg):
     signalDetectionMethod = partial(SignalDetection.mallawaarachchi, useBlur=True)
     signalExtractionMethod = SignalExtraction.naïveHorizontalScan
 
-    gridDetectionMethod = GridDetection.kernelApproach
+    gridDetectionMethod = GridDetection.thresholdApproach
 
     leads = zipDict(ecgData.leads)
 

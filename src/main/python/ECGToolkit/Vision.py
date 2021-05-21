@@ -58,9 +58,13 @@ def greyscale(colorImage: np.ndarray):
     return cv2.cvtColor(colorImage, cv2.COLOR_BGR2GRAY)
 
 
-def binarize(image, threshold):
-    _, binaryImage = cv2.threshold(image, threshold, 1, cv2.THRESH_BINARY_INV)
-    return binaryImage
+def binarize(image, threshold, inverse=True):
+    if inverse:
+        _, binaryImage = cv2.threshold(image, threshold, 1, cv2.THRESH_BINARY_INV)
+        return binaryImage
+    else:
+        _, binaryImage = cv2.threshold(image, threshold, 1, cv2.THRESH_BINARY)
+        return binaryImage
 
 
 def histogram(greyImage: np.ndarray):
