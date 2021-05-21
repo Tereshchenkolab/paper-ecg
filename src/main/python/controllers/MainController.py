@@ -5,10 +5,11 @@ Created November 9, 2020
 Controls the primary window, including the menu bar and the editor.
 """
 from pathlib import Path
-
+import os
 from PyQt5 import QtWidgets
 
 from Conversion import convertECGLeads, exportSignals
+from ImageUtilities import opencvImageToPixmap
 from views.MainWindow import MainWindow
 from views.ImageView import *
 from views.ROIView import *
@@ -48,6 +49,7 @@ class MainController:
         self.window.addLeadV6.triggered.connect(lambda: self.addLead("V6"))
 
         self.window.editor.imageViewer.roiItemSelected.connect(self.setEditorPane)
+        self.window.editor.imageViewer.leadImageUpdated.connect(self.saveLeadImage)
         self.window.editor.removeLead.connect(self.removeLead)
         self.window.editor.leadStartTimeChanged.connect(self.updateLeadStartTime)
         self.window.editor.gridTimeScaleChanged.connect(self.updateEcgTimeScale)
@@ -60,6 +62,10 @@ class MainController:
         # Per pathlib documentation, if no selection is made then Path('.') is returned
         #  https://docs.python.org/3/library/pathlib.html
         path = Path(self.openFileBrowser("Open File", "Images (*.png *.jpg)"))
+        self.outputDirectory = os.path.splitext(path)[0]
+
+        if not os.path.exists(self.outputDirectory):
+            os.mkdir(self.outputDirectory)
 
         if path != Path('.'):
             self.window.editor.loadImageFromPath(path)
@@ -222,3 +228,14 @@ class MainController:
         assert delimiter in seperatorMap, f"Unrecognized delimiter {delimiter}"
 
         exportSignals(extractedSignals, exportPath, separator=seperatorMap[delimiter])
+
+    def saveLeadImage(self, roi):
+        """Saves the cropped lead image. This function is connected to the leadImageUpdated signal which is emitted from
+        ROIView.updatePixelData(), meaning a new version of the image is saved every time the lead bounding box is moved.
+        Args:
+            roi ([ROIItem]): the ROI item from which we need to save the cropped lead image
+        """
+        imageName = roi.leadId + ".png"
+        fullPath = Path.joinpath(Path(self.outputDirectory), imageName)
+        pixmap = opencvImageToPixmap(roi.pixelData)     # easier to save a pixmap object than numpy array since we already have this function
+        pixmap.save(str(fullPath), "PNG")

@@ -135,7 +135,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.updatePixelData()
 
         self.update()   
-        # self.parentViews[0].itemMoved.emit(self)
 
 
     def boundingRect(self):
@@ -375,5 +374,4 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         h = box.toRect().height()
 
         self.pixelData = np.copy(self.parentViews[0]._image[y:y+h, x:x+w])
-        croppedImage = ImageUtilities.opencvImageToPixmap(self.pixelData)
-        croppedImage.save(self.leadId + ".png")
+        self.parentViews[0].leadImageUpdated.emit(self)
