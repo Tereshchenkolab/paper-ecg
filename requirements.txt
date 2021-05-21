@@ -12,3 +12,4 @@ qimage2ndarray
 matplotlib
 mypy
 pathlib
+dataclasses

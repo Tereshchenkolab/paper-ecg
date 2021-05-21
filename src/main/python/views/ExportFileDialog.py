@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
-from ECGToolkit.Visualization import displayColorImage
+from digitize.Visualization import displayColorImage
 from QtWrapper import *
 from views.ImagePreviewDialog import ImagePreviewDialog
 from ImageUtilities import opencvImageToPixmap
@@ -37,19 +37,19 @@ class ExportFileDialog(QtWidgets.QDialog):
         VerticalBoxLayout(owner=self, name="mainLayout", contents=[
             HorizontalBoxLayout(owner=self, name="chooseFileLayout", contents=[
                 Label(
-                    owner=self, 
-                    name="chooseFileLabel", 
+                    owner=self,
+                    name="chooseFileLabel",
                     text="Export to:"
                 ),
                 LineEdit(
-                    owner=self, 
-                    name="chooseFileTextBox", 
-                    contents="Choose file path", 
+                    owner=self,
+                    name="chooseFileTextBox",
+                    contents="Choose file path",
                     readOnly=True
                 ),
                 PushButton(
-                    owner=self, 
-                    name="chooseFileButton", 
+                    owner=self,
+                    name="chooseFileButton",
                     text="..."
                 )
             ]),
@@ -68,29 +68,29 @@ class ExportFileDialog(QtWidgets.QDialog):
                             "Space"
                         ]
                     )
-                
+
             ]),
             VerticalBoxLayout(owner=self, name="leadPreviewLayout", contents=[
                 Label(
-                    owner=self, 
-                    name="leadPreviewLabel", 
+                    owner=self,
+                    name="leadPreviewLabel",
                     text="Preview Selected Leads:"
                 ),
                 ScrollArea(
-                    owner=self, 
-                    name="leadPreivewScrollArea", 
-                    innerWidget= 
+                    owner=self,
+                    name="leadPreivewScrollArea",
+                    innerWidget=
                         Widget(
-                            owner=self, 
-                            name="leadPreviewWidget", 
+                            owner=self,
+                            name="leadPreviewWidget",
                             layout=self.leadPreviewLayout
                         )
                 )
             ]),
             HorizontalBoxLayout(owner=self, name="confirmCancelButtonLayout", contents=[
                 Label(
-                    owner=self, 
-                    name="errorMessageLabel", 
+                    owner=self,
+                    name="errorMessageLabel",
                     text=""
                 ),
                 PushButton(
@@ -108,7 +108,7 @@ class ExportFileDialog(QtWidgets.QDialog):
 
         self.delimiterChoiceLayout.setAlignment(QtCore.Qt.AlignLeft)
         self.confirmCancelButtonLayout.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)
-        
+
         self.setLayout(self.mainLayout)
 
         self.connectUI()

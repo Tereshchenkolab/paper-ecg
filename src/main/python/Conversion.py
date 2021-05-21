@@ -3,12 +3,12 @@ from pathlib import Path
 import numpy as np
 
 from model.EcgModel import Ecg
-from ECGToolkit.Common import *
-from ECGToolkit.Process import extractSignalFromImage, extractGridFromImage, ecgSignalSamplingPeriod, verticallyScaleECGSignal, zeroECGSignal
-from ECGToolkit import SignalDetection
-from ECGToolkit import SignalExtraction
-from ECGToolkit import GridDetection
-from ECGToolkit.Visualization import overlaySignalOnImage
+from digitize.Common import *
+from digitize.Process import extractSignalFromImage, extractGridFromImage, ecgSignalSamplingPeriod, verticallyScaleECGSignal, zeroECGSignal
+from digitize import SignalDetection
+from digitize import SignalExtraction
+from digitize import GridDetection
+from digitize.Visualization import overlaySignalOnImage
 
 
 LEAD_ORDER = {

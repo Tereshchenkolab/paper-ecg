@@ -8,7 +8,7 @@ from pathlib import Path
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from ECGToolkit.Process import estimateRotationAngle
+from digitize.Process import estimateRotationAngle
 from model.EditableImage import EditableImage
 from views.ImageView import *
 from views.ROIView import *
@@ -43,8 +43,8 @@ class Editor(QtWidgets.QWidget):
                         widget=ImageView()
                     ),
                     ScrollArea(
-                        owner=self, 
-                        name="scrollArea", 
+                        owner=self,
+                        name="scrollArea",
                         horizontalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOff,
                         verticalScrollBarPolicy=QtCore.Qt.ScrollBarAsNeeded,
                         widgetIsResizable=True,

@@ -29,9 +29,9 @@ def estimateRotationAngle(image, houghThresholdFraction=0.25):
 
 
 def extractSignalFromImage(image, detectionMethod, extractionMethod):
+    # Note that the signal is mirrored across the x-axis due to the coordinate system of images.
     signalBinary = detectionMethod(image)
-    pixelValues = extractionMethod(signalBinary)
-    signal = pixelValues * -1  # Pixels are 0 at the top of the image
+    signal = extractionMethod(signalBinary)
 
     return signal
 
@@ -97,7 +97,7 @@ def verticallyScaleECGSignal(signal, gridSizeInPixels: float, millimetersPerMill
     milliVoltsPerMillimeter = 1 / millimetersPerMilliVolt  # Converts size in mm to size in mV
     microVoltsPerMilliVolt = 1000                          # Converts size in mV to size in μV
     microVoltsPerPixel = gridsPerPixel * millimetersPerGrid * milliVoltsPerMillimeter * microVoltsPerMilliVolt
-    return signal * microVoltsPerPixel
+    return signal * microVoltsPerPixel * -1  # Pixels are 0 at the top of the image
 
 
 def ecgSignalSamplingPeriod(gridSizeInPixels: float, millimetersPerSecond: float = 25.0, gridSizeInMillimeters: float = 1.0):
