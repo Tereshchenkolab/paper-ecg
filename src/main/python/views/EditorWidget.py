@@ -8,7 +8,7 @@ from pathlib import Path
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from digitize.Process import estimateRotationAngle
+import digitize
 from model.EditableImage import EditableImage
 from views.ImageView import *
 from views.ROIView import *
@@ -122,7 +122,7 @@ class Editor(QtWidgets.QWidget):
     def autoRotate(self):
         if self.image is None: return
 
-        angle = estimateRotationAngle(self.image.image)
+        angle = digitize.estimateRotationAngle(self.image.image)
 
         if angle is None:
             errorModal = QtWidgets.QMessageBox()

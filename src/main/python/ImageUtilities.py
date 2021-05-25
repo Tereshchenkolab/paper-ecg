@@ -54,9 +54,8 @@ def applyContrast(inputImage, contrast: int):
     if contrast == 0:
         return inputImage.copy()
 
-    f = 131 * (contrast + 127) / (127 * (131 - contrast))
-    alpha_c = f
-    gamma_c = 127 * (1 - f)
+    alpha_c = 131 * (contrast + 127) / (127 * (131 - contrast))
+    gamma_c = 127 * (1 - alpha_c)
 
     return cv2.addWeighted(inputImage, alpha_c, inputImage, 0, gamma_c)
 

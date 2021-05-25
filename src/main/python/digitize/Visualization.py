@@ -10,7 +10,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .Common import lowerClamp, mapList, upperClamp
+from . import common
 
 
 class Color:
@@ -75,7 +75,7 @@ def displayImages(listOfImages):
 
 def overlaySignalOnImage(signal, image, color=(85, 19, 248), lineWidth=3):
     output = image.copy()
-    quantizedSignal = mapList(signal, int)
+    quantizedSignal = common.mapList(signal, int)
 
     for first, second in zip(enumerate(quantizedSignal[:-1]), enumerate(quantizedSignal[1:], start=1)):
         cv2.line(output, first, second, color, thickness=lineWidth)
