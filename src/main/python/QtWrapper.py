@@ -91,19 +91,42 @@ def SpinBox(
 
 
 @bindsToClass
+def SpinBox(
+    owner: QWidget,
+    name: str,
+    minVal: float,
+    maxVal: float,
+    prefix: Optional[str] = None,
+    suffix: Optional[str] = None,
+    defaultValue: Optional[float] = None,
+) -> QDoubleSpinBox:
+    spinbox = QSpinBox()
+    spinbox.setMinimum(minVal)
+    spinbox.setMaximum(maxVal)
+    spinbox.setPrefix(prefix)
+    spinbox.setSuffix(suffix)
+    if defaultValue:
+        spinbox.setValue(defaultValue)
+    return spinbox
+
+
+@bindsToClass
 def DoubleSpinBox(
     owner: QWidget,
     name: str,
     minVal: float,
     maxVal: float,
     prefix: Optional[str] = None,
-    suffix: Optional[str] = None
+    suffix: Optional[str] = None,
+    defaultValue: Optional[float] = None
 ) -> QDoubleSpinBox:
     spinbox = QDoubleSpinBox()
     spinbox.setMinimum(minVal)
     spinbox.setMaximum(maxVal)
     spinbox.setPrefix(prefix)
     spinbox.setSuffix(suffix)
+    if defaultValue:
+        spinbox.setValue(defaultValue)
     return spinbox
 
 

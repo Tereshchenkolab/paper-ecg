@@ -20,8 +20,8 @@ class EditPanelLeadView(QtWidgets.QWidget):
 
         VerticalBoxLayout(owner=self, name="mainlayout", margins=(5, 5, 5, 5), contents=[
             Label(
-                owner=self, 
-                name="title", 
+                owner=self,
+                name="title",
                 text=""
             ),
             FormLayout(owner=self, name="controlsLayout", contents=[
@@ -34,15 +34,15 @@ class EditPanelLeadView(QtWidgets.QWidget):
                     DoubleSpinBox(
                         owner=self,
                         name="leadStartTimeSpinBox",
-                        suffix=" ms",
-                        minVal=0.0,
-                        maxVal=500.0
+                        suffix=" sec",
+                        minVal=0,
+                        maxVal=1000
                     )
                 ]
             ]),
             PushButton(
-                owner=self, 
-                name="deleteLeadButton", 
+                owner=self,
+                name="deleteLeadButton",
                 text="Delete Lead"
             )
         ])
