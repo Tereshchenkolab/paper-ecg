@@ -17,6 +17,8 @@ from views.MessageDialog import *
 from model.EcgModel import *
 from model.LeadModel import *
 from QtWrapper import *
+import Annotation
+from model.Lead import LeadName
 
 
 class MainController:
@@ -26,6 +28,7 @@ class MainController:
         self.connectUI()
         # The ECG model that we will update and pass to the backend to process
         self.ecg = Ecg()
+        self.openFile = None
 
     def connectUI(self):
         """
@@ -53,6 +56,7 @@ class MainController:
         self.window.editor.gridTimeScaleChanged.connect(self.updateEcgTimeScale)
         self.window.editor.gridVoltScaleChanged.connect(self.updateEcgVoltScale)
         self.window.editor.processDataButtonClicked.connect(self.confirmDigitization)
+        self.window.editor.saveAnnotationsButtonClicked.connect(self.saveAnnotations)
         # self.window.editor.exportPathChosen.connect(self.processECGData)
 
     def openImageFile(self):
@@ -64,6 +68,7 @@ class MainController:
         if path != Path('.'):
             self.window.editor.loadImageFromPath(path)
             self.window.editor.resetImageEditControls()
+            self.openFile = path
         else:
             print("[Warning] No image selected")
 
@@ -92,6 +97,7 @@ class MainController:
         self.window.editor.removeImage()
         self.removeAllLeads()
         self.window.editor.resetImageEditControls()
+        self.openFile = None
 
     def addLead(self, leadId):
         """Adds a Lead ROI box to the image view and corresponding lead object to the ECG model.
@@ -222,3 +228,38 @@ class MainController:
         assert delimiter in seperatorMap, f"Unrecognized delimiter {delimiter}"
 
         exportSignals(extractedSignals, exportPath, separator=seperatorMap[delimiter])
+
+    def saveAnnotations(self):
+        if self.window.editor.image is None:
+            return
+
+        assert self.openFile is not None
+
+        def extractLeadAnnotation(lead: Lead) -> Annotation.LeadAnnotation:
+            return Annotation.LeadAnnotation(
+                Annotation.CropLocation(
+                    lead.roiData.x,
+                    lead.roiData.y,
+                    lead.roiData.width,
+                    lead.roiData.height,
+                ),
+                lead.leadStartTime
+            )
+
+        metadataDirectory = self.openFile.parent / '.paperecg'
+        if not metadataDirectory.exists():
+            metadataDirectory.mkdir()
+
+        filePath = metadataDirectory / (self.openFile.stem + '.json')
+
+        leads = {
+            LeadName[name]: extractLeadAnnotation(lead) for name, lead in self.ecg.leads.items()
+        }
+
+        Annotation.Annotation(
+            image=Annotation.ImageMetadata(self.openFile.name, directory=str(self.openFile.parent.absolute())),
+            rotation=self.window.editor.image.edits.rotation,
+            timeScale=self.ecg.gridTimeScale,
+            voltageScale=self.ecg.gridVoltageScale,
+            leads=leads
+        ).save(filePath)

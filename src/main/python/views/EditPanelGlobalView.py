@@ -68,6 +68,11 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                 owner=self,
                 name="processDataButton",
                 text="Process Lead Data"
+            ),
+            PushButton(
+                owner=self,
+                name="saveAnnotationsButton",
+                text="Save Metadata"
             )
         ])
 
@@ -98,6 +103,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
         self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
         self.processDataButton.clicked.connect(lambda: self.editorWidget.processDataButtonClicked.emit())
+        self.saveAnnotationsButton.clicked.connect(lambda: self.editorWidget.saveAnnotationsButtonClicked.emit())
 
 
     def clearVoltSpinBox(self):

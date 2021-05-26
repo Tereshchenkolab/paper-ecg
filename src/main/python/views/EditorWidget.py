@@ -24,6 +24,7 @@ class Editor(QtWidgets.QWidget):
     gridVoltScaleChanged = QtCore.pyqtSignal(float)
     gridTimeScaleChanged = QtCore.pyqtSignal(float)
     processDataButtonClicked = QtCore.pyqtSignal()
+    saveAnnotationsButtonClicked = QtCore.pyqtSignal()
     removeLead = QtCore.pyqtSignal(object)
 
     image = None # The openCV image
