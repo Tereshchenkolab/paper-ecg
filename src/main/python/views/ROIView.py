@@ -62,17 +62,27 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges, True)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, True)
         self.updateHandlesPos()
-
-        self.x = self.mapToScene(self.rect()).boundingRect().toRect().x()
-        self.y = self.mapToScene(self.rect()).boundingRect().toRect().y()
-        self.w = self.mapToScene(self.rect()).boundingRect().toRect().width()
-        self.h = self.mapToScene(self.rect()).boundingRect().toRect().height()
-
         # Set item type to identify ROI items in scene - according to custom items should
         # have type >= UserType (65536)
         self.type = QtWidgets.QGraphicsRectItem.UserType
 
         self.updatePixelData()
+
+    @property
+    def x(self):
+        return self.mapToScene(self.rect()).boundingRect().toRect().x()
+
+    @property
+    def y(self):
+        return self.mapToScene(self.rect()).boundingRect().toRect().y()
+
+    @property
+    def width(self):
+        return self.mapToScene(self.rect()).boundingRect().toRect().width()
+
+    @property
+    def height(self):
+        return self.mapToScene(self.rect()).boundingRect().toRect().height()
 
     def handleAt(self, point):
         """
@@ -134,7 +144,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         self.updatePixelData()
 
-        self.update()   
+        self.update()
         # self.parentViews[0].itemMoved.emit(self)
 
 

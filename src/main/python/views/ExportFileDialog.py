@@ -1,8 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
-from digitize.Visualization import displayColorImage
 from QtWrapper import *
 from views.ImagePreviewDialog import ImagePreviewDialog
-from ImageUtilities import opencvImageToPixmap
 
 
 fileTypesDictionary = {

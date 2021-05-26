@@ -20,51 +20,61 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         VerticalBoxLayout(owner=self, name="mainLayout", margins=(5, 5, 5, 5), contents=[
             GroupBox(owner=self, name="adjustmentsGroup", title="Image Adjustments", layout=
                 VerticalBoxLayout(owner=self, name="adjustmentsGroupLayout", contents=[
-                    Label("Brightness"),
-                    HorizontalSlider(self, "brightnessSlider"),
-                    Label("Contrast"),
-                    HorizontalSlider(self, "contrastSlider"),
+                    # Label("Brightness"),
+                    # HorizontalSlider(self, "brightnessSlider"),
+                    # Label("Contrast"),
+                    # HorizontalSlider(self, "contrastSlider"),
                     Label("Rotation"),
                     HorizontalSlider(self, "rotationSlider"),
-                    PushButton(self, "autoRotateButton", text="Auto Rotate")
+                    HorizontalBoxLayout(owner=self, name="buttonLayout", margins=(0, 0, 0, 0), contents=[
+                        PushButton(self, "autoRotateButton", text="Auto Rotate"),
+                        PushButton(self, "resetRotationButton", text="Reset")
+                    ])
                 ])
             ),
-            FormLayout(owner=self, name="controlsLayout", contents=[
-                [
-                    Label(
-                        owner=self,
-                        name="timeScaleLabel",
-                        text="Time Scale: "
-                    ),
-                    SpinBox(
-                        owner=self,
-                        name="timeScaleSpinBox",
-                        minVal=1,
-                        maxVal=1000,
-                        suffix=" mm/s",
-                        defaultValue=25
-                    )
-                ],
-                [
-                    Label(
-                        owner=self,
-                        name="voltScaleLabel",
-                        text="Voltage Scale: "
-                    ),
-                    SpinBox(
-                        owner=self,
-                        name="voltScaleSpinBox",
-                        minVal=1,
-                        maxVal=1000,
-                        suffix=" mm/mV",
-                        defaultValue=10
-                    )
-                ]
-            ]),
+            GroupBox(owner=self, name="gridScaleGroup", title="Grid Scale", layout=
+                FormLayout(owner=self, name="controlsLayout", contents=[
+                    [
+                        Label(
+                            owner=self,
+                            name="timeScaleLabel",
+                            text="Time Scale: "
+                        ),
+                        SpinBox(
+                            owner=self,
+                            name="timeScaleSpinBox",
+                            minVal=1,
+                            maxVal=1000,
+                            suffix=" mm/s",
+                            defaultValue=25
+                        )
+                    ],
+                    [
+                        Label(
+                            owner=self,
+                            name="voltScaleLabel",
+                            text="Voltage Scale: "
+                        ),
+                        SpinBox(
+                            owner=self,
+                            name="voltScaleSpinBox",
+                            minVal=1,
+                            maxVal=1000,
+                            suffix=" mm/mV",
+                            defaultValue=10
+                        )
+                    ]
+                ])
+            ),
             PushButton(
                 owner=self,
                 name="processDataButton",
                 text="Process Lead Data"
+            ),
+            PushButton(
+                owner=self,
+                name="saveAnnotationsButton",
+                text="Save Metadata"
             )
         ])
 
@@ -77,23 +87,25 @@ class EditPanelGlobalView(QtWidgets.QWidget):
 
     def connectUI(self):
         # Image editing controls
-        self.brightnessSlider.sliderReleased.connect(self.editorWidget.adjustBrightness)
-        self.brightnessSlider.sliderMoved.connect(self.editorWidget.adjustBrightness)
-        self.brightnessSlider.setRange(-127,127)
+        # self.brightnessSlider.sliderReleased.connect(self.editorWidget.adjustBrightness)
+        # self.brightnessSlider.sliderMoved.connect(self.editorWidget.adjustBrightness)
+        # self.brightnessSlider.setRange(-127,127)
 
-        self.contrastSlider.sliderReleased.connect(self.editorWidget.adjustContrast)
-        self.contrastSlider.sliderMoved.connect(self.editorWidget.adjustContrast)
-        self.contrastSlider.setRange(-127,127)
+        # self.contrastSlider.sliderReleased.connect(self.editorWidget.adjustContrast)
+        # self.contrastSlider.sliderMoved.connect(self.editorWidget.adjustContrast)
+        # self.contrastSlider.setRange(-127,127)
 
         self.rotationSlider.sliderReleased.connect(self.editorWidget.adjustRotation)
         self.rotationSlider.sliderMoved.connect(self.editorWidget.adjustRotation)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
 
         self.autoRotateButton.clicked.connect(self.editorWidget.autoRotate)
+        self.resetRotationButton.clicked.connect(self.editorWidget.resetRotation)
 
         self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
         self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
         self.processDataButton.clicked.connect(lambda: self.editorWidget.processDataButtonClicked.emit())
+        self.saveAnnotationsButton.clicked.connect(lambda: self.editorWidget.saveAnnotationsButtonClicked.emit())
 
 
     def clearVoltSpinBox(self):

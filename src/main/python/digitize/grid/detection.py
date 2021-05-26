@@ -1,19 +1,21 @@
 """
-Common.py
-Created March 2, 2021
+detection.py
+Created May 23, 2021
 
 Converts a color image to binary mask of the grid.
 """
-from .Common import *
-from .Vision import *
-from .SignalDetection import *
+import cv2
+import numpy as np
+
+from .. import vision
+from ..signal import detection as signal_detection
 
 
 def kernelApproach(colorImage):
-    binaryImage = binarize(greyscale(colorImage), 240)
+    binaryImage = vision.binarize(vision.greyscale(colorImage), 240)
 
-    opened = openImage(binaryImage)
-    opened = openImage(opened)
+    opened = vision.openImage(binaryImage)
+    opened = vision.openImage(opened)
 
     # Subtract the opened image from the binary image
     subtracted = cv2.subtract(binaryImage, opened)
@@ -23,7 +25,7 @@ def kernelApproach(colorImage):
         cv2.getStructuringElement(cv2.MORPH_CROSS, (2,2))
     )
 
-    from .Visualization import Color, displayImages
+    from ..visualization import Color, displayImages
     displayImages([
         (binaryImage, Color.greyscale, "Binary"),
         (opened, Color.greyscale, "Opened"),
@@ -34,10 +36,10 @@ def kernelApproach(colorImage):
     return final
 
 def thresholdApproach(colorImage, erode=False):
-    greyscaleImage = greyscale(colorImage)
-    binaryImage = binarize(greyscaleImage, 220)
+    greyscaleImage = vision.greyscale(colorImage)
+    binaryImage = vision.binarize(greyscaleImage, 220)
 
-    signalImage = mallawaarachchi(colorImage, useBlur=True, invert=True)
+    signalImage = signal_detection.mallawaarachchi(colorImage, useBlur=True, invert=True)
     dilatedSignal = cv2.dilate(
         signalImage,
         cv2.getStructuringElement(cv2.MORPH_DILATE, (5,5))
@@ -45,7 +47,7 @@ def thresholdApproach(colorImage, erode=False):
 
     subtracted = cv2.subtract(binaryImage, dilatedSignal)
 
-    # from .Visualization import Color, displayImages
+    # from ..visualization import Color, displayImages
     # displayImages([
     #     (binaryImage, Color.greyscale, "Binary"),
     #     (dilatedSignal, Color.greyscale, "Signal"),
@@ -60,3 +62,11 @@ def thresholdApproach(colorImage, erode=False):
         return final
     else:
         return subtracted
+
+
+def allDarkPixels(colorImage: np.ndarray):
+    greyscale = vision.greyscale(colorImage)
+    #
+    adjusted = vision.adjustWhitePoint(greyscale, strength=1.0)
+    binary = vision.binarize(adjusted, 230)
+    return binary

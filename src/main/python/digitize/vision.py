@@ -1,18 +1,19 @@
 """
-Vision.py
+vision.py
 Created March 2, 2021
 
 Contains all general methods for image processing. (Try to keep all the ugly cv2 calls in here.)
 """
 import math
+from typing import Tuple
 
 import cv2
 import numpy as np
 
-from .Optimization import climb1dHill
+from . import optimization
 
 
-def houghLines(binary, threshold=150):
+def houghLines(binary: np.ndarray, threshold: int = 150):
     output = cv2.HoughLines(binary, 1, np.pi/180, threshold)
 
     if output is None:
@@ -21,18 +22,18 @@ def houghLines(binary, threshold=150):
         return np.squeeze(output, axis=1)
 
 
-def getLinesInDirection(lines, directionInDegrees):
+def getLinesInDirection(lines: np.ndarray, directionInDegrees: float):
     # Get only lines in one direction
     return [(rho, theta) for rho, theta in lines if math.isclose(theta * 180/math.pi, directionInDegrees, abs_tol=2)]
 
 
-def houghLineToAngle(line):
+def houghLineToAngle(line: Tuple[float, float]):
     rho, theta = line
     return theta * 180/math.pi
 
 
 # This could help with extracting the signal from the grid
-def openImage(binaryImage):
+def openImage(binaryImage: np.ndarray):
     # Open the image
     element = cv2.getStructuringElement(cv2.MORPH_OPEN, (3,3))
     eroded = cv2.erode(binaryImage, element)
@@ -42,13 +43,20 @@ def openImage(binaryImage):
 
 
 # Gaussian blur
-def blur(greyImage, kernelSize: int = 2):
+def blur(greyImage: np.ndarray, kernelSize: int = 2):
     assert len(greyImage.shape) == 2, "Must be greyscale!"
 
     def guassianKernel(size):
         return np.ones((size,size),np.float32) / (size**2)
 
     return cv2.filter2D(greyImage, -1, guassianKernel(kernelSize))
+
+
+def adjustWhitePoint(greyscaleImage: np.ndarray, strength: float = 1.0):
+    hist = histogram(greyscaleImage)
+    whitePoint = np.argmax(hist)
+    whiteScaleFactor = 255 / whitePoint * strength
+    return cv2.addWeighted(greyscaleImage, whiteScaleFactor, greyscaleImage, 0, 0)
 
 
 def greyscale(colorImage: np.ndarray):
@@ -71,19 +79,14 @@ def binarize(greyscaleImage, threshold, inverse=True):
         return binaryImage
 
 
-def invert(greyscaleImage):
+def invert(greyscaleImage: np.ndarray):
     assert len(greyscaleImage.shape) == 2
+    raise NotImplementedError
 
 
 def histogram(greyImage: np.ndarray):
-    bins = 256
-    lightnesses = greyImage.ravel()
-    histogram = np.array(
-        [
-            (lightnesses == i).sum() for i in range(bins)
-        ]
-    )
-    return histogram
+    counts, values = np.histogram(greyImage, 255, range=(0,255))
+    return counts
 
 
 def normalizeGreyscale(image: np.ndarray):
@@ -115,6 +118,6 @@ def otsuThresholdSelection(image: np.ndarray):
         denominator =  ω(k) * ( 1 - ω(k) )
         return numerator / denominator
 
-    k = climb1dHill(range(L), σ_B)
+    k = optimization.climb1dHill(list(range(L)), σ_B)
 
     return k

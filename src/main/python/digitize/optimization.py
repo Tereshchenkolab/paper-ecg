@@ -1,13 +1,13 @@
 """
-Optimization.py
+optimization.py
 Created February 17, 2021
 
--
+Methods related to optimization.
 """
-from typing import Callable, Iterable, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 
-def climb1dHill(xs: Iterable[int], evaluate: Callable[[int], Union[float, int]]) -> int:
+def climb1dHill(xs: List[int], evaluate: Callable[[int], Union[float, int]]) -> int:
     """[summary]
 
     Args:
@@ -37,6 +37,10 @@ def climb1dHill(xs: Iterable[int], evaluate: Callable[[int], Union[float, int]])
 
     while True:
         left, right = neighbors(currentIndex)
+        if left is None or right is None:
+            # TODO: Handle this?
+            raise NotImplementedError
+
         leftScore, rightScore = cachedEvaluate(xs[left]), cachedEvaluate(xs[right])
 
         # If the left step improves our score, head that way
