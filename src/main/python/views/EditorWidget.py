@@ -16,6 +16,7 @@ from views.EditPanelLeadView import *
 from views.EditPanelGlobalView import *
 from views.ExportFileDialog import *
 from QtWrapper import *
+import model.EcgModel as EcgModel
 
 
 class Editor(QtWidgets.QWidget):
@@ -71,7 +72,7 @@ class Editor(QtWidgets.QWidget):
         self.viewSplitter.setSizes([2,1])
         self.editPanel.setCurrentIndex(0)
 
-    def showGlobalView(self, voltScale=1.0, timeScale=1.0):
+    def showGlobalView(self, voltScale=EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE, timeScale=EcgModel.Ecg.DEFAULT_TIME_SCALE):
         self.EditPanelGlobalView.setValues(voltScale, timeScale)
         self.editPanel.setCurrentIndex(0)
 

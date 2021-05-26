@@ -69,6 +69,7 @@ class MainController:
             self.window.editor.loadImageFromPath(path)
             self.window.editor.resetImageEditControls()
             self.openFile = path
+            self.attempToLoadAnnotations()
         else:
             print("[Warning] No image selected")
 
@@ -250,7 +251,7 @@ class MainController:
         if not metadataDirectory.exists():
             metadataDirectory.mkdir()
 
-        filePath = metadataDirectory / (self.openFile.stem + '.json')
+        filePath = metadataDirectory / (self.openFile.stem + '-' + self.openFile.suffix[1:] + '.json')
 
         leads = {
             LeadName[name]: extractLeadAnnotation(lead) for name, lead in self.ecg.leads.items()
@@ -263,3 +264,23 @@ class MainController:
             voltageScale=self.ecg.gridVoltageScale,
             leads=leads
         ).save(filePath)
+
+        print("Metadata successfully saved to:", str(filePath))
+
+
+    def attempToLoadAnnotations(self):
+        if self.window.editor.image is None:
+            return
+
+        assert self.openFile is not None
+
+        metadataDirectory = self.openFile.parent / '.paperecg'
+        if not metadataDirectory.exists():
+            return
+
+        filePath = metadataDirectory / (self.openFile.stem + '-' + self.openFile.suffix[1:] + '.json')
+        if not filePath.exists():
+            return
+
+        print("Loading saved state from:", filePath, '...')
+        # TODO(Natalie?) Load the saved state :D

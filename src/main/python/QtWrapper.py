@@ -84,9 +84,22 @@ def ComboBox(
 @bindsToClass
 def SpinBox(
     owner: QWidget,
-    name: str
+    name: str,
+    minVal: int,
+    maxVal: int,
+    prefix: Optional[str] = None,
+    suffix: Optional[str] = None,
+    defaultValue: Optional[int] = None,
 ) -> QSpinBox:
     spinbox = QSpinBox()
+    spinbox.setMinimum(minVal)
+    spinbox.setMaximum(maxVal)
+    if prefix:
+        spinbox.setPrefix(prefix)
+    if suffix:
+        spinbox.setSuffix(suffix)
+    if defaultValue:
+        spinbox.setValue(defaultValue)
     return spinbox
 
 
@@ -97,13 +110,18 @@ def DoubleSpinBox(
     minVal: float,
     maxVal: float,
     prefix: Optional[str] = None,
-    suffix: Optional[str] = None
+    suffix: Optional[str] = None,
+    defaultValue: Optional[float] = None
 ) -> QDoubleSpinBox:
     spinbox = QDoubleSpinBox()
     spinbox.setMinimum(minVal)
     spinbox.setMaximum(maxVal)
-    spinbox.setPrefix(prefix)
-    spinbox.setSuffix(suffix)
+    if prefix:
+        spinbox.setPrefix(prefix)
+    if suffix:
+        spinbox.setSuffix(suffix)
+    if defaultValue:
+        spinbox.setValue(defaultValue)
     return spinbox
 
 
@@ -245,7 +263,7 @@ def MenuAction(
     """
     action = QAction(
         '&' + displayName, owner
-    )  # In this case the owner is the main window
+    ) if displayName else QAction(owner) # In this case the owner is the main window
     if shortcut:
         action.setShortcut(shortcut)
     if statusTip:

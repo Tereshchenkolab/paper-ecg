@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
 
 from QtWrapper import *
+import model.EcgModel as EcgModel
 
 
 class EditPanelGlobalView(QtWidgets.QWidget):
@@ -40,12 +41,13 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                             name="timeScaleLabel",
                             text="Time Scale: "
                         ),
-                        DoubleSpinBox(
+                        SpinBox(
                             owner=self,
                             name="timeScaleSpinBox",
-                            minVal=0.01,
-                            maxVal=1000.0,
-                            suffix=" mm/s"
+                            minVal=1,
+                            maxVal=1000,
+                            suffix=" mm/s",
+                            defaultValue=EcgModel.Ecg.DEFAULT_TIME_SCALE
                         )
                     ],
                     [
@@ -54,12 +56,13 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                             name="voltScaleLabel",
                             text="Voltage Scale: "
                         ),
-                        DoubleSpinBox(
+                        SpinBox(
                             owner=self,
                             name="voltScaleSpinBox",
-                            minVal=0.01,
-                            maxVal=1000.0,
-                            suffix=" mm/mV"
+                            minVal=1,
+                            maxVal=1000,
+                            suffix=" mm/mV",
+                            defaultValue=EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE
                         )
                     ]
                 ])
@@ -107,10 +110,10 @@ class EditPanelGlobalView(QtWidgets.QWidget):
 
 
     def clearVoltSpinBox(self):
-        self.voltScaleSpinBox.setValue(1.0)
+        self.voltScaleSpinBox.setValue(EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE)
 
     def clearTimeSpinBox(self):
-        self.timeScaleSpinBox.setValue(1.0)
+        self.timeScaleSpinBox.setValue(EcgModel.Ecg.DEFAULT_TIME_SCALE)
 
     def setValues(self, voltScale, timeScale):
         self.voltScaleSpinBox.setValue(voltScale)
