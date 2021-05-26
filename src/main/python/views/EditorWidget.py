@@ -136,7 +136,7 @@ class Editor(QtWidgets.QWidget):
             return
 
         # Notice: The slider is scaled up by a factor of 10    \/
-        self.EditPanelGlobalView.rotationSlider.setValue(angle*10)
+        self.EditPanelGlobalView.rotationSlider.setValue(angle * -10)
         self.adjustRotation()
 
     def resetRotation(self):
