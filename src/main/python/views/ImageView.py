@@ -4,9 +4,14 @@ Created November 1, 2020
 
 ...
 """
+import sys
+
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 import ImageUtilities
+
+
+MACOS_SCROLL_KEYS = {QtCore.Qt.Key_Super_L, QtCore.Qt.Key_Super_R}
 
 
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
@@ -25,6 +30,7 @@ class ImageView(QtWidgets.QGraphicsView):
         self._zoom = 0
         self._scaleFactor = 1.5
         self._empty = True
+        self._macosScrollKey = False
 
         self.setScene(self._scene)
         self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
@@ -88,22 +94,36 @@ class ImageView(QtWidgets.QGraphicsView):
             if item.type == QtWidgets.QGraphicsRectItem.UserType and item.leadId == lead.leadId:
                 self._scene.removeItem(item)
 
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        if event.key() in MACOS_SCROLL_KEYS:
+            self._macosScrollKey = True
+        return super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event: QtGui.QKeyEvent) -> None:
+        if event.key() in MACOS_SCROLL_KEYS:
+            self._macosScrollKey = False
+        return super().keyPressEvent(event)
+
     def event(self, event):
         # Detects pinching gesture on macOS
         # Examples: https://doc.qt.io/qt-5/qtwidgets-gestures-imagegestures-example.html
         if type(event) is QtGui.QNativeGestureEvent:
             pinchAmount = event.value()
-            scale = (1 + pinchAmount)
+            scale = (1 + pinchAmount) # Why ???
             self.scale(scale, scale)
 
         return super().event(event)
 
     def wheelEvent(self, event):
         # Zoom in and out using mouse wheel
-        if event.angleDelta().y() > 0:
-            self.zoomIn()
+        if sys.platform == "darwin" and not self._macosScrollKey:
+            # TODO: Make this work
+            super().wheelEvent(event)
         else:
-            self.zoomOut()
+            if event.angleDelta().y() > 0:
+                self.zoomIn()
+            else:
+                self.zoomOut()
 
     #zoomIn and zoomOut based on: https://stackoverflow.com/questions/57713795/zoom-in-and-out-in-widget
     def zoomIn(self):
