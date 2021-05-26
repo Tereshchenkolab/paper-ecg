@@ -20,48 +20,53 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         VerticalBoxLayout(owner=self, name="mainLayout", margins=(5, 5, 5, 5), contents=[
             GroupBox(owner=self, name="adjustmentsGroup", title="Image Adjustments", layout=
                 VerticalBoxLayout(owner=self, name="adjustmentsGroupLayout", contents=[
-                    Label("Brightness"),
-                    HorizontalSlider(self, "brightnessSlider"),
-                    Label("Contrast"),
-                    HorizontalSlider(self, "contrastSlider"),
+                    # Label("Brightness"),
+                    # HorizontalSlider(self, "brightnessSlider"),
+                    # Label("Contrast"),
+                    # HorizontalSlider(self, "contrastSlider"),
                     Label("Rotation"),
                     HorizontalSlider(self, "rotationSlider"),
-                    PushButton(self, "autoRotateButton", text="Auto Rotate")
+                    HorizontalBoxLayout(owner=self, name="buttonLayout", margins=(0, 0, 0, 0), contents=[
+                        PushButton(self, "autoRotateButton", text="Auto Rotate"),
+                        PushButton(self, "resetRotationButton", text="Reset")
+                    ])
                 ])
             ),
-            FormLayout(owner=self, name="controlsLayout", contents=[
-                [
-                    Label(
-                        owner=self,
-                        name="timeScaleLabel",
-                        text="Time Scale: "
-                    ),
-                    DoubleSpinBox(
-                        owner=self,
-                        name="timeScaleSpinBox",
-                        minVal=0.01,
-                        maxVal=1000.0,
-                        suffix=" mm/s"
-                    )
-                ],
-                [
-                    Label(
-                        owner=self,
-                        name="voltScaleLabel",
-                        text="Voltage Scale: "
-                    ),
-                    DoubleSpinBox(
-                        owner=self,
-                        name="voltScaleSpinBox",
-                        minVal=0.01,
-                        maxVal=1000.0,
-                        suffix=" mm/mV"
-                    )
-                ]
-            ]),
+            GroupBox(owner=self, name="gridScaleGroup", title="Grid Scale", layout=
+                FormLayout(owner=self, name="controlsLayout", contents=[
+                    [
+                        Label(
+                            owner=self,
+                            name="timeScaleLabel",
+                            text="Time Scale: "
+                        ),
+                        DoubleSpinBox(
+                            owner=self,
+                            name="timeScaleSpinBox",
+                            minVal=0.01,
+                            maxVal=1000.0,
+                            suffix=" mm/s"
+                        )
+                    ],
+                    [
+                        Label(
+                            owner=self,
+                            name="voltScaleLabel",
+                            text="Voltage Scale: "
+                        ),
+                        DoubleSpinBox(
+                            owner=self,
+                            name="voltScaleSpinBox",
+                            minVal=0.01,
+                            maxVal=1000.0,
+                            suffix=" mm/mV"
+                        )
+                    ]
+                ])
+            ),
             PushButton(
-                owner=self, 
-                name="processDataButton", 
+                owner=self,
+                name="processDataButton",
                 text="Process Lead Data"
             )
         ])
@@ -75,19 +80,20 @@ class EditPanelGlobalView(QtWidgets.QWidget):
 
     def connectUI(self):
         # Image editing controls
-        self.brightnessSlider.sliderReleased.connect(self.editorWidget.adjustBrightness)
-        self.brightnessSlider.sliderMoved.connect(self.editorWidget.adjustBrightness)
-        self.brightnessSlider.setRange(-127,127)
+        # self.brightnessSlider.sliderReleased.connect(self.editorWidget.adjustBrightness)
+        # self.brightnessSlider.sliderMoved.connect(self.editorWidget.adjustBrightness)
+        # self.brightnessSlider.setRange(-127,127)
 
-        self.contrastSlider.sliderReleased.connect(self.editorWidget.adjustContrast)
-        self.contrastSlider.sliderMoved.connect(self.editorWidget.adjustContrast)
-        self.contrastSlider.setRange(-127,127)
+        # self.contrastSlider.sliderReleased.connect(self.editorWidget.adjustContrast)
+        # self.contrastSlider.sliderMoved.connect(self.editorWidget.adjustContrast)
+        # self.contrastSlider.setRange(-127,127)
 
         self.rotationSlider.sliderReleased.connect(self.editorWidget.adjustRotation)
         self.rotationSlider.sliderMoved.connect(self.editorWidget.adjustRotation)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
 
         self.autoRotateButton.clicked.connect(self.editorWidget.autoRotate)
+        self.resetRotationButton.clicked.connect(self.editorWidget.resetRotation)
 
         self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
         self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))

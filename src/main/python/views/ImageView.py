@@ -58,11 +58,13 @@ class ImageView(QtWidgets.QGraphicsView):
         self._image = image
         self._pixmapItem.setPixmap(ImageUtilities.opencvImageToPixmap(image))
         self._empty = False
-        self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
         self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
         self._scene.setSceneRect(QtCore.QRectF(self._pixmapItem.pixmap().rect()))
 
         self.updateAllRoiBoxes()
+
+    def fitImageInView(self):
+        self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
 
     def updateAllRoiBoxes(self):
         # update pixel data for each roi present in the scene

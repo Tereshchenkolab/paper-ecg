@@ -95,26 +95,26 @@ class Editor(QtWidgets.QWidget):
 
         return pixmap
 
-    def adjustBrightness(self, value = None):
-        if value is None:
-            value = self.EditPanelGlobalView.brightnessSlider.value()
+    # def adjustBrightness(self, value = None):
+    #     if value is None:
+    #         value = self.EditPanelGlobalView.brightnessSlider.value()
 
-        if self.image is not None:
-            self.displayImage(self.image.withBrightness(value))
+    #     if self.image is not None:
+    #         self.displayImage(self.image.withBrightness(value))
 
-    def adjustContrast(self, value = None):
-        if value is None:
-            value = self.EditPanelGlobalView.contrastSlider.value()
+    # def adjustContrast(self, value = None):
+    #     if value is None:
+    #         value = self.EditPanelGlobalView.contrastSlider.value()
 
-        if self.image is not None:
-            self.displayImage(self.image.withContrast(value))
+    #     if self.image is not None:
+    #         self.displayImage(self.image.withContrast(value))
 
     def adjustRotation(self, value = None):
         if value is None:
             value = self.EditPanelGlobalView.rotationSlider.value()
 
         # This slider is scaled up to give more fine control
-        value = float(value/10)
+        value = float(value/10) * -1
 
         if self.image is not None:
             self.displayImage(self.image.withRotation(value))
@@ -138,10 +138,14 @@ class Editor(QtWidgets.QWidget):
         self.EditPanelGlobalView.rotationSlider.setValue(angle*10)
         self.adjustRotation()
 
+    def resetRotation(self):
+        self.EditPanelGlobalView.rotationSlider.setValue(0)
+        self.adjustRotation()
+
     def resetImageEditControls(self):
         # IDEA: Only show the image editing controls when there is a image loaded?
-        self.EditPanelGlobalView.brightnessSlider.setValue(0)
-        self.EditPanelGlobalView.contrastSlider.setValue(0)
+        # self.EditPanelGlobalView.brightnessSlider.setValue(0)
+        # self.EditPanelGlobalView.contrastSlider.setValue(0)
         self.EditPanelGlobalView.rotationSlider.setValue(0)
         self.EditPanelGlobalView.clearTimeSpinBox()
         self.EditPanelGlobalView.clearVoltSpinBox()
@@ -157,7 +161,7 @@ class Editor(QtWidgets.QWidget):
         self.editPanel.show()
 
         # Adjust zoom to fit image in view
-        self.imageViewer.fitInView(QtCore.QRectF(self.image.getPixmap().rect()), QtCore.Qt.KeepAspectRatio)
+        self.imageViewer.fitImageInView()
 
     def displayImage(self, image):
         self.imageViewer.setImage(image)
