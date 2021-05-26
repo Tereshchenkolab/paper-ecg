@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
 
 from QtWrapper import *
+import model.EcgModel as EcgModel
 
 
 class EditPanelGlobalView(QtWidgets.QWidget):
@@ -46,7 +47,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                             minVal=1,
                             maxVal=1000,
                             suffix=" mm/s",
-                            defaultValue=25
+                            defaultValue=EcgModel.Ecg.DEFAULT_TIME_SCALE
                         )
                     ],
                     [
@@ -61,7 +62,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                             minVal=1,
                             maxVal=1000,
                             suffix=" mm/mV",
-                            defaultValue=10
+                            defaultValue=EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE
                         )
                     ]
                 ])
@@ -109,10 +110,10 @@ class EditPanelGlobalView(QtWidgets.QWidget):
 
 
     def clearVoltSpinBox(self):
-        self.voltScaleSpinBox.setValue(10)
+        self.voltScaleSpinBox.setValue(EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE)
 
     def clearTimeSpinBox(self):
-        self.timeScaleSpinBox.setValue(25)
+        self.timeScaleSpinBox.setValue(EcgModel.Ecg.DEFAULT_TIME_SCALE)
 
     def setValues(self, voltScale, timeScale):
         self.voltScaleSpinBox.setValue(voltScale)
