@@ -1,0 +1,14 @@
+{
+    "schema": {
+        "name": "paper-ecg-user-annotation",
+        "version": 0
+    },
+    "image": {
+        "name": "fullScan.png",
+        "directory": "/Users/julianfortune/Files/OHSU/paper-ecg"
+    },
+    "rotation": 0,
+    "timeScale": 25,
+    "voltageScale": 10,
+    "leads": {}
+}
