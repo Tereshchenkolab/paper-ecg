@@ -12,7 +12,8 @@ import ImageUtilities
 
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
 class ImageView(QtWidgets.QGraphicsView):
-    roiItemSelected = QtCore.pyqtSignal(object, bool)
+    roiItemSelected = QtCore.pyqtSignal(int, bool)
+    updateRoiItem = QtCore.pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
@@ -103,9 +104,9 @@ class ImageView(QtWidgets.QGraphicsView):
             if item.type == QtWidgets.QGraphicsRectItem.UserType:
                 self._scene.removeItem(item)
 
-    def removeRoiBox(self, lead):
+    def removeRoiBox(self, leadId):
         for item in self._scene.items():
-            if item.type == QtWidgets.QGraphicsRectItem.UserType and item.leadId == lead.leadId:
+            if item.type == QtWidgets.QGraphicsRectItem.UserType and item.leadId == leadId:
                 self._scene.removeItem(item)
 
     def event(self, event):

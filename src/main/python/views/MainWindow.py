@@ -7,6 +7,7 @@ Primary window of the application
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from views.EditorWidget import Editor
+from model.Lead import LeadId
 import QtWrapper as Qt
 
 
@@ -22,7 +23,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.buildMenuBar()
         self.buildLeadButtonDictionary()
 
-        self.editor = Editor()
+        self.editor = Editor(self)
         self.setCentralWidget(self.editor)
         self.setContentsMargins(0,0,0,0)
 
@@ -165,16 +166,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def buildLeadButtonDictionary(self):
         # Creates relationship between lead ID and the menu button used to add that lead
         self.leadButtons = {
-            "I": self.addLead1,
-            "II": self.addLead2,
-            "III": self.addLead3,
-            "aVR": self.addLeadaVR,
-            "aVL": self.addLeadaVL,
-            "aVF": self.addLeadaVF,
-            "V1": self.addLeadV1,
-            "V2": self.addLeadV2,
-            "V3": self.addLeadV3,
-            "V4": self.addLeadV4,
-            "V5": self.addLeadV5,
-            "V6": self.addLeadV6
+            LeadId(0): self.addLead1,
+            LeadId(1): self.addLead2,
+            LeadId(2): self.addLead3,
+            LeadId(3): self.addLeadaVR,
+            LeadId(4): self.addLeadaVL,
+            LeadId(5): self.addLeadaVF,
+            LeadId(6): self.addLeadV1,
+            LeadId(7): self.addLeadV2,
+            LeadId(8): self.addLeadV3,
+            LeadId(9): self.addLeadV4,
+            LeadId(10): self.addLeadV5,
+            LeadId(11): self.addLeadV6
         }

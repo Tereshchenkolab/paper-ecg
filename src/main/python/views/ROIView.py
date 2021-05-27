@@ -1,5 +1,6 @@
 import numpy as np
 from PyQt5 import QtGui, QtCore, QtWidgets
+from model.Lead import LeadId
 
 import ImageUtilities
 
@@ -39,9 +40,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         self.leadId = leadId
 
-        # Pixel data within the bounding box region (OpenCV form)
-        self.pixelData = None
-
         # Minimum width and height of box (in pixels)
         self.minHeight = 50
         self.minWidth = 50
@@ -62,6 +60,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges, True)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, True)
         self.updateHandlesPos()
+
         # Set item type to identify ROI items in scene - according to custom items should
         # have type >= UserType (65536)
         self.type = QtWidgets.QGraphicsRectItem.UserType
@@ -140,6 +139,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.mousePressPos = None
         self.mousePressRect = None
 
+        self.parentViews[0].updateRoiItem.emit(self)
         self.update()
 
     def boundingRect(self):
@@ -361,11 +361,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             # Set color (grey) and draw box (unselected)
             painter.setPen(QtGui.QPen(QtGui.QColor(128, 128, 128), 2.0, QtCore.Qt.SolidLine))
             painter.setBrush(QtGui.QBrush(QtGui.QColor(128, 128, 128, 64)))
-            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId)
+            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, LeadId(self.leadId).name)
             painter.drawRect(self.rect())
 
-    def setLeadId(self, lead):
-        self.leadId = lead
-
-    def getLeadId(self):
-        return self.leadId

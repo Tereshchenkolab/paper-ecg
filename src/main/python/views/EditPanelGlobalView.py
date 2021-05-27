@@ -103,8 +103,9 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.autoRotateButton.clicked.connect(self.editorWidget.autoRotate)
         self.resetRotationButton.clicked.connect(self.editorWidget.resetRotation)
 
-        self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
-        self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
+        # self.voltScaleSpinBox.valueChanged.connect(lambda: self.voltScaleChanged.emit(self.voltScaleSpinBox.value()))
+        self.voltScaleSpinBox.valueChanged.connect(self.editorWidget.updateVoltScale)
+        self.timeScaleSpinBox.valueChanged.connect(self.editorWidget.updateTimeScale)
         self.processDataButton.clicked.connect(lambda: self.editorWidget.processDataButtonClicked.emit())
         self.saveAnnotationsButton.clicked.connect(lambda: self.editorWidget.saveAnnotationsButtonClicked.emit())
 

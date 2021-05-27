@@ -93,7 +93,7 @@ class Annotation:
     rotation: Union[int, float]
     timeScale: Union[int, float]
     voltageScale: Union[int, float]
-    leads: Dict[Lead.LeadName, LeadAnnotation]
+    leads: Dict[Lead.LeadId, LeadAnnotation]
 
     def toDict(self):
         dictionary = dataclasses.asdict(self)  # <3 dataclasses
