@@ -66,8 +66,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         # have type >= UserType (65536)
         self.type = QtWidgets.QGraphicsRectItem.UserType
 
-        self.updatePixelData()
-
     @property
     def x(self):
         return self.mapToScene(self.rect()).boundingRect().toRect().x()
@@ -142,11 +140,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.mousePressPos = None
         self.mousePressRect = None
 
-        self.updatePixelData()
-
         self.update()
-        # self.parentViews[0].itemMoved.emit(self)
-
 
     def boundingRect(self):
         """
@@ -375,15 +369,3 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
     def getLeadId(self):
         return self.leadId
-
-    def updatePixelData(self):
-        box = self.mapToScene(self.rect()).boundingRect()
-
-        x = box.toRect().x()
-        y = box.toRect().y()
-        w = box.toRect().width()
-        h = box.toRect().height()
-
-        self.pixelData = np.copy(self.parentViews[0]._image[y:y+h, x:x+w])
-        croppedImage = ImageUtilities.opencvImageToPixmap(self.pixelData)
-        croppedImage.save(self.leadId + ".png")

@@ -4,6 +4,7 @@ Created November 1, 2020
 
 ...
 """
+from typing import Any
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 import ImageUtilities
@@ -16,22 +17,25 @@ class ImageView(QtWidgets.QGraphicsView):
     def __init__(self):
         super().__init__()
 
-        self.setMinimumSize(600, 400)
-
-        self._scene = QtWidgets.QGraphicsScene(self)
-        self._image = None                                  # OpenCV form of the image data - used for processing
-        self._pixmapItem = QtWidgets.QGraphicsPixmapItem()  # The pixmap form of the image data - used for displaying
-        self._scene.addItem(self._pixmapItem)
         self._zoom = 0
         self._scaleFactor = 1.5
         self._empty = True
 
+        self._scene = QtWidgets.QGraphicsScene(self)
+        self._container = ImageView.createContainer()  # Permits rotation mechanics
+        self._pixmapItem = QtWidgets.QGraphicsPixmapItem(parent=self._container)  # The pixmap form of the image data
+        self._scene.addItem(self._container)
+
+        self.setMinimumSize(600, 400) # What does this do?
         self.setScene(self._scene)
         self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
-        # Enable ctrl+ and ctrl- shortcuts for zoom in/out
+        self.addShortcuts()
+
+    def addShortcuts(self):
+        """ Enable ctrl+ and ctrl- shortcuts for zoom in/out """
         QtWidgets.QShortcut(
             QtGui.QKeySequence(QtGui.QKeySequence.ZoomIn),
             self,
@@ -46,31 +50,47 @@ class ImageView(QtWidgets.QGraphicsView):
             activated=self.zoomOut,
         )
 
+    @staticmethod
+    def createContainer():
+        container = QtWidgets.QGraphicsRectItem()
+        container.setFlag(container.ItemClipsChildrenToShape)
+        container.setBrush(QtCore.Qt.white) # default
+        return container
+
+    def setContainerBackground(self, color: Any):
+        # TODO Figure out how to set the color correctly
+        self._container.setBrush(QtCore.Qt.white)
+
+    @property
+    def imageRect(self):
+        return QtCore.QRectF(self._pixmapItem.pixmap().rect())
+
+    def imageChanged(self):
+        newRect = self.imageRect
+        self._scene.setSceneRect(newRect)
+        self._container.setRect(newRect)
+
     def resizeEvent(self, event):
         if self.hasImage() and not self.verticalScrollBar().isVisible() and not self.horizontalScrollBar().isVisible():
-           self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+           self.fitInView(self.imageRect, QtCore.Qt.KeepAspectRatio)
         QtWidgets.QGraphicsView.resizeEvent(self, event)
 
     def hasImage(self):
         return not self._empty
 
     def setImage(self, image=None):
-        self._image = image
         self._pixmapItem.setPixmap(ImageUtilities.opencvImageToPixmap(image))
         self._empty = False
         self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
-        self._scene.setSceneRect(QtCore.QRectF(self._pixmapItem.pixmap().rect()))
 
-        self.updateAllRoiBoxes()
+        # Set rotation origin in the center of the image
+        pixmapSize = self._pixmapItem.pixmap().size()
+        self._pixmapItem.setTransformOriginPoint(pixmapSize.width() // 2, pixmapSize.height() // 2)
+
+        self.imageChanged()
 
     def fitImageInView(self):
-        self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
-
-    def updateAllRoiBoxes(self):
-        # update pixel data for each roi present in the scene
-        for item in self._scene.items():
-            if item.type == QtWidgets.QGraphicsRectItem.UserType:
-                item.updatePixelData()
+        self.fitInView(self.imageRect, QtCore.Qt.KeepAspectRatio)
 
     def removeImage(self):
         self._image = None
@@ -91,10 +111,15 @@ class ImageView(QtWidgets.QGraphicsView):
     def event(self, event):
         # Detects pinching gesture on macOS
         # Examples: https://doc.qt.io/qt-5/qtwidgets-gestures-imagegestures-example.html
-        if type(event) is QtGui.QNativeGestureEvent:
-            pinchAmount = event.value()
-            scale = (1 + pinchAmount)
-            self.scale(scale, scale)
+        if isinstance(event, QtGui.QNativeGestureEvent):
+            if event.gestureType() == QtCore.Qt.RotateNativeGesture:
+                # TODO: This is just a demo (and only works on mac) hook this up to rotation interface instead
+                self.rotateImage(self._pixmapItem.rotation() + event.value() * 10)
+
+            if event.gestureType() == QtCore.Qt.ZoomNativeGesture:
+                pinchAmount = event.value()
+                scale = (1 + pinchAmount)
+                self.scale(scale, scale)
 
         return super().event(event)
 
@@ -129,8 +154,11 @@ class ImageView(QtWidgets.QGraphicsView):
                     self.setTransform(transform)
                     self._zoom -= 1
                 elif self._zoom == 1:
-                    self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+                    self.fitInView(self.imageRect, QtCore.Qt.KeepAspectRatio)
                     self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
                     self._zoom = 0
             else:
                 print("scale not invertible")
+
+    def rotateImage(self, rotation: float):
+        self._pixmapItem.setRotation(rotation)
