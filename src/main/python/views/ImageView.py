@@ -26,6 +26,7 @@ onMacOS = sys.platform == "darwin"
 class ImageView(QtWidgets.QGraphicsView):
     roiItemSelected = QtCore.pyqtSignal(int, bool)
     updateRoiItem = QtCore.pyqtSignal(object)
+    updateScale = QtCore.pyqtSignal(float)
 
     def __init__(self):
         super().__init__()
@@ -33,6 +34,7 @@ class ImageView(QtWidgets.QGraphicsView):
         self._zoom = 0
         self._scale = 1
         self._empty = True
+        self._imageRect = None
         self._macosScrollKey = False
 
         self._scene = QtWidgets.QGraphicsScene(self)
@@ -42,15 +44,12 @@ class ImageView(QtWidgets.QGraphicsView):
 
         self.setMinimumSize(600, 400) # What does this do?
         self.setScene(self._scene)
-        if not onMacOS:
-            self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
-            self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
-        else:
-            self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
-            self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
+        self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
+        self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
         self.addShortcuts()
+
 
     def addShortcuts(self):
         """ Enable ctrl+ and ctrl- shortcuts for zoom in/out """
@@ -91,7 +90,9 @@ class ImageView(QtWidgets.QGraphicsView):
     def resizeEvent(self, event):
         if self.hasImage() and not self.verticalScrollBar().isVisible() and not self.horizontalScrollBar().isVisible():
            self.fitInView(self.imageRect, QtCore.Qt.KeepAspectRatio)
-        QtWidgets.QGraphicsView.resizeEvent(self, event)
+        self.updatePixelSizeOnScreen()
+
+        super().resizeEvent(event)
 
     def hasImage(self):
         return not self._empty
@@ -100,6 +101,8 @@ class ImageView(QtWidgets.QGraphicsView):
         self._pixmapItem.setPixmap(ImageUtilities.opencvImageToPixmap(image))
         self._empty = False
         self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
+
+        self.rotateImage(0)
 
         # Set rotation origin in the center of the image
         pixmapSize = self._pixmapItem.pixmap().size()
@@ -113,6 +116,9 @@ class ImageView(QtWidgets.QGraphicsView):
     def removeImage(self):
         self._image = None
         self._pixmapItem.setPixmap(QtGui.QPixmap())
+        self.rotateImage(0)
+        # Delete the image background container
+        self._container = ImageView.createContainer()
         self._empty = True
 
     def removeAllRoiBoxes(self):
@@ -161,6 +167,13 @@ class ImageView(QtWidgets.QGraphicsView):
             else:
                 self.zoomOut()
 
+    # def updatePixelSizeOnScreen(self):
+    #     print()
+    #     graphicsViewRect = self.rect()
+    #     viewWidth, viewHeight = graphicsViewRect.width(), graphicsViewRect.height()
+    #     imageWidth, imageHeight = self.imageRect.width(), self.imageRect.height()
+    #     print(viewWidth, viewHeight, imageWidth, imageHeight)
+
     def smoothZoom(self, amount: float):
         """ Zooming in and out on macOS needs to be proportion to the strength of the user interaction """
         scaleChange = (1 + amount)
@@ -171,6 +184,7 @@ class ImageView(QtWidgets.QGraphicsView):
         else:  # Snap image to the window so it's never smaller than the canvas
             self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
             self._scale = 1
+        self.updatePixelSizeOnScreen()
 
     #zoomIn and zoomOut based on: https://stackoverflow.com/questions/57713795/zoom-in-and-out-in-widget
     def zoomIn(self):
@@ -183,6 +197,7 @@ class ImageView(QtWidgets.QGraphicsView):
             self._zoom += 1
 
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+        self.updatePixelSizeOnScreen()
 
     def zoomOut(self):
         if self.hasImage():
@@ -201,6 +216,8 @@ class ImageView(QtWidgets.QGraphicsView):
                     self._zoom = 0
             else:
                 print("scale not invertible")
+        self.updatePixelSizeOnScreen()
 
     def rotateImage(self, rotation: float):
-        self._pixmapItem.setRotation(rotation)
+        # The QGraphics notion of rotation is opposite standard angle meaning
+        self._pixmapItem.setRotation(rotation * -1)

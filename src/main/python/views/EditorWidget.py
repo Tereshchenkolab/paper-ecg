@@ -11,7 +11,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import digitize
 from model.Lead import LeadId
-from model.EditableImage import EditableImage
 from views.ImageView import *
 from views.ROIView import *
 from views.EditPanelLeadView import *
@@ -45,11 +44,14 @@ class Editor(QtWidgets.QWidget):
         self.mainWindow = parent
 
         self.initUI()
-        self.connectUI()   
+        self.connectUI()
 
+        # I'm not sure how well having this mutable will work... In particular if another class *sets* this
+        # value, because I don't know how to make the interface `listen` to these values. What about a
+        # getter-setter style approach that just uses this class to package the state of the editor?
         self.inputParameters = InputParameters(
-            rotation=self.EditPanelGlobalView.rotationSlider.value(), 
-            timeScale=self.EditPanelGlobalView.timeScaleSpinBox.value(), 
+            rotation=self.EditPanelGlobalView.rotationSlider.value(),
+            timeScale=self.EditPanelGlobalView.timeScaleSpinBox.value(),
             voltScale=self.EditPanelGlobalView.voltScaleSpinBox.value(),
             leads={}
         )
@@ -92,6 +94,7 @@ class Editor(QtWidgets.QWidget):
         self.viewSplitter.setCollapsible(1,False)
         self.viewSplitter.setSizes([2,1])
         self.editPanel.setCurrentIndex(0)
+
         # Constraint the width of the adjustable side panel on the right of the editor
         self.controlPanel.setMinimumWidth(250)
         self.controlPanel.setMaximumWidth(450)
@@ -131,37 +134,23 @@ class Editor(QtWidgets.QWidget):
         self.EditPanelLeadView.setValues(leadId, LeadId(leadId).name, leadStartTime)
         self.editPanel.setCurrentIndex(1)
 
-    # def adjustBrightness(self, value = None):
-    #     if value is None:
-    #         value = self.EditPanelGlobalView.brightnessSlider.value()
-
-    #     if self.image is not None:
-    #         self.displayImage(self.image.withBrightness(value))
-
-    # def adjustContrast(self, value = None):
-    #     if value is None:
-    #         value = self.EditPanelGlobalView.contrastSlider.value()
-
-    #     if self.image is not None:
-    #         self.displayImage(self.image.withContrast(value))
-
-    def adjustRotation(self, value = None):
-        if value is None:
-            value = self.EditPanelGlobalView.rotationSlider.value()
-
-        # This slider is scaled up to give more fine control
-        value = float(value/10) * -1
+    def rotationSliderChanged(self, _ = None):
+        value = self.getRotation()
 
         self.inputParameters.rotation = value
-        print("updated rotation\n", self.inputParameters)
+        self.imageViewer.rotateImage(value)
 
-        if self.image is not None:
-            self.displayImage(self.image.withRotation(value))
+    def getRotation(self) -> float:
+        return self.EditPanelGlobalView.rotationSlider.value() / -10
+
+    def setRotation(self, angle: float):
+        self.EditPanelGlobalView.rotationSlider.setValue(angle * -10)
+        self.rotationSliderChanged()
 
     def autoRotate(self):
         if self.image is None: return
 
-        angle = digitize.estimateRotationAngle(self.image.image)
+        angle = digitize.estimateRotationAngle(self.image)
 
         if angle is None:
             errorModal = QtWidgets.QMessageBox()
@@ -170,71 +159,40 @@ class Editor(QtWidgets.QWidget):
             errorModal.setInformativeText("Use the slider to adjust the rotation manually")
             errorModal.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
             errorModal.exec_()
-
-            return
-
-        # Notice: The slider is scaled up by a factor of 10    \/
-        self.EditPanelGlobalView.rotationSlider.setValue(angle * -10)
-        self.adjustRotation()
+        else:
+            self.setRotation(angle)
 
     def resetRotation(self):
-        self.EditPanelGlobalView.rotationSlider.setValue(0)
-        self.adjustRotation()
+        self.setRotation(0)
 
-
-###################
-# Image Functions #
-###################
+    ###################
+    # Image Functions #
+    ###################
 
     def resetImageEditControls(self):
-        # IDEA: Only show the image editing controls when there is a image loaded?
-        # self.EditPanelGlobalView.brightnessSlider.setValue(0)
-        # self.EditPanelGlobalView.contrastSlider.setValue(0)
         self.EditPanelGlobalView.rotationSlider.setValue(0)
         self.EditPanelGlobalView.clearTimeSpinBox()
         self.EditPanelGlobalView.clearVoltSpinBox()
         self.showGlobalView()
 
     def loadImageFromPath(self, path: Path):
-        self.image = EditableImage(path)
-        self.displayImage(self.image.image)
-        self.onImageAppear()
+        self.image = ImageUtilities.readImage(path)
+        self.displayImage()
 
-    def onImageAppear(self):
-        """Called when a new image is opened"""
+    def displayImage(self):
+        self.imageViewer.setImage(self.image)
         self.editPanel.show()
 
         # Adjust zoom to fit image in view
         self.imageViewer.fitImageInView()
 
-    def displayImage(self, image):
-        self.imageViewer.setImage(image)
-
     def removeImage(self):
         self.image = None
         self.imageViewer.removeImage()
 
-    # def numpyToPixMap(self, image):
-    #     # SOURCE: https://stackoverflow.com/a/50800745/7737644 (Creative Commons - Credit, share-alike)
-    #     height, width, channel = self.image.shape
-    #     bytesPerLine = 3 * width
-
-    #     pixmap = QtGui.QPixmap(
-    #         QtGui.QImage(
-    #             self.image.data,
-    #             width,
-    #             height,
-    #             bytesPerLine,
-    #             QtGui.QImage.Format_RGB888
-    #         ).rgbSwapped()
-    #     )
-
-    #     return pixmap
-
-
-########################
-# Grid Scale Functions #
-########################
+    ########################
+    # Grid Scale Functions #
+    ########################
 
     def updateTimeScale(self, value = None):
         if value is None:
@@ -251,9 +209,9 @@ class Editor(QtWidgets.QWidget):
         print("updated volt scale\n",self.inputParameters)
 
 
-######################
-# Lead ROI functions #           
-######################
+    ######################
+    # Lead ROI functions #
+    ######################
 
     def addLead(self, leadIdEnum):
         if self.imageViewer.hasImage():
@@ -276,7 +234,7 @@ class Editor(QtWidgets.QWidget):
             self.inputParameters.leads[leadIdEnum] = lead
             print("input parameters:")
             print(self.inputParameters)
-            
+
     def updateLeadRoi(self, roi):
         print("update lead ", roi.leadId, " roi ")
         self.inputParameters.leads[LeadId(roi.leadId)].x = roi.x
@@ -295,17 +253,17 @@ class Editor(QtWidgets.QWidget):
     def deleteLeadRoi(self, leadId):
         self.imageViewer.removeRoiBox(leadId)   # Remove lead roi box from image view
         self.mainWindow.leadButtons[leadId].setEnabled(True)    # Re-enable add lead menu button
-        self.setControlPanel()  # Set editor pane back to global view 
+        self.setControlPanel()  # Set editor pane back to global view
         del self.inputParameters.leads[LeadId(leadId)]  # Delete lead data from input parameters
 
         print("lead ", leadId, " deleted\n", self.inputParameters)
 
     def deleteAllLeadRois(self):
         self.window.editor.imageViewer.removeAllRoiBoxes()  # Remove all lead roi boxes from image view
-        
+
         # Re-enable all add lead menu buttons
         for lead, button in self.window.leadButtons.items():
             button.setEnabled(True)
-        
+
         self.setEditorPane()    # Set editor pane back to global view
         self.inputParameters.leads.clear()  # Clear all lead data from model

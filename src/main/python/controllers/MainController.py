@@ -199,14 +199,16 @@ class MainController:
     #     self.ecg.leads[leadId].leadStartTime = value
 
     def confirmDigitization(self):
-        if len(self.ecg.leads) > 0:
-            self.processECGData()
-        else:
-            warningDialog = MessageDialog(
-                message="Warning: No data to process\n\nPlease select at least one lead to digitize",
-                title="Warning"
-            )
-            warningDialog.exec_()
+        print(self.window.editor.inputParameters)
+        raise NotImplementedError("TODO: Digitization")
+        # if len(self.ecg.leads) > 0:
+        #     self.processECGData()
+        # else:
+        #     warningDialog = MessageDialog(
+        #         message="Warning: No data to process\n\nPlease select at least one lead to digitize",
+        #         title="Warning"
+        #     )
+        #     warningDialog.exec_()
 
     # we have all ECG data and export location - ready to pass off to backend to digitize
     def processECGData(self):

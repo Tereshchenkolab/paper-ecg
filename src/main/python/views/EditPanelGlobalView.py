@@ -21,10 +21,6 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         VerticalBoxLayout(owner=self, name="mainLayout", margins=(5, 5, 5, 5), contents=[
             GroupBox(owner=self, name="adjustmentsGroup", title="Image Adjustments", layout=
                 VerticalBoxLayout(owner=self, name="adjustmentsGroupLayout", contents=[
-                    # Label("Brightness"),
-                    # HorizontalSlider(self, "brightnessSlider"),
-                    # Label("Contrast"),
-                    # HorizontalSlider(self, "contrastSlider"),
                     Label("Rotation"),
                     HorizontalSlider(self, "rotationSlider"),
                     HorizontalBoxLayout(owner=self, name="buttonLayout", margins=(0, 0, 0, 0), contents=[
@@ -35,36 +31,49 @@ class EditPanelGlobalView(QtWidgets.QWidget):
             ),
             GroupBox(owner=self, name="gridScaleGroup", title="Grid Scale", layout=
                 FormLayout(owner=self, name="controlsLayout", contents=[
-                    [
+                    (
                         Label(
                             owner=self,
                             name="timeScaleLabel",
                             text="Time Scale: "
                         ),
-                        SpinBox(
+                        HorizontalBoxLayout(
                             owner=self,
-                            name="timeScaleSpinBox",
-                            minVal=1,
-                            maxVal=1000,
-                            suffix=" mm/s",
-                            defaultValue=EcgModel.Ecg.DEFAULT_TIME_SCALE
+                            name="timeScaleBoxLayout",
+                            contents=[
+                                SpinBox(
+                                    owner=self,
+                                    name="timeScaleSpinBox",
+                                    minVal=1,
+                                    maxVal=1000,
+                                    suffix=" mm/s",
+                                    defaultValue=EcgModel.Ecg.DEFAULT_TIME_SCALE
+                                )
+                            ]
                         )
-                    ],
-                    [
+                    ),
+                    (
                         Label(
                             owner=self,
                             name="voltScaleLabel",
                             text="Voltage Scale: "
                         ),
-                        SpinBox(
+                        HorizontalBoxLayout(
                             owner=self,
-                            name="voltScaleSpinBox",
-                            minVal=1,
-                            maxVal=1000,
-                            suffix=" mm/mV",
-                            defaultValue=EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE
+                            name="voltageScaleBoxLayout",
+                            contents=[
+                                SpinBox(
+                                    owner=self,
+                                    name="voltScaleSpinBox",
+                                    minVal=1,
+                                    maxVal=1000,
+                                    suffix=" mm/mV",
+                                    defaultValue=EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE
+                                )
+                            ]
                         )
-                    ]
+
+                    )
                 ])
             ),
             PushButton(
@@ -82,28 +91,27 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.mainLayout.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
         self.setLayout(self.mainLayout)
 
+        # Align the field labels in the grid scale form to the left
+        self.controlsLayout.setFormAlignment(QtCore.Qt.AlignLeft)
+        self.controlsLayout.setLabelAlignment(QtCore.Qt.AlignLeft)
+        # Force the rows to grow horizontally
+        self.controlsLayout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
+        # Align the inputs in the grid scale form to the right
+        self.timeScaleBoxLayout.setAlignment(QtCore.Qt.AlignRight)
+        self.voltageScaleBoxLayout.setAlignment(QtCore.Qt.AlignRight)
+
         self.clearTimeSpinBox()
         self.clearVoltSpinBox()
 
 
     def connectUI(self):
-        # Image editing controls
-        # self.brightnessSlider.sliderReleased.connect(self.editorWidget.adjustBrightness)
-        # self.brightnessSlider.sliderMoved.connect(self.editorWidget.adjustBrightness)
-        # self.brightnessSlider.setRange(-127,127)
-
-        # self.contrastSlider.sliderReleased.connect(self.editorWidget.adjustContrast)
-        # self.contrastSlider.sliderMoved.connect(self.editorWidget.adjustContrast)
-        # self.contrastSlider.setRange(-127,127)
-
-        self.rotationSlider.sliderReleased.connect(self.editorWidget.adjustRotation)
-        self.rotationSlider.sliderMoved.connect(self.editorWidget.adjustRotation)
+        self.rotationSlider.sliderPressed.connect(self.editorWidget.rotationSliderChanged)
+        self.rotationSlider.sliderMoved.connect(self.editorWidget.rotationSliderChanged)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
 
         self.autoRotateButton.clicked.connect(self.editorWidget.autoRotate)
         self.resetRotationButton.clicked.connect(self.editorWidget.resetRotation)
 
-        # self.voltScaleSpinBox.valueChanged.connect(lambda: self.voltScaleChanged.emit(self.voltScaleSpinBox.value()))
         self.voltScaleSpinBox.valueChanged.connect(self.editorWidget.updateVoltScale)
         self.timeScaleSpinBox.valueChanged.connect(self.editorWidget.updateTimeScale)
         self.processDataButton.clicked.connect(lambda: self.editorWidget.processDataButtonClicked.emit())

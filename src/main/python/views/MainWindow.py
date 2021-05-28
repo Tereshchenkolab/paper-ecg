@@ -4,6 +4,8 @@ Created November 7, 2020
 
 Primary window of the application
 """
+import sys
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from views.EditorWidget import Editor
@@ -29,9 +31,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setWindowTitle("Paper ECG")
         # self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
-        self.resize(800, 500)
 
-        self.showMaximized()
+        if sys.platform == "darwin" or sys.platform.startswith('linux'):
+            self.resize(1000, 600)
+            self.show()
+        else:
+            self.showMaximized()
 
 
     def buildMenuBar(self):
@@ -166,16 +171,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def buildLeadButtonDictionary(self):
         # Creates relationship between lead ID and the menu button used to add that lead
         self.leadButtons = {
-            LeadId(0): self.addLead1,
-            LeadId(1): self.addLead2,
-            LeadId(2): self.addLead3,
-            LeadId(3): self.addLeadaVR,
-            LeadId(4): self.addLeadaVL,
-            LeadId(5): self.addLeadaVF,
-            LeadId(6): self.addLeadV1,
-            LeadId(7): self.addLeadV2,
-            LeadId(8): self.addLeadV3,
-            LeadId(9): self.addLeadV4,
-            LeadId(10): self.addLeadV5,
-            LeadId(11): self.addLeadV6
+            LeadId.I: self.addLead1,
+            LeadId.II: self.addLead2,
+            LeadId.III: self.addLead3,
+            LeadId.aVR: self.addLeadaVR,
+            LeadId.aVL: self.addLeadaVL,
+            LeadId.aVF: self.addLeadaVF,
+            LeadId.V1: self.addLeadV1,
+            LeadId.V2: self.addLeadV2,
+            LeadId.V3: self.addLeadV3,
+            LeadId.V4: self.addLeadV4,
+            LeadId.V5: self.addLeadV5,
+            LeadId.V6: self.addLeadV6
         }
