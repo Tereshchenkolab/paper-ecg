@@ -6,6 +6,7 @@ Controls the primary window, including the menu bar and the editor.
 """
 from pathlib import Path
 
+import cv2
 from PyQt5 import QtWidgets
 
 from Conversion import convertECGLeads, exportSignals
@@ -19,6 +20,7 @@ from model.LeadModel import *
 from QtWrapper import *
 import Annotation
 from model.Lead import LeadId
+import digitize.image
 
 
 class MainController:
@@ -199,7 +201,19 @@ class MainController:
     #     self.ecg.leads[leadId].leadStartTime = value
 
     def confirmDigitization(self):
-        print(self.window.editor.inputParameters)
+        rotatedImage = digitize.image.rotated(self.window.editor.image, self.window.editor.inputParameters.rotation)
+        leadData = self.window.editor.inputParameters.leads[LeadId.I]
+        cropped = digitize.image.cropped(
+            rotatedImage,
+            digitize.image.Rectangle(
+                leadData.x, leadData.y, leadData.width, leadData.height
+            )
+        )
+
+        import random
+
+        cv2.imwrite(f"lead-pictures/{self.openFile.stem}-{random.randint(0,10**8)}.png", cropped)
+
         raise NotImplementedError("TODO: Digitization")
         # if len(self.ecg.leads) > 0:
         #     self.processECGData()
