@@ -4,10 +4,22 @@ Created November 1, 2020
 
 ...
 """
+import sys
 from typing import Any
+
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 import ImageUtilities
+
+
+MACOS_SCROLL_KEYS = {QtCore.Qt.Key_Meta}  # Option key
+# TODO: Try to find a way for the command key to work? A keydownEvent is registered for CMD+O, but
+# no keyupEvent fires because the file selector window steals focus without the main window noticing that it
+# lost focus. (ARGH!!!)
+SCROLL_STEP_FACTOR= 1.5
+
+
+onMacOS = sys.platform == "darwin"
 
 
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
@@ -19,8 +31,9 @@ class ImageView(QtWidgets.QGraphicsView):
         super().__init__()
 
         self._zoom = 0
-        self._scaleFactor = 1.5
+        self._scale = 1
         self._empty = True
+        self._macosScrollKey = False
 
         self._scene = QtWidgets.QGraphicsScene(self)
         self._container = ImageView.createContainer()  # Permits rotation mechanics
@@ -29,8 +42,12 @@ class ImageView(QtWidgets.QGraphicsView):
 
         self.setMinimumSize(600, 400) # What does this do?
         self.setScene(self._scene)
-        self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
+        if not onMacOS:
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
+            self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
+        else:
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
+            self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
         self.setFrameShape(QtWidgets.QFrame.NoFrame)
 
         self.addShortcuts()
@@ -109,33 +126,57 @@ class ImageView(QtWidgets.QGraphicsView):
             if item.type == QtWidgets.QGraphicsRectItem.UserType and item.leadId == leadId:
                 self._scene.removeItem(item)
 
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        if onMacOS and event.key() in MACOS_SCROLL_KEYS:
+            self._macosScrollKey = True
+        return super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event: QtGui.QKeyEvent) -> None:
+        if onMacOS and event.key() in MACOS_SCROLL_KEYS:
+            self._macosScrollKey = False
+        return super().keyPressEvent(event)
+
     def event(self, event):
         # Detects pinching gesture on macOS
         # Examples: https://doc.qt.io/qt-5/qtwidgets-gestures-imagegestures-example.html
-        if isinstance(event, QtGui.QNativeGestureEvent):
-            if event.gestureType() == QtCore.Qt.RotateNativeGesture:
-                # TODO: This is just a demo (and only works on mac) hook this up to rotation interface instead
-                self.rotateImage(self._pixmapItem.rotation() + event.value() * 10)
+        if isinstance(event, QtGui.QFocusEvent):
+            if event.lostFocus():
+                self._macosScrollKey = False
 
-            if event.gestureType() == QtCore.Qt.ZoomNativeGesture:
-                pinchAmount = event.value()
-                scale = (1 + pinchAmount)
-                self.scale(scale, scale)
+        if isinstance(event, QtGui.QNativeGestureEvent) and event.gestureType() == QtCore.Qt.ZoomNativeGesture:
+            pinchAmount = event.value()
+            self.smoothZoom(pinchAmount)
 
         return super().event(event)
 
     def wheelEvent(self, event):
-        # Zoom in and out using mouse wheel
-        if event.angleDelta().y() > 0:
-            self.zoomIn()
-        else:
-            self.zoomOut()
+        if onMacOS:
+            if self._macosScrollKey:
+                self.smoothZoom(event.angleDelta().y() / 750)
+            else:
+                super().wheelEvent(event)
+        else: # Zoom in and out using mouse wheel
+            if event.angleDelta().y() > 0:
+                self.zoomIn()
+            else:
+                self.zoomOut()
+
+    def smoothZoom(self, amount: float):
+        """ Zooming in and out on macOS needs to be proportion to the strength of the user interaction """
+        scaleChange = (1 + amount)
+        new_scale = self._scale * scaleChange
+        if (self._scale > 1 or amount > 0) and new_scale >= 1:
+            self._scale = new_scale
+            self.scale(scaleChange, scaleChange)
+        else:  # Snap image to the window so it's never smaller than the canvas
+            self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
+            self._scale = 1
 
     #zoomIn and zoomOut based on: https://stackoverflow.com/questions/57713795/zoom-in-and-out-in-widget
     def zoomIn(self):
         if self.hasImage():
             transformScale = QtGui.QTransform()
-            transformScale.scale(self._scaleFactor, self._scaleFactor)
+            transformScale.scale(self.SCROLL_STEP_FACTOR, self.SCROLL_STEP_FACTOR)
 
             transform = self.transform() * transformScale
             self.setTransform(transform)
@@ -146,7 +187,7 @@ class ImageView(QtWidgets.QGraphicsView):
     def zoomOut(self):
         if self.hasImage():
             transformScale = QtGui.QTransform()
-            transformScale.scale(self._scaleFactor, self._scaleFactor)
+            transformScale.scale(self.SCROLL_STEP_FACTOR, self.SCROLL_STEP_FACTOR)
             invertedScale, invertible = transformScale.inverted()
 
             if invertible:

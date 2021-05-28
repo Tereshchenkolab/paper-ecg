@@ -67,7 +67,7 @@ class Editor(QtWidgets.QWidget):
                     ),
                     ScrollArea(
                         owner=self,
-                        name="scrollArea",
+                        name="controlPanel",
                         horizontalScrollBarPolicy=QtCore.Qt.ScrollBarAlwaysOff,
                         verticalScrollBarPolicy=QtCore.Qt.ScrollBarAsNeeded,
                         widgetIsResizable=True,
@@ -92,6 +92,9 @@ class Editor(QtWidgets.QWidget):
         self.viewSplitter.setCollapsible(1,False)
         self.viewSplitter.setSizes([2,1])
         self.editPanel.setCurrentIndex(0)
+        # Constraint the width of the adjustable side panel on the right of the editor
+        self.controlPanel.setMinimumWidth(250)
+        self.controlPanel.setMaximumWidth(450)
 
     def connectUI(self):
         self.mainWindow.addLead1.triggered.connect(lambda: self.addLead(LeadId(0)))
