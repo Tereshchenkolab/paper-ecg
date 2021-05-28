@@ -110,8 +110,6 @@ class ImageView(QtWidgets.QGraphicsView):
             self._macosScrollKey = True
         return super().keyPressEvent(event)
 
-
-
     def keyReleaseEvent(self, event: QtGui.QKeyEvent) -> None:
         if onMacOS and event.key() in MACOS_SCROLL_KEYS:
             self._macosScrollKey = False
