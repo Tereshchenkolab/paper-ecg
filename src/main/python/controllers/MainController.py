@@ -7,6 +7,7 @@ Controls the primary window, including the menu bar and the editor.
 from pathlib import Path
 
 import cv2
+import json
 from PyQt5 import QtWidgets
 
 from Conversion import convertECGLeads, exportSignals
@@ -299,3 +300,7 @@ class MainController:
 
         print("Loading saved state from:", filePath, '...')
         # TODO(Natalie?) Load the saved state :D
+        with open(filePath) as file:
+            data = json.load(file)
+        
+        print(data)
