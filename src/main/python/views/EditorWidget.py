@@ -17,6 +17,7 @@ from views.EditPanelLeadView import *
 from views.EditPanelGlobalView import *
 from QtWrapper import *
 import model.EcgModel as EcgModel
+from views.MessageDialog import *
 
 @dataclasses.dataclass(frozen=False)
 class Lead:
@@ -34,7 +35,7 @@ class InputParameters:
     leads: dict
 
 class Editor(QtWidgets.QWidget):
-    processDataButtonClicked = QtCore.pyqtSignal()
+    processEcgData = QtCore.pyqtSignal()
     saveAnnotationsButtonClicked = QtCore.pyqtSignal()
 
     image = None # The openCV image
@@ -119,6 +120,10 @@ class Editor(QtWidgets.QWidget):
         self.EditPanelLeadView.leadStartTimeChanged.connect(self.updateLeadStartTime)
         self.EditPanelLeadView.deleteLeadRoi.connect(self.deleteLeadRoi)
 
+###########################
+# Control Panel Functions #
+###########################
+
     def setControlPanel(self, leadId=None, leadSelected=False):
         if leadSelected == True and leadId is not None:
             self.showLeadDetailView(leadId)
@@ -164,6 +169,19 @@ class Editor(QtWidgets.QWidget):
 
     def resetRotation(self):
         self.setRotation(0)
+        # self.EditPanelGlobalView.rotationSlider.setValue(0)
+        # self.adjustRotation()
+
+    def confirmDigitization(self):
+        if len(self.inputParameters.leads) > 0:
+            self.processEcgData.emit(self.inputParameters)
+        else:
+            warningDialog = MessageDialog(
+                message="Warning: No data to process\n\nPlease select at least one lead to digitize",
+                title="Warning"
+            )
+            warningDialog.exec_()
+
 
     ###################
     # Image Functions #

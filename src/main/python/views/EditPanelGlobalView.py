@@ -114,7 +114,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
 
         self.voltScaleSpinBox.valueChanged.connect(self.editorWidget.updateVoltScale)
         self.timeScaleSpinBox.valueChanged.connect(self.editorWidget.updateTimeScale)
-        self.processDataButton.clicked.connect(lambda: self.editorWidget.processDataButtonClicked.emit())
+        self.processDataButton.clicked.connect(self.editorWidget.confirmDigitization)
         self.saveAnnotationsButton.clicked.connect(lambda: self.editorWidget.saveAnnotationsButtonClicked.emit())
 
 
@@ -127,3 +127,4 @@ class EditPanelGlobalView(QtWidgets.QWidget):
     def setValues(self, voltScale, timeScale):
         self.voltScaleSpinBox.setValue(voltScale)
         self.timeScaleSpinBox.setValue(timeScale)
+        

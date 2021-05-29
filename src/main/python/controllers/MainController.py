@@ -14,7 +14,6 @@ from views.MainWindow import MainWindow
 from views.ImageView import *
 from views.ROIView import *
 from views.ExportFileDialog import *
-from views.MessageDialog import *
 from model.EcgModel import *
 from model.LeadModel import *
 from QtWrapper import *
@@ -57,7 +56,7 @@ class MainController:
         # self.window.editor.leadStartTimeChanged.connect(self.updateLeadStartTime)
         # self.window.editor.gridTimeScaleChanged.connect(self.updateEcgTimeScale)
         # self.window.editor.gridVoltScaleChanged.connect(self.updateEcgVoltScale)
-        self.window.editor.processDataButtonClicked.connect(self.confirmDigitization)
+        self.window.editor.processEcgData.connect(self.processEcgData)
         self.window.editor.saveAnnotationsButtonClicked.connect(self.saveAnnotations)
         # self.window.editor.exportPathChosen.connect(self.processECGData)
 
@@ -225,8 +224,8 @@ class MainController:
         #     warningDialog.exec_()
 
     # we have all ECG data and export location - ready to pass off to backend to digitize
-    def processECGData(self):
-        extractedSignals, previewImages = convertECGLeads(self.ecg)
+    def processEcgData(self, inputParameters):
+        extractedSignals, previewImages = convertECGLeads(inputParameters)
 
         if extractedSignals is None:
 

@@ -90,7 +90,6 @@ class ImageView(QtWidgets.QGraphicsView):
     def resizeEvent(self, event):
         if self.hasImage() and not self.verticalScrollBar().isVisible() and not self.horizontalScrollBar().isVisible():
            self.fitInView(self.imageRect, QtCore.Qt.KeepAspectRatio)
-        self.updatePixelSizeOnScreen()
 
         super().resizeEvent(event)
 
@@ -184,7 +183,6 @@ class ImageView(QtWidgets.QGraphicsView):
         else:  # Snap image to the window so it's never smaller than the canvas
             self.fitInView(QtCore.QRectF(self._pixmapItem.pixmap().rect()), QtCore.Qt.KeepAspectRatio)
             self._scale = 1
-        self.updatePixelSizeOnScreen()
 
     #zoomIn and zoomOut based on: https://stackoverflow.com/questions/57713795/zoom-in-and-out-in-widget
     def zoomIn(self):
@@ -197,7 +195,6 @@ class ImageView(QtWidgets.QGraphicsView):
             self._zoom += 1
 
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
-        self.updatePixelSizeOnScreen()
 
     def zoomOut(self):
         if self.hasImage():
