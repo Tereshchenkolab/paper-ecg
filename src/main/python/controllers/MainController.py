@@ -13,6 +13,7 @@ from PyQt5 import QtWidgets
 from Conversion import convertECGLeads, exportSignals
 from views.MainWindow import MainWindow
 from views.ImageView import *
+from views.EditorWidget import *
 from views.ROIView import *
 from views.ExportFileDialog import *
 from model.EcgModel import *
@@ -98,7 +99,7 @@ class MainController:
     def closeImageFile(self):
         """Closes out current image file and resets editor controls."""
         self.window.editor.removeImage()
-        self.removeAllLeads()
+        self.window.editor.deleteAllLeadRois()
         self.window.editor.resetImageEditControls()
         self.openFile = None
 
@@ -246,7 +247,7 @@ class MainController:
 
         exportSignals(extractedSignals, exportPath, separator=seperatorMap[delimiter])
 
-    def saveAnnotations(self):
+    def saveAnnotations(self, inputParameters):
         if self.window.editor.image is None:
             return
 
@@ -255,12 +256,12 @@ class MainController:
         def extractLeadAnnotation(lead: Lead) -> Annotation.LeadAnnotation:
             return Annotation.LeadAnnotation(
                 Annotation.CropLocation(
-                    lead.roiData.x,
-                    lead.roiData.y,
-                    lead.roiData.width,
-                    lead.roiData.height,
+                    lead.x,
+                    lead.y,
+                    lead.width,
+                    lead.height,
                 ),
-                lead.leadStartTime
+                lead.startTime
             )
 
         metadataDirectory = self.openFile.parent / '.paperecg'
@@ -269,15 +270,17 @@ class MainController:
 
         filePath = metadataDirectory / (self.openFile.stem + '-' + self.openFile.suffix[1:] + '.json')
 
+        print("leads\n", inputParameters.leads.items())
+
         leads = {
-            LeadName[name]: extractLeadAnnotation(lead) for name, lead in self.ecg.leads.items()
+            name: extractLeadAnnotation(lead) for name, lead in inputParameters.leads.items()
         }
 
         Annotation.Annotation(
             image=Annotation.ImageMetadata(self.openFile.name, directory=str(self.openFile.parent.absolute())),
-            rotation=self.window.editor.image.edits.rotation,
-            timeScale=self.ecg.gridTimeScale,
-            voltageScale=self.ecg.gridVoltageScale,
+            rotation=inputParameters.rotation,
+            timeScale=inputParameters.timeScale,
+            voltageScale=inputParameters.voltScale,
             leads=leads
         ).save(filePath)
 
@@ -304,3 +307,4 @@ class MainController:
             data = json.load(file)
         
         print(data)
+        self.window.editor.loadMetaData(data)

@@ -4,7 +4,7 @@ from QtWrapper import *
 
 
 class EditPanelLeadView(QtWidgets.QWidget):
-    leadStartTimeChanged = QtCore.pyqtSignal(str, float)
+    leadStartTimeChanged = QtCore.pyqtSignal(int, float)
     deleteLeadRoi = QtCore.pyqtSignal(str)
 
     def __init__(self, parent):
@@ -59,8 +59,6 @@ class EditPanelLeadView(QtWidgets.QWidget):
 
 
     def setValues(self, leadId, leadName, startTime=0.0):
-        # self.lead = lead
-        # self.setTitle(lead.leadId)
         self.leadId = leadId
         self.setTitle(leadName)
         self.leadStartTimeSpinBox.setValue(startTime)

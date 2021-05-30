@@ -70,6 +70,7 @@ class ImageView(QtWidgets.QGraphicsView):
     @staticmethod
     def createContainer():
         container = QtWidgets.QGraphicsRectItem()
+        container.setPen(QtGui.QPen(QtCore.Qt.NoPen))
         container.setFlag(container.ItemClipsChildrenToShape)
         container.setBrush(QtCore.Qt.white) # default
         return container

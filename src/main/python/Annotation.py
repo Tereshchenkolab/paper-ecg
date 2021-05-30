@@ -100,7 +100,7 @@ class Annotation:
 
         # Need to customize the leads to convert enum to string
         dictionary["leads"] = {
-            lead.value: dataclasses.asdict(annotation) for lead, annotation in self.leads.items()
+            lead.name: dataclasses.asdict(annotation) for lead, annotation in self.leads.items()
         }
         # Remove None entries from the image since it has optional fields
         dictionary["image"] = noneValuesRemoved(dataclasses.asdict(self.image))

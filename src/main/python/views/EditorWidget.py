@@ -36,7 +36,7 @@ class InputParameters:
 
 class Editor(QtWidgets.QWidget):
     processEcgData = QtCore.pyqtSignal()
-    saveAnnotationsButtonClicked = QtCore.pyqtSignal()
+    saveAnnotationsButtonClicked = QtCore.pyqtSignal(object)
 
     image = None # The openCV image
 
@@ -119,6 +119,18 @@ class Editor(QtWidgets.QWidget):
 
         self.EditPanelLeadView.leadStartTimeChanged.connect(self.updateLeadStartTime)
         self.EditPanelLeadView.deleteLeadRoi.connect(self.deleteLeadRoi)
+
+    def loadMetaData(self, data):
+        self.setRotation(data['rotation'])
+        self.EditPanelGlobalView.setValues(voltScale=data['voltageScale'], timeScale=data['timeScale'])
+        
+        # print(data['leads'])
+        leads = data['leads']
+        for name in leads:
+            lead = leads[name]
+            cropping = lead['cropping']
+            self.addLead(LeadId[name], cropping['x'], cropping['y'], cropping['width'], cropping['height'])
+            self.inputParameters.leads[LeadId[name]].startTime = lead['start']
 
 ###########################
 # Control Panel Functions #
@@ -231,7 +243,7 @@ class Editor(QtWidgets.QWidget):
     # Lead ROI functions #
     ######################
 
-    def addLead(self, leadIdEnum):
+    def addLead(self, leadIdEnum, x=0, y=0, width=400, height=200):
         if self.imageViewer.hasImage():
             idName = leadIdEnum.name
             leadId = leadIdEnum.value
@@ -242,8 +254,8 @@ class Editor(QtWidgets.QWidget):
 
             # Create instance of Region of Interest (ROI) bounding box and add to image viewer
             roiBox = ROIItem(self.imageViewer._scene, leadId)
-            roiBox.setRect(0, 0, 400, 200)
-            roiBox.setPos(0,0)
+            roiBox.setRect(x, y, width, height)
+            # roiBox.setPos(x,y)
             self.imageViewer._scene.addItem(roiBox)
             roiBox.show()
 
@@ -277,11 +289,11 @@ class Editor(QtWidgets.QWidget):
         print("lead ", leadId, " deleted\n", self.inputParameters)
 
     def deleteAllLeadRois(self):
-        self.window.editor.imageViewer.removeAllRoiBoxes()  # Remove all lead roi boxes from image view
+        self.imageViewer.removeAllRoiBoxes()  # Remove all lead roi boxes from image view
 
         # Re-enable all add lead menu buttons
-        for lead, button in self.window.leadButtons.items():
+        for lead, button in self.mainWindow.leadButtons.items():
             button.setEnabled(True)
 
-        self.setEditorPane()    # Set editor pane back to global view
+        self.setControlPanel()    # Set editor pane back to global view
         self.inputParameters.leads.clear()  # Clear all lead data from model
