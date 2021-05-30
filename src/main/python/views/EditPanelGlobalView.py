@@ -2,7 +2,11 @@ from PyQt5 import QtCore, QtWidgets
 
 from QtWrapper import *
 import model.EcgModel as EcgModel
+import digitize
+from views.MessageDialog import *
 
+DEFAULT_TIME_SCALE = 25
+DEFAULT_VOLTAGE_SCALE = 10
 
 class EditPanelGlobalView(QtWidgets.QWidget):
     def __init__(self, parent):
@@ -47,7 +51,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                                     minVal=1,
                                     maxVal=1000,
                                     suffix=" mm/s",
-                                    defaultValue=EcgModel.Ecg.DEFAULT_TIME_SCALE
+                                    defaultValue=DEFAULT_TIME_SCALE
                                 )
                             ]
                         )
@@ -68,7 +72,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                                     minVal=1,
                                     maxVal=1000,
                                     suffix=" mm/mV",
-                                    defaultValue=EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE
+                                    defaultValue=DEFAULT_VOLTAGE_SCALE
                                 )
                             ]
                         )
@@ -105,24 +109,51 @@ class EditPanelGlobalView(QtWidgets.QWidget):
 
 
     def connectUI(self):
-        self.rotationSlider.sliderPressed.connect(self.editorWidget.rotationSliderChanged)
-        self.rotationSlider.sliderMoved.connect(self.editorWidget.rotationSliderChanged)
+        self.rotationSlider.sliderPressed.connect(self.rotationSliderChanged)
+        self.rotationSlider.sliderMoved.connect(self.rotationSliderChanged)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
 
-        self.autoRotateButton.clicked.connect(self.editorWidget.autoRotate)
-        self.resetRotationButton.clicked.connect(self.editorWidget.resetRotation)
+        self.autoRotateButton.clicked.connect(self.autoRotate)
+        self.resetRotationButton.clicked.connect(self.resetRotation)
 
-        self.voltScaleSpinBox.valueChanged.connect(self.editorWidget.updateVoltScale)
-        self.timeScaleSpinBox.valueChanged.connect(self.editorWidget.updateTimeScale)
-        self.processDataButton.clicked.connect(self.editorWidget.confirmDigitization)
-        self.saveAnnotationsButton.clicked.connect(lambda: self.editorWidget.saveAnnotationsButtonClicked.emit(self.editorWidget.inputParameters))
+        self.processDataButton.clicked.connect(lambda: self.editorWidget.processEcgData.emit())
+        self.saveAnnotationsButton.clicked.connect(lambda: self.editorWidget.saveAnnotationsButtonClicked.emit())
 
 
     def clearVoltSpinBox(self):
-        self.voltScaleSpinBox.setValue(EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE)
+        self.voltScaleSpinBox.setValue(DEFAULT_VOLTAGE_SCALE)
 
     def clearTimeSpinBox(self):
-        self.timeScaleSpinBox.setValue(EcgModel.Ecg.DEFAULT_TIME_SCALE)
+        self.timeScaleSpinBox.setValue(DEFAULT_TIME_SCALE)
+
+    def rotationSliderChanged(self, _ = None):
+        value = self.getRotation()
+        self.editorWidget.imageViewer.rotateImage(value)
+
+    def getRotation(self) -> float:
+        return self.rotationSlider.value() / -10
+
+    def setRotation(self, angle: float):
+        self.rotationSlider.setValue(angle * -10)
+        self.rotationSliderChanged()
+
+    def autoRotate(self):
+        if self.editorWidget.image is None: return
+
+        angle = digitize.estimateRotationAngle(self.editorWidget.image)
+
+        if angle is None:
+            errorModal = QtWidgets.QMessageBox()
+            errorModal.setWindowTitle("Error")
+            errorModal.setText("Unable to detect the angle automatically!")
+            errorModal.setInformativeText("Use the slider to adjust the rotation manually")
+            errorModal.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+            errorModal.exec_()
+        else:
+            self.setRotation(angle)
+
+    def resetRotation(self):
+        self.setRotation(0)
 
     def setValues(self, voltScale, timeScale):
         self.voltScaleSpinBox.setValue(voltScale)

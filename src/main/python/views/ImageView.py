@@ -10,6 +10,8 @@ from typing import Any
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 import ImageUtilities
+from views.ROIView import ROI_ITEM_TYPE
+from model.Lead import Lead, LeadId
 
 
 MACOS_SCROLL_KEYS = {QtCore.Qt.Key_Meta}  # Option key
@@ -24,7 +26,7 @@ onMacOS = sys.platform == "darwin"
 
 # From: https://stackoverflow.com/questions/35508711/how-to-enable-pan-and-zoom-in-a-qgraphicsview
 class ImageView(QtWidgets.QGraphicsView):
-    roiItemSelected = QtCore.pyqtSignal(int, bool)
+    roiItemSelected = QtCore.pyqtSignal(str, bool)
     updateRoiItem = QtCore.pyqtSignal(object)
     updateScale = QtCore.pyqtSignal(float)
 
@@ -124,13 +126,34 @@ class ImageView(QtWidgets.QGraphicsView):
     def removeAllRoiBoxes(self):
         # remove roi boxes from scene
         for item in self._scene.items():
-            if item.type == QtWidgets.QGraphicsRectItem.UserType:
+            if item.type == ROI_ITEM_TYPE:
                 self._scene.removeItem(item)
 
     def removeRoiBox(self, leadId):
+        # remove indiviudual roi from scene
         for item in self._scene.items():
-            if item.type == QtWidgets.QGraphicsRectItem.UserType and item.leadId == leadId:
+            if item.type == ROI_ITEM_TYPE and item.leadId == leadId:
                 self._scene.removeItem(item)
+
+    def getAllLeadRoisAsDict(self):
+        # return all lead ROIs present in the scene as a dictionary with LeadId:Lead pairs
+        leads = {}
+        for item in self._scene.items():
+            if item.type == ROI_ITEM_TYPE:
+                leads[LeadId[item.leadId]] = Lead(x=item.x, y=item.y, width=item.width, height=item.height, startTime=item.startTime)
+        return leads
+
+    def getLeadRoiStartTime(self, leadId):
+        # get start time for specific lead (looking into a way to do this without looping through all items in scene)
+        for item in self._scene.items():
+            if item.type == ROI_ITEM_TYPE and item.leadId == leadId:
+                return item.startTime
+
+    def setLeadRoiStartTime(self, leadId, startTime):
+        # set start time for specific lead (looking into a way to do this without looping through all items in scene)
+        for item in self._scene.items():
+            if item.type == ROI_ITEM_TYPE and item.leadId == leadId:
+                item.startTime = startTime
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         if onMacOS and event.key() in MACOS_SCROLL_KEYS:
@@ -189,7 +212,7 @@ class ImageView(QtWidgets.QGraphicsView):
     def zoomIn(self):
         if self.hasImage():
             transformScale = QtGui.QTransform()
-            transformScale.scale(self.SCROLL_STEP_FACTOR, self.SCROLL_STEP_FACTOR)
+            transformScale.scale(SCROLL_STEP_FACTOR, SCROLL_STEP_FACTOR)
 
             transform = self.transform() * transformScale
             self.setTransform(transform)
@@ -200,7 +223,7 @@ class ImageView(QtWidgets.QGraphicsView):
     def zoomOut(self):
         if self.hasImage():
             transformScale = QtGui.QTransform()
-            transformScale.scale(self.SCROLL_STEP_FACTOR, self.SCROLL_STEP_FACTOR)
+            transformScale.scale(SCROLL_STEP_FACTOR, SCROLL_STEP_FACTOR)
             invertedScale, invertible = transformScale.inverted()
 
             if invertible:
@@ -214,7 +237,6 @@ class ImageView(QtWidgets.QGraphicsView):
                     self._zoom = 0
             else:
                 print("scale not invertible")
-        self.updatePixelSizeOnScreen()
 
     def rotateImage(self, rotation: float):
         # The QGraphics notion of rotation is opposite standard angle meaning

@@ -4,6 +4,10 @@ from model.Lead import LeadId
 
 import ImageUtilities
 
+# According the docs, custom items should have type >= UserType (65536)
+# Setting the type allows you to distinguish between items in the graphics scene
+# https://doc.qt.io/archives/qt-4.8/qgraphicsitem.html#UserType-var
+ROI_ITEM_TYPE = QtWidgets.QGraphicsRectItem.UserType
 
 # From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
 class ROIItem(QtWidgets.QGraphicsRectItem):
@@ -39,6 +43,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         super().__init__(*args)
 
         self.leadId = leadId
+        self.startTime = 0.0
 
         # Minimum width and height of box (in pixels)
         self.minHeight = 50
@@ -63,7 +68,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
 
         # Set item type to identify ROI items in scene - according to custom items should
         # have type >= UserType (65536)
-        self.type = QtWidgets.QGraphicsRectItem.UserType
+        self.type = ROI_ITEM_TYPE
 
     @property
     def x(self):
@@ -361,6 +366,6 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             # Set color (grey) and draw box (unselected)
             painter.setPen(QtGui.QPen(QtGui.QColor(128, 128, 128), 2.0, QtCore.Qt.SolidLine))
             painter.setBrush(QtGui.QBrush(QtGui.QColor(128, 128, 128, 64)))
-            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, LeadId(self.leadId).name)
+            painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId)
             painter.drawRect(self.rect())
 

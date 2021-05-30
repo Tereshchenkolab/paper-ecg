@@ -5,6 +5,7 @@ Type representing an ECG lead.
 """
 
 from enum import Enum
+import dataclasses
 
 
 class LeadId(Enum):
@@ -36,22 +37,12 @@ class LeadId(Enum):
     V5  = 10
     V6  = 11
 
-    # I = 'I'
-    # II = 'II'
-    # III = 'III'
 
-    # aVR = 'aVR'
-    # aVL = 'aVL'
-    # aVF = 'aVF'
+@dataclasses.dataclass(frozen=True)
+class Lead:
+    x: int
+    y: int
+    width: int
+    height: int
+    startTime: int
 
-    # V1 = 'V1'
-    # V2 = 'V2'
-    # V3 = 'V3'
-
-    # V4 = 'V4'
-    # V5 = 'V5'
-    # V6 = 'V6'
-
-    # A1 = 'A1'
-    # A2 = 'A2'
-    # A3 = 'A3'

@@ -4,7 +4,7 @@ from QtWrapper import *
 
 
 class EditPanelLeadView(QtWidgets.QWidget):
-    leadStartTimeChanged = QtCore.pyqtSignal(int, float)
+    leadStartTimeChanged = QtCore.pyqtSignal(str, float)
     deleteLeadRoi = QtCore.pyqtSignal(str)
 
     def __init__(self, parent):
@@ -12,8 +12,8 @@ class EditPanelLeadView(QtWidgets.QWidget):
 
         self.parent = parent # the editor widget
 
-        # self.lead = None
         self.leadId = None
+
         self.sizePolicy().setHorizontalPolicy(QtWidgets.QSizePolicy.Expanding)
         self.sizePolicy().setVerticalPolicy(QtWidgets.QSizePolicy.Fixed)
 
@@ -58,14 +58,14 @@ class EditPanelLeadView(QtWidgets.QWidget):
         self.deleteLeadButton.clicked.connect(lambda: self.deleteLeadRoi.emit(self.leadId))
 
 
-    def setValues(self, leadId, leadName, startTime=0.0):
+    def setValues(self, leadId, startTime=0.0):
         self.leadId = leadId
-        self.setTitle(leadName)
+        self.setTitle(leadId)
         self.leadStartTimeSpinBox.setValue(startTime)
 
-    def setTitle(self, leadName):
-        self.title.setText("Lead " + leadName)
+    def setTitle(self, leadId):
+        self.title.setText("Lead " + leadId)
 
     def startTimeChanged(self):
         print("start time changed: " + str(self.leadStartTimeSpinBox.value()))
-        self.parent.leadStartTimeChanged.emit(self.lead.leadId, self.leadStartTimeSpinBox.value())
+        self.parent.leadStartTimeChanged.emit(self.leadId, self.leadStartTimeSpinBox.value())
