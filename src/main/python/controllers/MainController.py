@@ -23,6 +23,7 @@ from QtWrapper import *
 import Annotation
 from model.Lead import LeadId
 import digitize.image
+import datetime
 
 @dataclasses.dataclass(frozen=True)
 class InputParameters:
@@ -168,7 +169,10 @@ class MainController:
             name: extractLeadAnnotation(lead) for name, lead in inputParameters.leads.items()
         }
 
+        currentDateTime = (datetime.datetime.now()).strftime("%m/%d/%Y, %H:%M:%S")
+
         Annotation.Annotation(
+            timeStamp = currentDateTime,
             image=Annotation.ImageMetadata(self.openFile.name, directory=str(self.openFile.parent.absolute())),
             rotation=inputParameters.rotation,
             timeScale=inputParameters.timeScale,
@@ -177,6 +181,7 @@ class MainController:
         ).save(filePath)
 
         print("Metadata successfully saved to:", str(filePath))
+        self.window.editor.EditPanelGlobalView.setLastSavedTimeStamp(currentDateTime)
 
     def attempToLoadAnnotations(self):
         if self.window.editor.image is None:

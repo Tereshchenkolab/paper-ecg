@@ -94,7 +94,8 @@ class Editor(QtWidgets.QWidget):
     def loadSavedState(self, data):
         self.EditPanelGlobalView.setRotation(data['rotation'])
         self.EditPanelGlobalView.setValues(voltScale=data['voltageScale'], timeScale=data['timeScale'])
-        
+        self.EditPanelGlobalView.setLastSavedTimeStamp(data['timeStamp'])
+
         leads = data['leads']
         for name in leads:
             lead = leads[name]
@@ -132,6 +133,7 @@ class Editor(QtWidgets.QWidget):
         self.EditPanelGlobalView.rotationSlider.setValue(0)
         self.EditPanelGlobalView.clearTimeSpinBox()
         self.EditPanelGlobalView.clearVoltSpinBox()
+        self.EditPanelGlobalView.setLastSavedTimeStamp(timeStamp=None)
         self.showGlobalView()
 
     def loadImageFromPath(self, path: Path):

@@ -8,6 +8,7 @@ from os import path
 import dataclasses
 import json
 import pathlib
+import datetime
 from typing import Any, Dict, List, Optional, Union
 
 from model import Lead
@@ -89,6 +90,7 @@ class Annotation:
         default=Schema("paper-ecg-user-annotation", VERSION), init=False
     )
 
+    timeStamp: str
     image: ImageMetadata
     rotation: Union[int, float]
     timeScale: Union[int, float]

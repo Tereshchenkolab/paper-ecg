@@ -1,3 +1,4 @@
+from datetime import datetime
 from PyQt5 import QtCore, QtWidgets
 
 from QtWrapper import *
@@ -89,6 +90,11 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                 owner=self,
                 name="saveAnnotationsButton",
                 text="Save Metadata"
+            ),
+            Label(
+                owner=self,
+                name="lastSavedTimeStamp",
+                text=""
             )
         ])
 
@@ -103,6 +109,8 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         # Align the inputs in the grid scale form to the right
         self.timeScaleBoxLayout.setAlignment(QtCore.Qt.AlignRight)
         self.voltageScaleBoxLayout.setAlignment(QtCore.Qt.AlignRight)
+
+        self.lastSavedTimeStamp.setAlignment(QtCore.Qt.AlignCenter)
 
         self.clearTimeSpinBox()
         self.clearVoltSpinBox()
@@ -159,3 +167,8 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.voltScaleSpinBox.setValue(voltScale)
         self.timeScaleSpinBox.setValue(timeScale)
         
+    def setLastSavedTimeStamp(self, timeStamp=None):
+        if timeStamp is not None:
+            self.lastSavedTimeStamp.setText("Last saved: " + timeStamp)
+        else:
+            self.lastSavedTimeStamp.setText(None)
