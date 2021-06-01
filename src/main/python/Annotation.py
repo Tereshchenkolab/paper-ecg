@@ -8,6 +8,7 @@ from os import path
 import dataclasses
 import json
 import pathlib
+import datetime
 from typing import Any, Dict, List, Optional, Union
 
 from model import Lead
@@ -89,18 +90,19 @@ class Annotation:
         default=Schema("paper-ecg-user-annotation", VERSION), init=False
     )
 
+    timeStamp: str
     image: ImageMetadata
     rotation: Union[int, float]
     timeScale: Union[int, float]
     voltageScale: Union[int, float]
-    leads: Dict[Lead.LeadName, LeadAnnotation]
+    leads: Dict[Lead.LeadId, LeadAnnotation]
 
     def toDict(self):
         dictionary = dataclasses.asdict(self)  # <3 dataclasses
 
         # Need to customize the leads to convert enum to string
         dictionary["leads"] = {
-            lead.value: dataclasses.asdict(annotation) for lead, annotation in self.leads.items()
+            lead.name: dataclasses.asdict(annotation) for lead, annotation in self.leads.items()
         }
         # Remove None entries from the image since it has optional fields
         dictionary["image"] = noneValuesRemoved(dataclasses.asdict(self.image))

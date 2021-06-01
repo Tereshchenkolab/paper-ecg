@@ -4,10 +4,17 @@ Created November 9, 2020
 
 -
 """
+from pathlib import Path
 from typing import Tuple
 
 import cv2
-from PyQt5 import QtCore, QtGui
+import numpy as np
+from PyQt5 import QtGui
+import scipy.stats as stats
+
+
+def readImage(path: Path) -> np.ndarray:
+    return cv2.imread(str(path.absolute()))
 
 
 def opencvImageToPixmap(image):
@@ -27,55 +34,3 @@ def opencvImageToPixmap(image):
     )
 
     return pixmap
-
-
-def applyBrightness(inputImage, brightness: int):
-    # Source: https://stackoverflow.com/a/50053219/7737644
-
-    if brightness == 0:
-        return inputImage.copy()
-
-    if brightness > 0:
-        shadow = brightness
-        highlight = 255
-    else:
-        shadow = 0
-        highlight = 255 + brightness
-
-    alpha_b = (highlight - shadow) / 255
-    gamma_b = shadow
-
-    return cv2.addWeighted(inputImage, alpha_b, inputImage, 0, gamma_b)
-
-
-def applyContrast(inputImage, contrast: int):
-    # Source: https://stackoverflow.com/a/50053219/7737644
-
-    if contrast == 0:
-        return inputImage.copy()
-
-    alpha_c = 131 * (contrast + 127) / (127 * (131 - contrast))
-    gamma_c = 127 * (1 - alpha_c)
-
-    return cv2.addWeighted(inputImage, alpha_c, inputImage, 0, gamma_c)
-
-
-def applyRotation(inputImage, angle: float, border: Tuple[int] = (255,255,255)):
-    height, width = inputImage.shape[:2]
-    center = (width // 2, height // 2)
-
-    rotationMatrix = cv2.getRotationMatrix2D(center, angle, 1.0)
-
-    rotated = cv2.warpAffine(
-        inputImage,
-        rotationMatrix,
-        (width, height),
-        flags=cv2.INTER_CUBIC,
-        borderMode=cv2.BORDER_CONSTANT,
-        borderValue=border,
-    )
-
-    return rotated
-
-def pixelToTuple(pixel):
-    return (int(pixel[0][0][0]), int(pixel[0][0][1]), int(pixel[0][0][2]))

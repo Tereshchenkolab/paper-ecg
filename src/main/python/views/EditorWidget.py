@@ -9,31 +9,27 @@ from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import digitize
-from model.EditableImage import EditableImage
+from model.Lead import LeadId
 from views.ImageView import *
 from views.ROIView import *
 from views.EditPanelLeadView import *
 from views.EditPanelGlobalView import *
-from views.ExportFileDialog import *
 from QtWrapper import *
 import model.EcgModel as EcgModel
-
+from views.MessageDialog import *
 
 class Editor(QtWidgets.QWidget):
-
-    leadStartTimeChanged = QtCore.pyqtSignal(object, float)
-    gridVoltScaleChanged = QtCore.pyqtSignal(float)
-    gridTimeScaleChanged = QtCore.pyqtSignal(float)
-    processDataButtonClicked = QtCore.pyqtSignal()
+    processEcgData = QtCore.pyqtSignal()
     saveAnnotationsButtonClicked = QtCore.pyqtSignal()
-    removeLead = QtCore.pyqtSignal(object)
 
     image = None # The openCV image
 
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
-        self.exportFileDialog = None
+        self.mainWindow = parent
+
         self.initUI()
+        self.connectUI()
 
     def initUI(self):
         self.setLayout(
@@ -71,106 +67,127 @@ class Editor(QtWidgets.QWidget):
         self.viewSplitter.setCollapsible(1,False)
         self.viewSplitter.setSizes([2,1])
         self.editPanel.setCurrentIndex(0)
+
         # Constraint the width of the adjustable side panel on the right of the editor
         self.controlPanel.setMinimumWidth(250)
         self.controlPanel.setMaximumWidth(450)
 
-    def showGlobalView(self, voltScale=EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE, timeScale=EcgModel.Ecg.DEFAULT_TIME_SCALE):
-        self.EditPanelGlobalView.setValues(voltScale, timeScale)
+    def connectUI(self):
+        self.mainWindow.addLead1.triggered.connect(lambda: self.addLead(LeadId['I']))
+        self.mainWindow.addLead2.triggered.connect(lambda: self.addLead(LeadId['II']))
+        self.mainWindow.addLead3.triggered.connect(lambda: self.addLead(LeadId['III']))
+        self.mainWindow.addLeadaVR.triggered.connect(lambda: self.addLead(LeadId['aVR']))
+        self.mainWindow.addLeadaVL.triggered.connect(lambda: self.addLead(LeadId['aVL']))
+        self.mainWindow.addLeadaVF.triggered.connect(lambda: self.addLead(LeadId['aVF']))
+        self.mainWindow.addLeadV1.triggered.connect(lambda: self.addLead(LeadId['V1']))
+        self.mainWindow.addLeadV2.triggered.connect(lambda: self.addLead(LeadId['V2']))
+        self.mainWindow.addLeadV3.triggered.connect(lambda: self.addLead(LeadId['V3']))
+        self.mainWindow.addLeadV4.triggered.connect(lambda: self.addLead(LeadId['V4']))
+        self.mainWindow.addLeadV5.triggered.connect(lambda: self.addLead(LeadId['V5']))
+        self.mainWindow.addLeadV6.triggered.connect(lambda: self.addLead(LeadId['V6']))
+
+        self.imageViewer.roiItemSelected.connect(self.setControlPanel)
+
+        self.EditPanelLeadView.leadStartTimeChanged.connect(self.updateLeadStartTime)
+        self.EditPanelLeadView.deleteLeadRoi.connect(self.deleteLeadRoi)
+
+    def loadSavedState(self, data):
+        self.EditPanelGlobalView.setRotation(data['rotation'])
+        self.EditPanelGlobalView.setValues(voltScale=data['voltageScale'], timeScale=data['timeScale'])
+        self.EditPanelGlobalView.setLastSavedTimeStamp(data['timeStamp'])
+
+        leads = data['leads']
+        for name in leads:
+            lead = leads[name]
+            cropping = lead['cropping']
+            self.addLead(leadIdEnum=LeadId[name], x=cropping['x'], y=cropping['y'], width=cropping['width'], height=cropping['height'], startTime=lead['start'])
+
+
+    ###########################
+    # Control Panel Functions #
+    ###########################
+
+    def setControlPanel(self, leadId=None, leadSelected=False):
+        if leadSelected == True and leadId is not None:
+            self.showLeadDetailView(leadId)
+        else:
+            # self.showGlobalView(self.inputParameters.voltScale, self.inputParameters.timeScale)
+            self.showGlobalView()
+
+    def showGlobalView(self):
+        # self.EditPanelGlobalView.setValues(voltScale, timeScale)
         self.editPanel.setCurrentIndex(0)
 
-    def showLeadDetailView(self, lead):
-        self.EditPanelLeadView.setValues(lead)
+    def showLeadDetailView(self, leadId):
+        # leadStartTime = self.inputParameters.leads[LeadId[leadId]].startTime
+        leadStartTime = self.imageViewer.getLeadRoiStartTime(leadId)
+        self.EditPanelLeadView.setValues(leadId, leadStartTime)
         self.editPanel.setCurrentIndex(1)
 
-    def numpyToPixMap(self, image):
-        # SOURCE: https://stackoverflow.com/a/50800745/7737644 (Creative Commons - Credit, share-alike)
-        height, width, channel = self.image.shape
-        bytesPerLine = 3 * width
 
-        pixmap = QtGui.QPixmap(
-            QtGui.QImage(
-                self.image.data,
-                width,
-                height,
-                bytesPerLine,
-                QtGui.QImage.Format_RGB888
-            ).rgbSwapped()
-        )
-
-        return pixmap
-
-    # def adjustBrightness(self, value = None):
-    #     if value is None:
-    #         value = self.EditPanelGlobalView.brightnessSlider.value()
-
-    #     if self.image is not None:
-    #         self.displayImage(self.image.withBrightness(value))
-
-    # def adjustContrast(self, value = None):
-    #     if value is None:
-    #         value = self.EditPanelGlobalView.contrastSlider.value()
-
-    #     if self.image is not None:
-    #         self.displayImage(self.image.withContrast(value))
-
-    def adjustRotation(self, value = None):
-        if value is None:
-            value = self.EditPanelGlobalView.rotationSlider.value()
-
-        # This slider is scaled up to give more fine control
-        value = float(value/10) * -1
-
-        if self.image is not None:
-            self.displayImage(self.image.withRotation(value))
-
-    def autoRotate(self):
-        if self.image is None: return
-
-        angle = digitize.estimateRotationAngle(self.image.image)
-
-        if angle is None:
-            errorModal = QtWidgets.QMessageBox()
-            errorModal.setWindowTitle("Error")
-            errorModal.setText("Unable to detect the angle automatically!")
-            errorModal.setInformativeText("Use the slider to adjust the rotation manually")
-            errorModal.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
-            errorModal.exec_()
-
-            return
-
-        # Notice: The slider is scaled up by a factor of 10    \/
-        self.EditPanelGlobalView.rotationSlider.setValue(angle * -10)
-        self.adjustRotation()
-
-    def resetRotation(self):
-        self.EditPanelGlobalView.rotationSlider.setValue(0)
-        self.adjustRotation()
+    ###################
+    # Image Functions #
+    ###################
 
     def resetImageEditControls(self):
-        # IDEA: Only show the image editing controls when there is a image loaded?
-        # self.EditPanelGlobalView.brightnessSlider.setValue(0)
-        # self.EditPanelGlobalView.contrastSlider.setValue(0)
         self.EditPanelGlobalView.rotationSlider.setValue(0)
         self.EditPanelGlobalView.clearTimeSpinBox()
         self.EditPanelGlobalView.clearVoltSpinBox()
+        self.EditPanelGlobalView.setLastSavedTimeStamp(timeStamp=None)
         self.showGlobalView()
 
     def loadImageFromPath(self, path: Path):
-        self.image = EditableImage(path)
-        self.displayImage(self.image.image)
-        self.onImageAppear()
+        self.image = ImageUtilities.readImage(path)
+        self.displayImage()
 
-    def onImageAppear(self):
-        """Called when a new image is opened"""
+    def displayImage(self):
+        self.imageViewer.setImage(self.image)
         self.editPanel.show()
 
         # Adjust zoom to fit image in view
         self.imageViewer.fitImageInView()
 
-    def displayImage(self, image):
-        self.imageViewer.setImage(image)
-
     def removeImage(self):
         self.image = None
         self.imageViewer.removeImage()
+
+
+    ######################
+    # Lead ROI functions #
+    ######################
+
+    def addLead(self, leadIdEnum, x=0, y=0, width=400, height=200, startTime=0.0):
+        if self.imageViewer.hasImage():
+            leadId = leadIdEnum.name
+
+            # Disable menu action so user can't add more than one bounding box for an individual lead
+            # action.setEnabled(False)
+            self.mainWindow.leadButtons[leadIdEnum].setEnabled(False)
+
+            # Create instance of Region of Interest (ROI) bounding box and add to image viewer
+            roiBox = ROIItem(self.imageViewer._scene, leadId)
+            roiBox.setRect(x, y, width, height)
+            roiBox.startTime = startTime
+
+            self.imageViewer._scene.addItem(roiBox)
+            roiBox.show()
+
+    def updateLeadStartTime(self, leadId, value=None):
+        if value is None:
+            value = self.EditPanelLeadView.leadStartTimeSpinBox.value()
+
+        self.imageViewer.setLeadRoiStartTime(leadId, value)
+
+    def deleteLeadRoi(self, leadId):
+        self.imageViewer.removeRoiBox(leadId)   # Remove lead roi box from image view
+        self.mainWindow.leadButtons[LeadId[leadId]].setEnabled(True)    # Re-enable add lead menu button
+        self.setControlPanel()  # Set control panel back to global view
+
+    def deleteAllLeadRois(self):
+        self.imageViewer.removeAllRoiBoxes()  # Remove all lead roi boxes from image view
+
+        # Re-enable all add lead menu buttons
+        for _, button in self.mainWindow.leadButtons.items():
+            button.setEnabled(True)
+
+        self.setControlPanel()    # Set control panel back to global view

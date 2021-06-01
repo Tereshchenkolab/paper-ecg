@@ -1,8 +1,13 @@
+from datetime import datetime
 from PyQt5 import QtCore, QtWidgets
 
 from QtWrapper import *
 import model.EcgModel as EcgModel
+import digitize
+from views.MessageDialog import *
 
+DEFAULT_TIME_SCALE = 25
+DEFAULT_VOLTAGE_SCALE = 10
 
 class EditPanelGlobalView(QtWidgets.QWidget):
     def __init__(self, parent):
@@ -21,10 +26,6 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         VerticalBoxLayout(owner=self, name="mainLayout", margins=(5, 5, 5, 5), contents=[
             GroupBox(owner=self, name="adjustmentsGroup", title="Image Adjustments", layout=
                 VerticalBoxLayout(owner=self, name="adjustmentsGroupLayout", contents=[
-                    # Label("Brightness"),
-                    # HorizontalSlider(self, "brightnessSlider"),
-                    # Label("Contrast"),
-                    # HorizontalSlider(self, "contrastSlider"),
                     Label("Rotation"),
                     HorizontalSlider(self, "rotationSlider"),
                     HorizontalBoxLayout(owner=self, name="buttonLayout", margins=(0, 0, 0, 0), contents=[
@@ -35,36 +36,49 @@ class EditPanelGlobalView(QtWidgets.QWidget):
             ),
             GroupBox(owner=self, name="gridScaleGroup", title="Grid Scale", layout=
                 FormLayout(owner=self, name="controlsLayout", contents=[
-                    [
+                    (
                         Label(
                             owner=self,
                             name="timeScaleLabel",
                             text="Time Scale: "
                         ),
-                        SpinBox(
+                        HorizontalBoxLayout(
                             owner=self,
-                            name="timeScaleSpinBox",
-                            minVal=1,
-                            maxVal=1000,
-                            suffix=" mm/s",
-                            defaultValue=EcgModel.Ecg.DEFAULT_TIME_SCALE
+                            name="timeScaleBoxLayout",
+                            contents=[
+                                SpinBox(
+                                    owner=self,
+                                    name="timeScaleSpinBox",
+                                    minVal=1,
+                                    maxVal=1000,
+                                    suffix=" mm/s",
+                                    defaultValue=DEFAULT_TIME_SCALE
+                                )
+                            ]
                         )
-                    ],
-                    [
+                    ),
+                    (
                         Label(
                             owner=self,
                             name="voltScaleLabel",
                             text="Voltage Scale: "
                         ),
-                        SpinBox(
+                        HorizontalBoxLayout(
                             owner=self,
-                            name="voltScaleSpinBox",
-                            minVal=1,
-                            maxVal=1000,
-                            suffix=" mm/mV",
-                            defaultValue=EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE
+                            name="voltageScaleBoxLayout",
+                            contents=[
+                                SpinBox(
+                                    owner=self,
+                                    name="voltScaleSpinBox",
+                                    minVal=1,
+                                    maxVal=1000,
+                                    suffix=" mm/mV",
+                                    defaultValue=DEFAULT_VOLTAGE_SCALE
+                                )
+                            ]
                         )
-                    ]
+
+                    )
                 ])
             ),
             PushButton(
@@ -76,45 +90,85 @@ class EditPanelGlobalView(QtWidgets.QWidget):
                 owner=self,
                 name="saveAnnotationsButton",
                 text="Save Metadata"
+            ),
+            Label(
+                owner=self,
+                name="lastSavedTimeStamp",
+                text=""
             )
         ])
 
         self.mainLayout.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
         self.setLayout(self.mainLayout)
 
+        # Align the field labels in the grid scale form to the left
+        self.controlsLayout.setFormAlignment(QtCore.Qt.AlignLeft)
+        self.controlsLayout.setLabelAlignment(QtCore.Qt.AlignLeft)
+        # Force the rows to grow horizontally
+        self.controlsLayout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
+        # Align the inputs in the grid scale form to the right
+        self.timeScaleBoxLayout.setAlignment(QtCore.Qt.AlignRight)
+        self.voltageScaleBoxLayout.setAlignment(QtCore.Qt.AlignRight)
+
+        self.lastSavedTimeStamp.setAlignment(QtCore.Qt.AlignCenter)
+
         self.clearTimeSpinBox()
         self.clearVoltSpinBox()
 
 
     def connectUI(self):
-        # Image editing controls
-        # self.brightnessSlider.sliderReleased.connect(self.editorWidget.adjustBrightness)
-        # self.brightnessSlider.sliderMoved.connect(self.editorWidget.adjustBrightness)
-        # self.brightnessSlider.setRange(-127,127)
-
-        # self.contrastSlider.sliderReleased.connect(self.editorWidget.adjustContrast)
-        # self.contrastSlider.sliderMoved.connect(self.editorWidget.adjustContrast)
-        # self.contrastSlider.setRange(-127,127)
-
-        self.rotationSlider.sliderReleased.connect(self.editorWidget.adjustRotation)
-        self.rotationSlider.sliderMoved.connect(self.editorWidget.adjustRotation)
+        self.rotationSlider.sliderPressed.connect(self.rotationSliderChanged)
+        self.rotationSlider.sliderMoved.connect(self.rotationSliderChanged)
         self.rotationSlider.setRange(-15 * 10, 15 * 10)
 
-        self.autoRotateButton.clicked.connect(self.editorWidget.autoRotate)
-        self.resetRotationButton.clicked.connect(self.editorWidget.resetRotation)
+        self.autoRotateButton.clicked.connect(self.autoRotate)
+        self.resetRotationButton.clicked.connect(self.resetRotation)
 
-        self.voltScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridVoltScaleChanged.emit(self.voltScaleSpinBox.value()))
-        self.timeScaleSpinBox.valueChanged.connect(lambda: self.editorWidget.gridTimeScaleChanged.emit(self.timeScaleSpinBox.value()))
-        self.processDataButton.clicked.connect(lambda: self.editorWidget.processDataButtonClicked.emit())
+        self.processDataButton.clicked.connect(lambda: self.editorWidget.processEcgData.emit())
         self.saveAnnotationsButton.clicked.connect(lambda: self.editorWidget.saveAnnotationsButtonClicked.emit())
 
 
     def clearVoltSpinBox(self):
-        self.voltScaleSpinBox.setValue(EcgModel.Ecg.DEFAULT_VOLTAGE_SCALE)
+        self.voltScaleSpinBox.setValue(DEFAULT_VOLTAGE_SCALE)
 
     def clearTimeSpinBox(self):
-        self.timeScaleSpinBox.setValue(EcgModel.Ecg.DEFAULT_TIME_SCALE)
+        self.timeScaleSpinBox.setValue(DEFAULT_TIME_SCALE)
+
+    def rotationSliderChanged(self, _ = None):
+        value = self.getRotation()
+        self.editorWidget.imageViewer.rotateImage(value)
+
+    def getRotation(self) -> float:
+        return self.rotationSlider.value() / -10
+
+    def setRotation(self, angle: float):
+        self.rotationSlider.setValue(angle * -10)
+        self.rotationSliderChanged()
+
+    def autoRotate(self):
+        if self.editorWidget.image is None: return
+
+        angle = digitize.estimateRotationAngle(self.editorWidget.image)
+
+        if angle is None:
+            errorModal = QtWidgets.QMessageBox()
+            errorModal.setWindowTitle("Error")
+            errorModal.setText("Unable to detect the angle automatically!")
+            errorModal.setInformativeText("Use the slider to adjust the rotation manually")
+            errorModal.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+            errorModal.exec_()
+        else:
+            self.setRotation(angle)
+
+    def resetRotation(self):
+        self.setRotation(0)
 
     def setValues(self, voltScale, timeScale):
         self.voltScaleSpinBox.setValue(voltScale)
         self.timeScaleSpinBox.setValue(timeScale)
+        
+    def setLastSavedTimeStamp(self, timeStamp=None):
+        if timeStamp is not None:
+            self.lastSavedTimeStamp.setText("Last saved: " + timeStamp)
+        else:
+            self.lastSavedTimeStamp.setText(None)

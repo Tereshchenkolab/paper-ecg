@@ -4,9 +4,12 @@ Created November 7, 2020
 
 Primary window of the application
 """
+import sys
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from views.EditorWidget import Editor
+from model.Lead import LeadId
 import QtWrapper as Qt
 
 
@@ -22,15 +25,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.buildMenuBar()
         self.buildLeadButtonDictionary()
 
-        self.editor = Editor()
+        self.editor = Editor(self)
         self.setCentralWidget(self.editor)
         self.setContentsMargins(0,0,0,0)
 
         self.setWindowTitle("Paper ECG")
         # self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
-        self.resize(800, 500)
 
-        self.showMaximized()
+        if sys.platform == "darwin" or sys.platform.startswith('linux'):
+            self.resize(1000, 600)
+            self.show()
+        else:
+            self.showMaximized()
 
 
     def buildMenuBar(self):
@@ -165,16 +171,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def buildLeadButtonDictionary(self):
         # Creates relationship between lead ID and the menu button used to add that lead
         self.leadButtons = {
-            "I": self.addLead1,
-            "II": self.addLead2,
-            "III": self.addLead3,
-            "aVR": self.addLeadaVR,
-            "aVL": self.addLeadaVL,
-            "aVF": self.addLeadaVF,
-            "V1": self.addLeadV1,
-            "V2": self.addLeadV2,
-            "V3": self.addLeadV3,
-            "V4": self.addLeadV4,
-            "V5": self.addLeadV5,
-            "V6": self.addLeadV6
+            LeadId.I: self.addLead1,
+            LeadId.II: self.addLead2,
+            LeadId.III: self.addLead3,
+            LeadId.aVR: self.addLeadaVR,
+            LeadId.aVL: self.addLeadaVL,
+            LeadId.aVF: self.addLeadaVF,
+            LeadId.V1: self.addLeadV1,
+            LeadId.V2: self.addLeadV2,
+            LeadId.V3: self.addLeadV3,
+            LeadId.V4: self.addLeadV4,
+            LeadId.V5: self.addLeadV5,
+            LeadId.V6: self.addLeadV6
         }

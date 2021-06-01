@@ -1,8 +1,13 @@
 import numpy as np
 from PyQt5 import QtGui, QtCore, QtWidgets
+from model.Lead import LeadId
 
 import ImageUtilities
 
+# According the docs, custom items should have type >= UserType (65536)
+# Setting the type allows you to distinguish between items in the graphics scene
+# https://doc.qt.io/archives/qt-4.8/qgraphicsitem.html#UserType-var
+ROI_ITEM_TYPE = QtWidgets.QGraphicsRectItem.UserType
 
 # From: https://github.com/drmatthews/slidecrop_pyqt/blob/master/slidecrop/gui/roi.py#L116
 class ROIItem(QtWidgets.QGraphicsRectItem):
@@ -38,9 +43,7 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         super().__init__(*args)
 
         self.leadId = leadId
-
-        # Pixel data within the bounding box region (OpenCV form)
-        self.pixelData = None
+        self.startTime = 0.0
 
         # Minimum width and height of box (in pixels)
         self.minHeight = 50
@@ -62,11 +65,10 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges, True)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, True)
         self.updateHandlesPos()
+
         # Set item type to identify ROI items in scene - according to custom items should
         # have type >= UserType (65536)
-        self.type = QtWidgets.QGraphicsRectItem.UserType
-
-        self.updatePixelData()
+        self.type = ROI_ITEM_TYPE
 
     @property
     def x(self):
@@ -142,11 +144,8 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
         self.mousePressPos = None
         self.mousePressRect = None
 
-        self.updatePixelData()
-
+        self.parentViews[0].updateRoiItem.emit(self)
         self.update()
-        # self.parentViews[0].itemMoved.emit(self)
-
 
     def boundingRect(self):
         """
@@ -370,20 +369,3 @@ class ROIItem(QtWidgets.QGraphicsRectItem):
             painter.drawText(self.rect(), QtCore.Qt.AlignCenter, self.leadId)
             painter.drawRect(self.rect())
 
-    def setLeadId(self, lead):
-        self.leadId = lead
-
-    def getLeadId(self):
-        return self.leadId
-
-    def updatePixelData(self):
-        box = self.mapToScene(self.rect()).boundingRect()
-
-        x = box.toRect().x()
-        y = box.toRect().y()
-        w = box.toRect().width()
-        h = box.toRect().height()
-
-        self.pixelData = np.copy(self.parentViews[0]._image[y:y+h, x:x+w])
-        croppedImage = ImageUtilities.opencvImageToPixmap(self.pixelData)
-        croppedImage.save(self.leadId + ".png")
