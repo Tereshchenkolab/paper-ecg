@@ -27,10 +27,10 @@ class ExportFileDialog(QtWidgets.QDialog):
         # Create label and preview button for each lead that was processed
         for leadId, image in self.leadPreviewImages.items():
             self.leadPreviewLayout.addRow(
-                Label(owner=self, text="Lead " + leadId),
+                Label(owner=self, text="Lead " + str(leadId)),
                 PushButton(owner=self, name="button", text="Preview")
             )
-            self.button.clicked.connect(lambda checked, img=image, title=leadId: self.displayPreview(img, title))
+            self.button.clicked.connect(lambda checked, img=image.data, title=leadId: self.displayPreview(img, title))
 
         VerticalBoxLayout(owner=self, name="mainLayout", contents=[
             HorizontalBoxLayout(owner=self, name="chooseFileLayout", contents=[

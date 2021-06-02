@@ -1,15 +1,15 @@
-import functools
 from pathlib import Path
 
 import numpy as np
+from numpy.lib.arraysetops import isin
 
-from model.EcgModel import Ecg
-import digitize
-from digitize import common, grid, signal
-from digitize.signal import detection as signal_detection
-from digitize.signal import extraction as signal_extraction
-from digitize.grid import detection as grid_detection
-from digitize import visualization
+import ecgdigitize
+import ecgdigitize.signal
+import ecgdigitize.image
+from ecgdigitize import common, visualization
+from ecgdigitize.image import ColorImage, Rectangle
+
+from model.InputParameters import InputParameters
 
 
 LEAD_ORDER = {
@@ -18,60 +18,79 @@ LEAD_ORDER = {
 }
 
 
-def convertECGLeads(ecgData: Ecg):
+def convertECGLeads(inputImage: ColorImage, parameters: InputParameters):
+    # Apply rotation
+    rotatedImage = ecgdigitize.image.rotated(inputImage, parameters.rotation)
 
-    # TODO: Make parameters
-    signalDetectionMethod = functools.partial(signal_detection.mallawaarachchi, useBlur=True)
-    signalExtractionMethod = signal_extraction.naïveHorizontalScan
+    # Crop each lead
+    leadImages = {
+        leadId: ecgdigitize.image.cropped(rotatedImage, Rectangle(lead.x, lead.y, lead.width, lead.height))
+        for leadId, lead in parameters.leads.items()
+    }
 
-    leads = common.zipDict(ecgData.leads)
-
-    extractSignal = functools.partial(signal.extractSignalFromImage, detectionMethod=signalDetectionMethod, extractionMethod=signalExtractionMethod)
-    extractGrid   = grid.extractGridFromImage
+    extractSignal = ecgdigitize.digitizeSignal
+    extractGrid   = ecgdigitize.digitizeGrid
 
     # Map all lead images to signal data
-    signals = common.mapList(leads, lambda pair: (pair[0], extractSignal(pair[1].roiData.pixelData)))
+    signals = {
+        leadId: extractSignal(leadImage)
+        for leadId, leadImage in leadImages.items()
+    }
 
     # If all signals failed -> Failure
-    if all([signalData is None for _, signalData in signals]):
+    if all([isinstance(signal, common.Failure) for _, signal in signals.items()]):
         return None, None
 
-    images = common.mapList(
-        zip(leads, signals),
-        lambda leadSignalPair: (
-            leadSignalPair[1][0],
-            visualization.overlaySignalOnImage(leadSignalPair[1][1],
-            leadSignalPair[0][1].roiData.pixelData)
-        )
-    )
+    previews = {
+        leadId: visualization.overlaySignalOnImage(signal, image)
+        for (leadId, image), (_, signal) in zip(leadImages.items(), signals.items())
+    }
 
     # Map leads to grid size estimates
-    gridSpacings = common.mapList(leads, lambda pair: (pair[0], (extractGrid(pair[1].roiData.pixelData))))
-    horizontalSpacings = [hSpace for _, (hSpace, _) in gridSpacings if hSpace is not None]
-    verticalSpacings   = [vSpace for _, (_, vSpace) in gridSpacings if vSpace is not None]
+    gridSpacings = {
+        leadId: extractGrid(leadImage)
+        for leadId, leadImage in leadImages.items()
+    }
+    # Just got successful spacings
+    spacings = [spacing for spacing in gridSpacings.values() if not isinstance(spacing, common.Failure)]
 
-    if len(horizontalSpacings) == 0 or len(verticalSpacings) == 0:
+    if len(spacings) == 0:
         return None, None
 
-    samplingPeriodInPixels = common.mean(horizontalSpacings)
-    gridHeightInPixels = common.mean(verticalSpacings)
+    samplingPeriodInPixels = gridHeightInPixels = common.mean(spacings)
 
     # Scale signals
     # TODO: Pass in the grid size in mm
-    signals = common.mapList(signals, lambda pair: (pair[0], signal.verticallyScaleECGSignal(signal.zeroECGSignal(pair[1]), gridHeightInPixels, ecgData.gridVoltageScale, gridSizeInMillimeters=1.0)))
+    scaledSignals = {
+        leadId: ecgdigitize.signal.verticallyScaleECGSignal(
+            ecgdigitize.signal.zeroECGSignal(signal),
+            gridHeightInPixels,
+            parameters.voltScale, gridSizeInMillimeters=1.0
+        )
+        for leadId, signal in signals.items()
+    }
 
     # TODO: Pass in the grid size in mm
-    samplingPeriod = signal.ecgSignalSamplingPeriod(samplingPeriodInPixels, ecgData.gridTimeScale, gridSizeInMillimeters=1.0)
+    samplingPeriod = ecgdigitize.signal.ecgSignalSamplingPeriod(samplingPeriodInPixels, parameters.timeScale, gridSizeInMillimeters=1.0)
 
     # 3. Zero pad all signals on the left based on their start times and the samplingPeriod
     # take the max([len(x) for x in signals]) and zero pad all signals on the right
-    paddedSignals = [(key, common.padLeft(signal, int(leadData.leadStartTime / samplingPeriod))) for (key, signal), (_, leadData) in zip(signals, leads)]
+    print(scaledSignals)
+    paddedSignals = {
+        leadId: common.padLeft(signal, int(parameters.leads[leadId].startTime / samplingPeriod))
+        for leadId, signal in scaledSignals.items()
+    }
 
     # (should already be handled by (3)) Replace any None signals with all zeros
-    length = max([len(s) for _, s in paddedSignals])
-    fullSignals = [(key, common.padRight(signal, length - len(signal))) for (key, signal) in paddedSignals]
+    maxLength = max([len(s) for _, s in paddedSignals.items()])
+    fullSignals = {
+        leadId: common.padRight(signal, maxLength - len(signal))
+        for leadId, signal in paddedSignals.items()
+    }
 
-    return dict(fullSignals), dict(images)
+    print(fullSignals, previews)
+
+    return fullSignals, previews
 
 
 def exportSignals(leadSignals, filePath, separator='\t'):
@@ -88,7 +107,7 @@ def exportSignals(leadSignals, filePath, separator='\t'):
 
     assert all([len(signal) == lengthOfFirst for key, signal in leads])
 
-    collated = np.array([signal for key, signal in leads])
+    collated = np.array([signal for _, signal in leads])
     output = np.swapaxes(collated, 0, 1)
 
     if not issubclass(type(filePath), Path):

@@ -12,7 +12,7 @@ class ImagePreviewDialog(QtWidgets.QDialog):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle("Lead " + self.leadId)
+        self.setWindowTitle("Lead " + str(self.leadId))
 
         self.layout = QVBoxLayout()
         self.margins = QtCore.QMargins(4, 4, 4, 4)

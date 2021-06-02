@@ -11,26 +11,20 @@ import json
 import dataclasses
 from PyQt5 import QtWidgets
 
+from ecgdigitize.image import ColorImage, openImage
+
 from Conversion import convertECGLeads, exportSignals
 from views.MainWindow import MainWindow
 from views.ImageView import *
 from views.EditorWidget import *
 from views.ROIView import *
 from views.ExportFileDialog import *
-from model.EcgModel import *
-from model.LeadModel import *
 from QtWrapper import *
 import Annotation
-from model.Lead import LeadId
-import digitize.image
+from model.Lead import Lead, LeadId
 import datetime
+from model.InputParameters import InputParameters
 
-@dataclasses.dataclass(frozen=True)
-class InputParameters:
-    rotation: int
-    timeScale: int
-    voltScale: int
-    leads: dict
 
 class MainController:
 
@@ -38,6 +32,7 @@ class MainController:
         self.window = MainWindow()
         self.connectUI()
         self.openFile = None
+        self.openImage: Optional[ColorImage] = None
 
     def connectUI(self):
         """
@@ -58,6 +53,7 @@ class MainController:
             self.window.editor.loadImageFromPath(path)
             self.window.editor.resetImageEditControls()
             self.openFile = path
+            self.openImage = openImage(path)
             self.attempToLoadAnnotations()
         else:
             print("[Warning] No image selected")
@@ -88,24 +84,23 @@ class MainController:
         self.window.editor.deleteAllLeadRois()
         self.window.editor.resetImageEditControls()
         self.openFile = None
+        self.openImage = None
 
     def confirmDigitization(self):
         inputParameters = self.getCurrentInputParameters()
 
-        rotatedImage = digitize.image.rotated(self.window.editor.image, inputParameters.rotation)
-        leadData = inputParameters.leads[LeadId.I]
-        cropped = digitize.image.cropped(
-            rotatedImage,
-            digitize.image.Rectangle(
-                leadData.x, leadData.y, leadData.width, leadData.height
-            )
-        )
+        # <- One-off utility to save I lead as file ->
+        # rotatedImage = digitize.image.rotated(self.window.editor.image, inputParameters.rotation)
+        # leadData = inputParameters.leads[LeadId.I]
+        # cropped = digitize.image.cropped(
+        #     rotatedImage,
+        #     digitize.image.Rectangle(
+        #         leadData.x, leadData.y, leadData.width, leadData.height
+        #     )
+        # )
+        # import random
+        # cv2.imwrite(f"lead-pictures/{self.openFile.stem}-{random.randint(0,10**8)}.png", cropped)
 
-        import random
-
-        cv2.imwrite(f"lead-pictures/{self.openFile.stem}-{random.randint(0,10**8)}.png", cropped)
-
-        # raise NotImplementedError("TODO: Digitization")
         if len(inputParameters.leads) > 0:
             self.processEcgData(inputParameters)
         else:
@@ -117,10 +112,12 @@ class MainController:
 
     # we have all ECG data and export location - ready to pass off to backend to digitize
     def processEcgData(self, inputParameters):
-        extractedSignals, previewImages = convertECGLeads(inputParameters)
+        if self.window.editor.image is None:
+            raise Exception("IMAGE NOT AVAILABLE WHEN `processEcgData` CALLED")
+
+        extractedSignals, previewImages = convertECGLeads(self.openImage, inputParameters)
 
         if extractedSignals is None:
-
             errorDialog = MessageDialog(
                 message="Error: Signal Processing Failed\n\nPlease check your lead selection boxes",
                 title="Error"
@@ -198,11 +195,11 @@ class MainController:
             return
 
         print("Loading saved state from:", filePath, '...')
-        
+
         # Load the saved state
         with open(filePath) as file:
             data = json.load(file)
-        
+
         print(data)
         self.window.editor.loadSavedState(data)
 
