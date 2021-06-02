@@ -2,7 +2,6 @@ from PyQt5 import QtWidgets, QtCore
 from QtWrapper import *
 from views.ImagePreviewDialog import ImagePreviewDialog
 
-
 fileTypesDictionary = {
     "Text File (*.txt)": "txt",
     "CSV (*.csv)": "csv"
@@ -25,9 +24,9 @@ class ExportFileDialog(QtWidgets.QDialog):
         self.leadPreviewLayout = QtWidgets.QFormLayout()
 
         # Create label and preview button for each lead that was processed
-        for leadId, image in self.leadPreviewImages.items():
+        for leadId, image in sorted(self.leadPreviewImages.items(), key=lambda img: img[0].value):
             self.leadPreviewLayout.addRow(
-                Label(owner=self, text="Lead " + str(leadId)),
+                Label(owner=self, text="Lead " + str(leadId.name)),
                 PushButton(owner=self, name="button", text="Preview")
             )
             self.button.clicked.connect(lambda checked, img=image.data, title=leadId: self.displayPreview(img, title))
