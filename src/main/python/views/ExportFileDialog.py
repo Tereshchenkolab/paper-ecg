@@ -29,7 +29,7 @@ class ExportFileDialog(QtWidgets.QDialog):
                 Label(owner=self, text="Lead " + str(leadId.name)),
                 PushButton(owner=self, name="button", text="Preview")
             )
-            self.button.clicked.connect(lambda checked, img=image.data, title=leadId: self.displayPreview(img, title))
+            self.button.clicked.connect(lambda checked, img=image.data, title=leadId.name: self.displayPreview(img, title))
 
         VerticalBoxLayout(owner=self, name="mainLayout", contents=[
             HorizontalBoxLayout(owner=self, name="chooseFileLayout", contents=[
