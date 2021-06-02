@@ -4,7 +4,41 @@ Created February 17, 2021
 
 Methods related to optimization.
 """
+
 from typing import Callable, List, Optional, Tuple, Union
+
+from ecgdigitize.image import GrayscaleImage
+
+
+def otsuThreshold(image: GrayscaleImage) -> float:
+    """
+    A Threshold Selection Method from Gray-Level Histograms - Nobuyuki Otsu
+    http://web-ext.u-aizu.ac.jp/course/bmclass/documents/otsu1979.pdf
+    """
+    assert isinstance(image, GrayscaleImage)
+
+    L = 256
+    height, width = image.data.shape
+    N = height * width
+    n = image.histogram()
+    p = n / N
+
+    def ω(k: int) -> float:
+        return sum(p[0:k])
+
+    def μ(k: int) -> float:
+        return sum([(i+1) * p_i for i, p_i in enumerate(p[0:k])])
+
+    μ_T = μ(L)
+
+    def σ_B(k: int) -> float: # Technically σ^2_B
+        numerator   = (μ_T * ω(k) - μ(k))**2
+        denominator =  ω(k) * ( 1 - ω(k) )
+        return numerator / denominator
+
+    k = climb1dHill(list(range(L)), σ_B)
+
+    return k
 
 
 def climb1dHill(xs: List[int], evaluate: Callable[[int], Union[float, int]]) -> int:
