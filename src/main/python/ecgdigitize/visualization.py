@@ -8,7 +8,6 @@ import math
 from typing import List, Optional, Sequence, Tuple, Union
 
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.lib.arraysetops import isin
 
@@ -22,6 +21,8 @@ class Color:
 
 # Use matplotlib to show an image with greyscale color (2d array)
 def displayImage(image: Image, title: str = "") -> None:
+    import matplotlib.pyplot as plt
+
     if isinstance(image, ColorImage):
         displayImage = image
         plt.imshow(displayImage.data)
