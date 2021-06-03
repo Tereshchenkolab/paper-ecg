@@ -3,7 +3,8 @@ from PyQt5 import QtCore, QtWidgets
 
 from QtWrapper import *
 import model.EcgModel as EcgModel
-import digitize
+import ecgdigitize
+from ecgdigitize.image import ColorImage
 from views.MessageDialog import *
 
 DEFAULT_TIME_SCALE = 25
@@ -148,7 +149,8 @@ class EditPanelGlobalView(QtWidgets.QWidget):
     def autoRotate(self):
         if self.editorWidget.image is None: return
 
-        angle = digitize.estimateRotationAngle(self.editorWidget.image)
+        colorImage = ColorImage(self.editorWidget.image)
+        angle = ecgdigitize.estimateRotationAngle(colorImage)
 
         if angle is None:
             errorModal = QtWidgets.QMessageBox()
@@ -166,7 +168,7 @@ class EditPanelGlobalView(QtWidgets.QWidget):
     def setValues(self, voltScale, timeScale):
         self.voltScaleSpinBox.setValue(voltScale)
         self.timeScaleSpinBox.setValue(timeScale)
-        
+
     def setLastSavedTimeStamp(self, timeStamp=None):
         if timeStamp is not None:
             self.lastSavedTimeStamp.setText("Last saved: " + timeStamp)

@@ -72,9 +72,9 @@ class ImageView(QtWidgets.QGraphicsView):
     @staticmethod
     def createContainer():
         container = QtWidgets.QGraphicsRectItem()
-        container.setPen(QtGui.QPen(QtCore.Qt.NoPen))
-        container.setFlag(container.ItemClipsChildrenToShape)
-        container.setBrush(QtCore.Qt.white) # default
+        container.setPen(QtGui.QPen(QtCore.Qt.NoPen))  # Hide the border
+        container.setFlag(container.ItemClipsChildrenToShape)  # Clip the rotated corners
+        container.setBrush(QtCore.Qt.white)  # default
         return container
 
     def setContainerBackground(self, color: Any):
@@ -86,6 +86,7 @@ class ImageView(QtWidgets.QGraphicsView):
         return QtCore.QRectF(self._pixmapItem.pixmap().rect())
 
     def imageChanged(self):
+        print("Image changed")
         newRect = self.imageRect
         self._scene.setSceneRect(newRect)
         self._container.setRect(newRect)
@@ -100,9 +101,13 @@ class ImageView(QtWidgets.QGraphicsView):
         return not self._empty
 
     def setImage(self, image=None):
+        print("Image set")
         self._pixmapItem.setPixmap(ImageUtilities.opencvImageToPixmap(image))
         self._empty = False
         self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
+
+        # Show the image background container
+        self._container.setVisible(True)
 
         self.rotateImage(0)
 
@@ -118,10 +123,12 @@ class ImageView(QtWidgets.QGraphicsView):
     def removeImage(self):
         self._image = None
         self._pixmapItem.setPixmap(QtGui.QPixmap())
-        self.rotateImage(0)
-        # Delete the image background container
-        self._container = ImageView.createContainer()
         self._empty = True
+
+        # Hide the image background container
+        self._container.setVisible(False)
+
+        self.rotateImage(0)
 
     def removeAllRoiBoxes(self):
         # remove roi boxes from scene

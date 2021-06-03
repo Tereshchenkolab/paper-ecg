@@ -6,16 +6,14 @@ Created November 7, 2020
 """
 from pathlib import Path
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
-import digitize
 from model.Lead import LeadId
 from views.ImageView import *
 from views.ROIView import *
 from views.EditPanelLeadView import *
 from views.EditPanelGlobalView import *
 from QtWrapper import *
-import model.EcgModel as EcgModel
 from views.MessageDialog import *
 
 class Editor(QtWidgets.QWidget):

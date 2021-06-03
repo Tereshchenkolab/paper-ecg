@@ -37,6 +37,10 @@ class LeadId(Enum):
     V5  = 10
     V6  = 11
 
+    def __repr__(self) -> str:
+        names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
+        return names[self.value]
+
 
 @dataclasses.dataclass(frozen=True)
 class Lead:
