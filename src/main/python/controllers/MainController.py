@@ -9,6 +9,7 @@ from pathlib import Path
 import cv2
 import json
 import dataclasses
+import webbrowser
 from PyQt5 import QtWidgets
 
 from Conversion import convertECGLeads, exportSignals
@@ -47,6 +48,9 @@ class MainController:
         self.window.fileMenuClose.triggered.connect(self.closeImageFile)
         self.window.editor.processEcgData.connect(self.confirmDigitization)
         self.window.editor.saveAnnotationsButtonClicked.connect(self.saveAnnotations)
+
+        self.window.reportIssueButton.triggered.connect(lambda: webbrowser.open('https://github.com/Tereshchenkolab/paper-ecg/issues'))
+        self.window.userGuideButton.triggered.connect(lambda: webbrowser.open('https://github.com/Tereshchenkolab/paper-ecg/blob/master/USER-GUIDE.md'))
 
     def openImageFile(self):
 

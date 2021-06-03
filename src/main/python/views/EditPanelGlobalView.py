@@ -127,7 +127,6 @@ class EditPanelGlobalView(QtWidgets.QWidget):
         self.processDataButton.clicked.connect(lambda: self.editorWidget.processEcgData.emit())
         self.saveAnnotationsButton.clicked.connect(lambda: self.editorWidget.saveAnnotationsButtonClicked.emit())
 
-
     def clearVoltSpinBox(self):
         self.voltScaleSpinBox.setValue(DEFAULT_VOLTAGE_SCALE)
 
@@ -172,3 +171,4 @@ class EditPanelGlobalView(QtWidgets.QWidget):
             self.lastSavedTimeStamp.setText("Last saved: " + timeStamp)
         else:
             self.lastSavedTimeStamp.setText(None)
+
