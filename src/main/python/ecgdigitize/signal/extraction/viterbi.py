@@ -13,7 +13,6 @@ from math import isnan, sqrt, asin, pi
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple, Union
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from ... import common
 from ...common import Numeric
