@@ -84,6 +84,7 @@ class Editor(QtWidgets.QWidget):
         self.mainWindow.addLeadV5.triggered.connect(lambda: self.addLead(LeadId['V5']))
         self.mainWindow.addLeadV6.triggered.connect(lambda: self.addLead(LeadId['V6']))
 
+
         self.imageViewer.roiItemSelected.connect(self.setControlPanel)
 
         self.EditPanelLeadView.leadStartTimeChanged.connect(self.updateLeadStartTime)

@@ -45,7 +45,8 @@ class MainWindow(QtWidgets.QMainWindow):
             name='bar',
             menus=[
                 self.buildFileMenu(),
-                self.buildLeadMenu()
+                self.buildLeadMenu(),
+                self.buildHelpMenu()
             ]
         )
 
@@ -161,6 +162,29 @@ class MainWindow(QtWidgets.QMainWindow):
                     displayName="Add Lead V6",
                     shortcut=QtGui.QKeySequence('Ctrl+]'),
                     statusTip="Add Lead V6"
+                )
+            ]
+        )
+
+    def buildHelpMenu(self):
+        return Qt.Menu(
+            owner=self,
+            name='helpMenu',
+            displayName='Help',
+            items=[
+               Qt.MenuAction(
+                    owner=self,
+                    name="userGuideButton",
+                    displayName="User Guide",
+                    shortcut=None,
+                    statusTip="View User Guide on GitHub"
+                ),
+                Qt.MenuAction(
+                    owner=self,
+                    name="reportIssueButton",
+                    displayName="Report An Issue",
+                    shortcut=None,
+                    statusTip="Report and Issue on GitHub"
                 )
             ]
         )
