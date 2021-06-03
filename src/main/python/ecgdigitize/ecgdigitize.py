@@ -1,3 +1,4 @@
+from ecgdigitize import visualization
 from typing import Optional, Union
 from dataclasses import dataclass
 from enum import Enum
@@ -18,6 +19,9 @@ def estimateRotationAngle(image: ColorImage, houghThresholdFraction: float = 0.2
 
     houghThreshold = int(image.width * houghThresholdFraction)
     lines = vision.houghLines(binaryImage, houghThreshold)
+
+    # <- DEBUG ->
+    visualization.displayImage(visualization.overlayLines(lines, image))
 
     angles = common.mapList(lines, vision.houghLineToAngle)
     offsets = common.mapList(angles, lambda angle: angle % 90)

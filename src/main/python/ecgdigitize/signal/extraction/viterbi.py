@@ -117,11 +117,14 @@ def getPointLocations(image: np.ndarray) -> List[List[Point]]:
 
 # TODO: Make score multiply, or normalize the score by the length of the path
 def score(currentPoint: Point, candidatePoint: Point, candidateAngle: float) -> float:
-    DISTANCE_WEIGHT = 1
+    DISTANCE_WEIGHT = .5
 
     currentAngle = angleBetweenPoints(candidatePoint, currentPoint)
-    angleValue = angleSimilarity(currentAngle, candidateAngle)
+    angleValue = 1 - angleSimilarity(currentAngle, candidateAngle)
     distanceValue = distanceBetweenPoints(currentPoint, candidatePoint)
+
+    # print(currentAngle, candidateAngle, angleValue)
+    # print(distanceValue)
 
     return (distanceValue * DISTANCE_WEIGHT) + (angleValue * (1 - DISTANCE_WEIGHT))
 
@@ -144,7 +147,7 @@ def getAdjacent(pointsByColumn, bestPathToPoint, startingColumn: int, minimumLoo
 
 def interpolate(fromPoint: Point, toPoint: Point) -> Iterator[Point]:
     slope = (toPoint.y - fromPoint.y) / (toPoint.x - fromPoint.x)
-    f = lambda x: slope * (x - fromPoint.x) + toPoint.y
+    f = lambda x: slope * (x - toPoint.x) + toPoint.y
 
     for x in range(fromPoint.index + 1, toPoint.index):
         yield Point(x, f(x))
@@ -153,7 +156,8 @@ def interpolate(fromPoint: Point, toPoint: Point) -> Iterator[Point]:
 def convertPointsToSignal(points: List[Point], width: Optional[int] = None) -> np.ndarray:
     assert len(points) > 0
 
-    firstPoint = points[0]
+    firstPoint = points[0]  # farthest from y-axis (recall we `back`-tracked earlier so paths are reversed)
+    lastPoint = points[-1]  # closest to y-axis
 
     arraySize = width or (firstPoint.x + 1)
     signal = np.full(arraySize, np.nan, dtype=float)
@@ -164,7 +168,6 @@ def convertPointsToSignal(points: List[Point], width: Optional[int] = None) -> n
     for point in points[1:]:
         if isnan(signal[point.index + 1]):
             for interpolatedPoint in interpolate(point, priorPoint):
-                print(interpolatedPoint)
                 signal[interpolatedPoint.index] = interpolatedPoint.y
 
         signal[point.index] = point.y
@@ -187,6 +190,7 @@ def extractSignal(binary: BinaryImage) -> Optional[np.ndarray]:
     # TODO: Allow some leeway either (1) Initialize the first N columns with 0s or (2) Search until some threshold for seeding is met
 
     # Initialize the DP table with base cases (far left side)
+    # TODO: Is this even needed? See below. Currently causes error with `getAdjacent` if removed.
     for column in pointsByColumn[:1]:
         for point in column:
             bestPathToPoint[point] = (0, None, 0)
@@ -198,7 +202,8 @@ def extractSignal(binary: BinaryImage) -> Optional[np.ndarray]:
             adjacent = list(getAdjacent(pointsByColumn, bestPathToPoint, point.index, minimumLookBack))
 
             if len(adjacent) == 0:
-                bestPathToPoint[point] = (float('inf'), None, 0)
+                print(f"None adjacent to {point}")
+                bestPathToPoint[point] = (0, None, 0)
             else:
                 bestScore: float
                 bestPoint: Point
@@ -209,17 +214,13 @@ def extractSignal(binary: BinaryImage) -> Optional[np.ndarray]:
                 )
                 bestPathToPoint[point] = (bestScore, bestPoint, angleBetweenPoints(bestPoint, point))
 
+    # print(bestPathToPoint)
+
     # TODO: Search backward in some 2D area for the best path ?
     OPTIMAL_ENDING_WIDTH = 20
     optimalCandidates = list(getAdjacent(pointsByColumn, bestPathToPoint, startingColumn=binary.width, minimumLookBack=OPTIMAL_ENDING_WIDTH))
 
-    if len(optimalCandidates) == 0:
-        scores = [bestPathToPoint[point][0] ** .5 for point in points]
-        print(points)
-        plt.imshow(binary.toGrayscale().data, cmap='Greys')
-        plt.scatter([point.y for point in points], [point.x for point in points], c=scores)
-        # plt.plot(signal, c='purple')
-        plt.show()
+    # if len(optimalCandidates) == 0:
 
     _, current = min(
         [(totalScore, point) for totalScore, point, _ in optimalCandidates],
@@ -233,5 +234,11 @@ def extractSignal(binary: BinaryImage) -> Optional[np.ndarray]:
         _, current, _ = bestPathToPoint[current]
 
     signal = convertPointsToSignal(bestPath) #, width=binary.width)
+
+    # scores = [bestPathToPoint[point][0] ** .5 for point in points]
+    # plt.imshow(binary.toColor().data, cmap='Greys')
+    # plt.scatter([point.x for point in points], [point.y for point in points], c=scores)
+    # # plt.plot(signal, c='purple')
+    # plt.show()
 
     return signal

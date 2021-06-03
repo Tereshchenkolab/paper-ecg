@@ -9,6 +9,7 @@ import numpy as np
 
 from ..image import BinaryImage, ColorImage
 from .. import vision
+from ..signal.detection import adaptive
 
 
 def kernelApproach(colorImage: ColorImage) -> BinaryImage:
@@ -39,33 +40,29 @@ def kernelApproach(colorImage: ColorImage) -> BinaryImage:
 
 #
 def thresholdApproach(colorImage: ColorImage, erode: bool =False) -> BinaryImage:
-    greyscaleImage = colorImage.toGrayscale()
-    binaryImage = greyscaleImage.toBinary(threshold=220)
+    binaryImage = allDarkPixels(colorImage)
 
-    signalImage = colorImage.toGrayscale().toBinary() # Mallawaarchi method
+    signalImage = adaptive(colorImage)
+
     dilatedSignal = cv2.dilate(
-        signalImage,
+        signalImage.data,
         cv2.getStructuringElement(cv2.MORPH_DILATE, (5,5))
     )
 
-    subtracted: np.ndarray = cv2.subtract(binaryImage, dilatedSignal)
+    subtracted: np.ndarray = cv2.subtract(binaryImage.data, dilatedSignal)
 
     # <- DEBUG ->
-    # from ..visualization import Color, displayImages
-    # displayImages([
-    #     (binaryImage, Color.greyscale, "Binary"),
-    #     (dilatedSignal, Color.greyscale, "Signal"),
-    #     (subtracted, Color.greyscale, "Subtracted"),
-    # ])
+    from ..visualization import displayImage
+    displayImage(BinaryImage(subtracted).toColor())
 
     if erode:
         final = cv2.erode(
             subtracted,
             cv2.getStructuringElement(cv2.MORPH_CROSS, (2,2))
         )
-        return final
+        return BinaryImage(final)
     else:
-        return subtracted
+        return BinaryImage(subtracted)
 
 
 def allDarkPixels(colorImage: ColorImage, belowThreshold: int = 230) -> BinaryImage:

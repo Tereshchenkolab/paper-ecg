@@ -24,7 +24,7 @@ class Color:
 def displayImage(image: Image, title: str = "") -> None:
     if isinstance(image, ColorImage):
         displayImage = image
-        plt.imshow(cv2.cvtColor(displayImage.data, cv2.COLOR_BGR2RGB))
+        plt.imshow(displayImage.data)
     elif isinstance(image, (GrayscaleImage, BinaryImage)):
         displayImage = image.toColor()
         plt.imshow(displayImage.data, cmap='gray')
