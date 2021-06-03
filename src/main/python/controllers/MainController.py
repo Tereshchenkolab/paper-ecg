@@ -200,7 +200,6 @@ class MainController:
         with open(filePath) as file:
             data = json.load(file)
 
-        print(data)
         self.window.editor.loadSavedState(data)
 
     def getCurrentInputParameters(self):

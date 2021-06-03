@@ -12,12 +12,6 @@ from ecgdigitize.image import ColorImage, Rectangle
 from model.InputParameters import InputParameters
 
 
-LEAD_ORDER = {
-    leadID: i for i, leadID
-    in enumerate(["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"])
-}
-
-
 def convertECGLeads(inputImage: ColorImage, parameters: InputParameters):
     # Apply rotation
     rotatedImage = ecgdigitize.image.rotated(inputImage, parameters.rotation)
@@ -75,7 +69,6 @@ def convertECGLeads(inputImage: ColorImage, parameters: InputParameters):
 
     # 3. Zero pad all signals on the left based on their start times and the samplingPeriod
     # take the max([len(x) for x in signals]) and zero pad all signals on the right
-    print(scaledSignals)
     paddedSignals = {
         leadId: common.padLeft(signal, int(parameters.leads[leadId].startTime / samplingPeriod))
         for leadId, signal in scaledSignals.items()
@@ -88,8 +81,6 @@ def convertECGLeads(inputImage: ColorImage, parameters: InputParameters):
         for leadId, signal in paddedSignals.items()
     }
 
-    print(fullSignals, previews)
-
     return fullSignals, previews
 
 
@@ -100,7 +91,7 @@ def exportSignals(leadSignals, filePath, separator='\t'):
         leadSignals (Dict[str -> np.ndarray]): Dict mapping lead id's to np array of signal data (output from convertECGLeads)
     """
     leads = common.zipDict(leadSignals)
-    leads.sort(key=lambda pair: LEAD_ORDER[pair[0]])
+    leads.sort(key=lambda pair: pair[0].value)
 
     assert len(leads) >= 1
     lengthOfFirst = len(leads[0][1])

@@ -52,8 +52,8 @@ def thresholdApproach(colorImage: ColorImage, erode: bool =False) -> BinaryImage
     subtracted: np.ndarray = cv2.subtract(binaryImage.data, dilatedSignal)
 
     # <- DEBUG ->
-    from ..visualization import displayImage
-    displayImage(BinaryImage(subtracted).toColor())
+    # from ..visualization import displayImage
+    # displayImage(BinaryImage(subtracted).toColor())
 
     if erode:
         final = cv2.erode(

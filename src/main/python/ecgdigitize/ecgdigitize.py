@@ -21,7 +21,7 @@ def estimateRotationAngle(image: ColorImage, houghThresholdFraction: float = 0.2
     lines = vision.houghLines(binaryImage, houghThreshold)
 
     # <- DEBUG ->
-    visualization.displayImage(visualization.overlayLines(lines, image))
+    # visualization.displayImage(visualization.overlayLines(lines, image))
 
     angles = common.mapList(lines, vision.houghLineToAngle)
     offsets = common.mapList(angles, lambda angle: angle % 90)
