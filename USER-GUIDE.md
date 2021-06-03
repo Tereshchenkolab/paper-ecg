@@ -6,23 +6,17 @@ This guide walks you through the process of digitizing ECG scans using the Paper
 
 ## Contents ##
 
-- [Opening an ECG Scane Image](#Opening-an-ECG-Scan-Image)
-
+- [Opening an ECG Scan Image](#Opening-an-ECG-Scan-Image)
 - [Fixing Image Rotation](#Fixing-Image-Rotation)
-
 - [Selecting Leads](#Selecting-Leads)
-
 - [Adjusting Grid Scales](#Adjusting-Grid-Scales)
-
 - [Exporting Signal Data](#Exporting-Signal-Data)
-
 - [Saving Your Work](#Saving-Your-Work)
-
 - [Getting Help](#Getting-Help)
 
 ## Opening an ECG Scan Image ##
 
-The application supports JPG, PNG, and TIFF image formats. To open a new ECG scan, click the `File` button in the top left of the window and select `Open`. Alternatively, you can use the key shortcut `Ctrl + O`.
+The application supports JPG, PNG, and TIFF image formats. To open a new ECG scan, click the `File` button in the top left of the window and select `Open`. Alternatively, you can use the key shortcut `Ctrl O`.
 
 <img src="userGuideImages/openButton.png" width=800>
 
@@ -30,7 +24,7 @@ This will open a dialog where you may select your image from your file system as
 
 <img src="userGuideImages/fileChooser.png" width=800>
 
-Once you select your image it will open in the application's editor window. You can zoom in and out of the image by pinching a track pad, scrolling with the wheel of a mouse, or by using the key shortcuts `Ctrl + Shift + +` (zoom in) and `Ctrl + -` (zoom out).
+Once you select your image it will open in the application's editor window.
 
 ## Fixing Image Rotation ##
 
@@ -45,7 +39,14 @@ To add a lead, click the `Lead` button in the menu bar at the top of the window,
 
 <img src="userGuideImages/addLeadButton.png" width=800>
 
-A new bounding box should now appear in the top left corner of the editor. Drag this box over the corresponding lead, ensuring you have the full signal. Try to exclude as much outside text and/or signals from the box to get the most accurate results.
+A new bounding box will appear in the top left corner of the editor. Drag this box over the corresponding lead, ensuring you have the full signal. Try to exclude as much outside text and/or signals from the box to get the most accurate results.
+
+**Note**: You can zoom in and out of the image with the following methods: 
+- Pinching the trackpad
+- Scrolling with the wheel of a mouse 
+- Key shortcuts:  
+    - `Ctrl Shift + ` (zoom in)
+    - `Ctrl -` (zoom out)
 
 <img src="userGuideImages/leadCropping.png" width=800>
 

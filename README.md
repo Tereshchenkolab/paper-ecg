@@ -6,6 +6,9 @@ OSU Capstone Project 2020-21 - Natalie &amp; Julian
 
 See our sprint documents [here](scrum/README.md).
 
+## User Guide
+
+Read the user guide [here](USER-GUIDE.md)
 
 ## Contributing
 
