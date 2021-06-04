@@ -16,7 +16,7 @@ To produce digital signals, like these:
 
 ## Installation
 
-Download the latest release [here](https://drive.google.com/drive/folders/1e5dho1QJhfxXARXutDWoB3eHNGTZ_VNl?usp=sharing).
+Download the latest release [here](https://github.com/Tereshchenkolab/paper-ecg/releases/latest).
 
 
 ## User Guide
