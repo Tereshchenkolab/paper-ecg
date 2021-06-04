@@ -1,10 +1,20 @@
 # Paper ECG
 OSU Capstone Project 2020-21 - Natalie &amp; Julian
 
+## Overview
+
+This application allows digitizing paper ECG image scans, such as this one:
+
+![fullscan](https://user-images.githubusercontent.com/25210657/120732384-13bb9400-c49a-11eb-9913-5e99da0f8d53.png)
+
+To produce digital signals, like these:
+
+![fullscan-output](https://user-images.githubusercontent.com/25210657/120732452-3057cc00-c49a-11eb-8228-0d3f7cb31e78.png)
 
 ## Capstone
 
 See our sprint documents [here](scrum/README.md).
+
 
 ## User Guide
 
