@@ -1,5 +1,7 @@
 # Paper ECG
+
 OSU Capstone Project 2020-21 - Natalie &amp; Julian
+
 
 ## Overview
 
@@ -11,14 +13,16 @@ To produce digital signals, like these:
 
 ![fullscan-output](https://user-images.githubusercontent.com/25210657/120732452-3057cc00-c49a-11eb-8228-0d3f7cb31e78.png)
 
-## Capstone
 
-See our sprint documents [here](scrum/README.md).
+## Installation
+
+Download the latest release [here](https://drive.google.com/drive/folders/1e5dho1QJhfxXARXutDWoB3eHNGTZ_VNl?usp=sharing).
 
 
 ## User Guide
 
 Read the user guide [here](USER-GUIDE.md)
+
 
 ## Contributing
 
@@ -65,9 +69,11 @@ py -3.6 -m fbs build
 
 This only builds an executable targeting the current OS (i.e., virtualization or multiple machines is necessary to produce builds for each OS).
 
+
 ## Contributing
 
 View the [issues list](https://github.com/Tereshchenkolab/paper-ecg/issues) to see what tasks are available to work on.
+
 
 ## Dependencies
 
@@ -78,3 +84,8 @@ The project currently requires Python `3.6.7` to work with `fbs` (see [3.7 suppo
 
 - Detailed [guide](https://gist.github.com/j9ac9k/1f2858ceb84d94b7643a6558967d954d) on PyQt + fbs + macOS building and releasing.
 - [Dark mode doesn't work on macOS](https://github.com/pyinstaller/pyinstaller/issues/4627) when `frozen`.
+
+
+## Capstone
+
+See our sprint documents [here](scrum/README.md).
