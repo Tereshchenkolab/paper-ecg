@@ -1,7 +1,18 @@
 # Paper ECG
 
-OSU Capstone Project 2020-21 - Natalie &amp; Julian
+An application for digitizing ECG scans. (OSU Capstone Project 2020-21)
 
+See [ecgdigitize](https://github.com/Tereshchenkolab/ecg-digitize) for the library implementing the grid and signal digitization.
+
+## Authors
+
+- Natalie Coppa
+- Julian Fortune
+- Larisa Tereschenko (tereshch at ohsu.edu)
+
+With help from:
+- Kazi Haq
+- Hetal Patel
 
 ## Overview
 
