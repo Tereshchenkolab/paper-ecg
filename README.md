@@ -102,8 +102,8 @@ The project currently requires Python `3.6.7` to work with `fbs` (see [3.7 suppo
 See our sprint documents [here](scrum/README.md).
 
 ## Preprint to cite
-Digitizing ECG image: new fully automated method and open-source software code
-Julian Fortune, Natalie Coppa, Kazi T Haq, Hetal Patel, Larisa G Tereshchenko
+Julian Fortune, Natalie Coppa, Kazi T Haq, Hetal Patel, Larisa G Tereshchenko. 
+Digitizing ECG image: new fully automated method and open-source software code. 
 medRxiv 2021.07.13.21260461; doi: https://doi.org/10.1101/2021.07.13.21260461
 
 ## Statistical validation code
