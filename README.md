@@ -3,6 +3,9 @@
 An application for digitizing ECG scans. (OSU Capstone Project 2020-21)
 
 See [ecgdigitize](https://github.com/Tereshchenkolab/ecg-digitize) for the library implementing the grid and signal digitization.
+Cite published manuscript: J. D. Fortune, N. E. Coppa, K. T. Haq, H. Patel and L. G. Tereshchenko. Digitizing ECG image: a new method and open-source software code. 
+Computer Methods and Programs in Biomedicine 2022 Pages 106890. DOI: https://doi.org/10.1016/j.cmpb.2022.106890 https://www.sciencedirect.com/science/article/pii/S0169260722002723
+
 
 ## Authors
 
