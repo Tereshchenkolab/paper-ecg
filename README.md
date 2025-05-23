@@ -104,7 +104,11 @@ The project currently requires Python `3.6.7` to work with `fbs` (see [3.7 suppo
 
 See our sprint documents [here](scrum/README.md).
 
-## Preprint to cite
+## Manuscript to cite
+
+Fortune JD, Coppa NE, Haq KT, Patel H, Tereshchenko LG. Digitizing ECG image: A new method and open-source software code. Comput Methods Programs Biomed. 2022 Jun;221:106890. doi: 10.1016/j.cmpb.2022.106890. Epub 2022 May 14. PMID: 35598436; PMCID: PMC9286778.
+
+## Preprint:
 Julian Fortune, Natalie Coppa, Kazi T Haq, Hetal Patel, Larisa G Tereshchenko. 
 Digitizing ECG image: new fully automated method and open-source software code. 
 medRxiv 2021.07.13.21260461; doi: https://doi.org/10.1101/2021.07.13.21260461
